@@ -1,51 +1,66 @@
-# Phase 5 - Current Status
+# Phase 5 — Current Status
 
-**Updated 1 September 2026**
+**Updated 9 September 2026.** Supersedes the 1 September version, which still described E18 Part 2
+as running; R1, R2, R3, R3b, R3c and Phase 2 have all completed since.
 
 | | |
 |---|---|
-| Active experiment | **E18 - OD-8 calibration** |
-| Stage | Part 1 (calibration) complete; Part 2 (fault evaluation) running |
-| E18 verdict so far | **PARTIAL** |
-| E19 | Gated - may proceed on **P1 and P3 only** |
+| Active experiment | **E21 — baseline comparison** (running) |
+| Last completed | **Phase 2 — monitorability** |
+| E18 series | **Closed.** R3c is the terminal result |
+| E19 | Unblocked for P1, **not** pre-registered. Waiting on E21 |
 | E20 | Future |
 
-## What E18 established
+## Where the programme actually is
 
-**Root cause of OD-8.** All three policies classify 99.75 % of ticks as `URBAN_CLEAR`. That context's
-legacy corpus spans 3.8776-5.4380 while live clean scores span 2.40-7.45 with policy means of 3.686,
-4.781 and 3.383. Conformal validity requires exchangeability between calibration and test data; it
-did not hold.
+The E18 series is finished and its terminal finding is E18-R3c:
 
-**Corpus context scales differ by two orders of magnitude:**
+> **A persistent sensor failure is invisible to the conformal monitor for as long as it persists.**
 
-| context | n | min | median | max |
-|---|--:|--:|--:|--:|
-| HIGHWAY_CLEAR | 1000 | 0.0785 | 0.0888 | 3.7144 |
-| **URBAN_CLEAR** | 1000 | **3.8776** | **5.3199** | **5.4380** |
-| DEGRADED_SENSOR | 1000 | 0.0782 | 0.1043 | 5.4031 |
+Alarm rate 0.2 % under sustained `imu_dropout` against a ~5 % clean baseline, for 160 continuous
+seconds, on all 30 seeds, at a frozen threshold, with a duration-matched control. Under sustained
+injection **3 of 6** faults are detected; R3b's fourth was the post-fault recovery transient.
 
-**Clean score behaviour differs enormously by policy:**
+Phase 2 then asked whether a monitorability metric predicts that detection. It **partially deleted
+the ASTRA 2.0 proposal**, which is what it was for:
 
-| policy | mean | SD | frozen quantile | clean FAR (held out) | headroom |
-|---|--:|--:|--:|--:|--:|
-| P1 | 3.6860 | 0.0222 | **3.7095** | 5.47 % | 0.0235 |
-| P2 | 4.7807 | 0.9220 | **5.9024** | 4.68 % | 1.1217 |
-| P3 | 3.3830 | 0.0124 | **3.4000** | 8.23 % | 0.0170 |
+- Identity-free ρ = 0.654 (p = 0.0113) — the **weak** band, not the pass band.
+- The pre-registered primary (ρ = 0.895) is inflated by an identity between the metric and its
+  outcome. The confound was in the frozen definition, and it is reported rather than buried.
+- **The location-only formulation is withdrawn.** It reads sustained `imu_dropout` as mildly
+  elevated while the monitor is running 25× quieter than clean — a dispersion failure a location
+  statistic structurally cannot see.
+- `D_s` is confirmed dead as a predictor a second time, now with no algebraic path to the outcome:
+  ρ = 0.077, p = 0.7192.
 
-P1 and P3 are near-deterministic; P2's spread is 40-75x larger.
+## What E21 is deciding, right now
 
-**A global threshold reproduces OD-8 exactly** (q = 5.6449): 0.00 % clean false alarms on P1 and P3,
-11.06 % on P2. This is why the defect is a policy-conditioning failure rather than a bad value.
+E18-R3c's negative result has never been compared against anything. `benchmarks/detectors.py` has
+held three simple detectors since P2.7 — one of which its own docstring calls "the principled
+candidate" — and none has ever been run against OD-8.
 
-**P2 fails the drift criterion.** First-half mean 4.1902, second-half 5.3711, drift/SD = 1.28. This
-also retrospectively explains an earlier reading: P2 measured ~5.15 over ticks 200-400 and 2.56-4.46
-over ticks 0-200. That was drift, not a regime property -- further undermining the already-withdrawn
-H-regime claim.
+E21 asks whether they detect the faults OD-8 misses. Pre-registered at `ae997b3`, paired with R3c
+on the same 30 seeds, same six faults, sustained injection, 3,400 ticks, plus a clean arm.
+
+**If a baseline wins, the contribution reframes** from "conformal monitoring is blind" to "the fault
+evidence was available two layers upstream and the gate does not consult it" — a claim about
+architecture rather than about conformal prediction.
 
 ## Immediate next steps
 
-1. Complete E18 Part 2: detection probability, latency and threshold margin at the frozen thresholds,
-   six faults x three severity levels x 30 seeds x 3 policies.
-2. Write `final_decision.md` with the E19 gate decision.
-3. Only then design E19, restricted to P1 and P3.
+1. **E21 completes** and its decision is written.
+2. **E19 / H7** pre-registered — but only after E21, because E19 measures where to place a monitor
+   and E21 decides which monitor is worth placing.
+3. **Literature review.** Still the gating item for the novelty claim, and unaffected by any of the
+   above.
+
+## Known open items, carried
+
+- Two integration tests (`test_not_one_gate_fires_while_it_happens`,
+  `test_the_posture_escalates_on_sensor_health_rather_than_on_a_verdict`) have been red since before
+  the dashboard work and are still unexplained. Confirmed to predate it at `1b09738`.
+- A demo speed-reset sits in `training/closed_loop.py`, the shared harness. **Measured inert** —
+  0 of 6 paired runs differ, bit-for-bit, because the `NOMINAL` guard never coincides with a speed
+  below 1 m/s. It is a latent trap, not a live contaminant.
+- OD-10 (innovation covariance omits `H Q Hᵀ`, ~1.24× inflation at the median) is uncorrected.
+- `[M-ext]` remains **0 of 30**. Everything here is one synthetic plant, P1 only, `medium` severity.

@@ -1,0 +1,422 @@
+[
+ {
+  "fault": "clean",
+  "seed": 20260731,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "clean",
+  "seed": 20260731,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "clean",
+  "seed": 20260731,
+  "detector": "trust",
+  "fired_at": 313,
+  "latency_ticks": null,
+  "fired_ticks": 2,
+  "false_alarm": true,
+  "detected": true
+ },
+ {
+  "fault": "clean",
+  "seed": 20260732,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "clean",
+  "seed": 20260732,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "clean",
+  "seed": 20260732,
+  "detector": "trust",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "position_bias",
+  "seed": 20260731,
+  "detector": "health",
+  "fired_at": 213,
+  "latency_ticks": 13,
+  "fired_ticks": 2963,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "position_bias",
+  "seed": 20260731,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "position_bias",
+  "seed": 20260731,
+  "detector": "trust",
+  "fired_at": 228,
+  "latency_ticks": 28,
+  "fired_ticks": 961,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "position_bias",
+  "seed": 20260732,
+  "detector": "health",
+  "fired_at": 213,
+  "latency_ticks": 13,
+  "fired_ticks": 3006,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "position_bias",
+  "seed": 20260732,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "position_bias",
+  "seed": 20260732,
+  "detector": "trust",
+  "fired_at": 227,
+  "latency_ticks": 27,
+  "fired_ticks": 3134,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "position_drift",
+  "seed": 20260731,
+  "detector": "health",
+  "fired_at": 1262,
+  "latency_ticks": 1062,
+  "fired_ticks": 1862,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "position_drift",
+  "seed": 20260731,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "position_drift",
+  "seed": 20260731,
+  "detector": "trust",
+  "fired_at": 520,
+  "latency_ticks": 320,
+  "fired_ticks": 1490,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "position_drift",
+  "seed": 20260732,
+  "detector": "health",
+  "fired_at": 1353,
+  "latency_ticks": 1153,
+  "fired_ticks": 1953,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "position_drift",
+  "seed": 20260732,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "position_drift",
+  "seed": 20260732,
+  "detector": "trust",
+  "fired_at": 641,
+  "latency_ticks": 441,
+  "fired_ticks": 1248,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "imu_dropout",
+  "seed": 20260731,
+  "detector": "health",
+  "fired_at": 205,
+  "latency_ticks": 5,
+  "fired_ticks": 3195,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "imu_dropout",
+  "seed": 20260731,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "imu_dropout",
+  "seed": 20260731,
+  "detector": "trust",
+  "fired_at": 217,
+  "latency_ticks": 17,
+  "fired_ticks": 15,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "imu_dropout",
+  "seed": 20260732,
+  "detector": "health",
+  "fired_at": 205,
+  "latency_ticks": 5,
+  "fired_ticks": 3195,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "imu_dropout",
+  "seed": 20260732,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "imu_dropout",
+  "seed": 20260732,
+  "detector": "trust",
+  "fired_at": 207,
+  "latency_ticks": 7,
+  "fired_ticks": 787,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "lateral_noise",
+  "seed": 20260731,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "lateral_noise",
+  "seed": 20260731,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "lateral_noise",
+  "seed": 20260731,
+  "detector": "trust",
+  "fired_at": 204,
+  "latency_ticks": 4,
+  "fired_ticks": 2211,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "lateral_noise",
+  "seed": 20260732,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "lateral_noise",
+  "seed": 20260732,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "lateral_noise",
+  "seed": 20260732,
+  "detector": "trust",
+  "fired_at": 203,
+  "latency_ticks": 3,
+  "fired_ticks": 2485,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "speed_bias",
+  "seed": 20260731,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_bias",
+  "seed": 20260731,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_bias",
+  "seed": 20260731,
+  "detector": "trust",
+  "fired_at": 313,
+  "latency_ticks": 113,
+  "fired_ticks": 2,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "speed_bias",
+  "seed": 20260732,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_bias",
+  "seed": 20260732,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_bias",
+  "seed": 20260732,
+  "detector": "trust",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_stuck",
+  "seed": 20260731,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_stuck",
+  "seed": 20260731,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_stuck",
+  "seed": 20260731,
+  "detector": "trust",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_stuck",
+  "seed": 20260732,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_stuck",
+  "seed": 20260732,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_stuck",
+  "seed": 20260732,
+  "detector": "trust",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ }
+]

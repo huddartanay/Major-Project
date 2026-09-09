@@ -1,0 +1,175 @@
+{
+  "experiment_id": "E21-BASELINE",
+  "seeds": 2,
+  "ticks": 3400,
+  "fault_first": 200,
+  "detection_bar": 0.9,
+  "clean_bar": 0.1,
+  "od8_sustained": {
+    "position_bias": 1.0,
+    "position_drift": 1.0,
+    "lateral_noise": 1.0,
+    "speed_stuck": 0.37,
+    "speed_bias": 0.0,
+    "imu_dropout": 0.0
+  },
+  "clean_false_positive": {
+    "health": 0.0,
+    "innovation": 0.0,
+    "trust": 0.5
+  },
+  "cells": [
+    {
+      "fault": "position_bias",
+      "detector": "health",
+      "detection_rate": 1.0,
+      "clean_fp": 0.0,
+      "median_latency_ticks": 13.0,
+      "detects": true
+    },
+    {
+      "fault": "position_bias",
+      "detector": "innovation",
+      "detection_rate": 0.0,
+      "clean_fp": 0.0,
+      "median_latency_ticks": null,
+      "detects": false
+    },
+    {
+      "fault": "position_bias",
+      "detector": "trust",
+      "detection_rate": 1.0,
+      "clean_fp": 0.5,
+      "median_latency_ticks": 27.5,
+      "detects": false
+    },
+    {
+      "fault": "position_drift",
+      "detector": "health",
+      "detection_rate": 1.0,
+      "clean_fp": 0.0,
+      "median_latency_ticks": 1107.5,
+      "detects": true
+    },
+    {
+      "fault": "position_drift",
+      "detector": "innovation",
+      "detection_rate": 0.0,
+      "clean_fp": 0.0,
+      "median_latency_ticks": null,
+      "detects": false
+    },
+    {
+      "fault": "position_drift",
+      "detector": "trust",
+      "detection_rate": 1.0,
+      "clean_fp": 0.5,
+      "median_latency_ticks": 380.5,
+      "detects": false
+    },
+    {
+      "fault": "imu_dropout",
+      "detector": "health",
+      "detection_rate": 1.0,
+      "clean_fp": 0.0,
+      "median_latency_ticks": 5.0,
+      "detects": true
+    },
+    {
+      "fault": "imu_dropout",
+      "detector": "innovation",
+      "detection_rate": 0.0,
+      "clean_fp": 0.0,
+      "median_latency_ticks": null,
+      "detects": false
+    },
+    {
+      "fault": "imu_dropout",
+      "detector": "trust",
+      "detection_rate": 1.0,
+      "clean_fp": 0.5,
+      "median_latency_ticks": 12.0,
+      "detects": false
+    },
+    {
+      "fault": "lateral_noise",
+      "detector": "health",
+      "detection_rate": 0.0,
+      "clean_fp": 0.0,
+      "median_latency_ticks": null,
+      "detects": false
+    },
+    {
+      "fault": "lateral_noise",
+      "detector": "innovation",
+      "detection_rate": 0.0,
+      "clean_fp": 0.0,
+      "median_latency_ticks": null,
+      "detects": false
+    },
+    {
+      "fault": "lateral_noise",
+      "detector": "trust",
+      "detection_rate": 1.0,
+      "clean_fp": 0.5,
+      "median_latency_ticks": 3.5,
+      "detects": false
+    },
+    {
+      "fault": "speed_bias",
+      "detector": "health",
+      "detection_rate": 0.0,
+      "clean_fp": 0.0,
+      "median_latency_ticks": null,
+      "detects": false
+    },
+    {
+      "fault": "speed_bias",
+      "detector": "innovation",
+      "detection_rate": 0.0,
+      "clean_fp": 0.0,
+      "median_latency_ticks": null,
+      "detects": false
+    },
+    {
+      "fault": "speed_bias",
+      "detector": "trust",
+      "detection_rate": 0.5,
+      "clean_fp": 0.5,
+      "median_latency_ticks": 113,
+      "detects": false
+    },
+    {
+      "fault": "speed_stuck",
+      "detector": "health",
+      "detection_rate": 0.0,
+      "clean_fp": 0.0,
+      "median_latency_ticks": null,
+      "detects": false
+    },
+    {
+      "fault": "speed_stuck",
+      "detector": "innovation",
+      "detection_rate": 0.0,
+      "clean_fp": 0.0,
+      "median_latency_ticks": null,
+      "detects": false
+    },
+    {
+      "fault": "speed_stuck",
+      "detector": "trust",
+      "detection_rate": 0.0,
+      "clean_fp": 0.5,
+      "median_latency_ticks": null,
+      "detects": false
+    }
+  ],
+  "rescued": {
+    "imu_dropout": [
+      "health"
+    ],
+    "speed_bias": [],
+    "speed_stuck": []
+  },
+  "verdict": "BASELINE WINS"
+}

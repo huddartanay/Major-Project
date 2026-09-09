@@ -37,6 +37,11 @@ Permanent record of what may and may not be said. Every experiment updates this.
 | **`D_s` does not predict operational detection** | **Established** | E18, 17/28 cells disagree; D_L6 rho +0.29 (p=0.14) | **Yes** |
 | **Higher sensor-level `D_L1` is associated with *lower* operational detection** | **Supported** | E18, Spearman rho = -0.480, p = 0.0088, n = 28 cells | **Yes, as an association** |
 | **Fault-induced alarm suppression** | **Supported** | E18, 11/28 cells on valid policies, all p < 0.05 | **Yes, as observed** |
+| **`D_s` does not predict operational detection** — second, independent confirmation | **Established** | Phase 2: rho = 0.077, p = 0.7192, n = 24 cells. Unlike the primary M test this has no algebraic relationship to the outcome | **Yes** |
+| A per-fault metric can represent phase-dependent detection | **Refuted** | Phase 2: `position_drift` runs 0.068 -> 1.000 across four phases at a constant `D_s` of 0.997 | **No** |
+| **Monitorability M(f,p) predicts operational detection** | **Weak** | Phase 2: identity-free rho = 0.654, p = 0.0113 on 15 cells. The pre-registered primary (rho = 0.895) is inflated by an identity between the metric and its outcome | **Yes, at "weak", and only with the identity disclosed** |
+| ~~The location-only monitorability metric is fit for ASTRA 2.0~~ | **WITHDRAWN** | Phase 2: M reads sustained `imu_dropout` as mildly elevated above clean in every phase, while the monitor runs 25x quieter than its own clean baseline. A location statistic cannot represent a dispersion failure | **No** |
+| A dispersion-augmented monitorability metric would work | **Not tested** | Phase 2 generated this hypothesis and did not test it. Its definition would now be chosen after seeing results, so it needs a fresh pre-registration | **No** |
 | `speed_stuck` and `imu_dropout` are undetectable by OD-8 under sustained fault | **Established** | E18-R3c: `imu_dropout` 0 %, `speed_stuck` 37 %, both below the 90 % criterion. R3b's `imu_dropout` 100 % was aftermath, not sustained detection | **Yes, with injection mode stated** |
 | General L2a absorption | **Withdrawn** | E17 + E17-Position | **No** |
 | Position faults are absorbed at L2a | **Withdrawn** | E17-Position, 0 of 12 cells | **No** |
@@ -71,3 +76,11 @@ Permanent record of what may and may not be said. Every experiment updates this.
 - **Detection claims must state the injection mode** — transient (fault ends) or sustained
   (fault persists). E18-R3c showed the same fault at 99.1 % transient and 0.2 % sustained.
   A detection rate without the mode is not interpretable.
+
+- **Monitorability must be quoted per (fault, phase), never per fault** — Phase 2: `position_drift`
+  moves 0.068 -> 1.000 across phases while `D_s` stays at 0.997. A per-fault number cannot
+  represent the quantity it is being scored against.
+- **Any metric scored against detection must be checked for an algebraic path to it** — Phase 2's
+  pre-registered primary reached rho = 0.895 largely because `median > threshold` and
+  `alarm rate > 0.5` are the same statement. The confound was in the frozen definition, not in the
+  data, and it was only visible because the identity was looked for after the number arrived.

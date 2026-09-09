@@ -103,3 +103,33 @@ short window. **R3b re-runs the faulted evaluation at n = 3200 against the froze
 decides whether the PASS is worth anything.
 
 Only after R3b does E19 become genuinely worth running.
+
+
+## Update, 9 September 2026 — the E18 series is closed and Phase 2 has cut a claim
+
+    E18-R3b  detection at the long window     COMPLETE - superseded by R3c
+    E18-R3c  duration-matched control         COMPLETE - H-AFTERMATH SUPPORTED, terminal for E18
+    Phase 2  monitorability re-analysis       COMPLETE - M IS WEAK; location-only form withdrawn
+    E21      baseline comparison              <-- RUNNING, and now the gate on E19
+    E19      H7 monitor placement             pre-register only after E21
+    E20      lying sensor                     FUTURE
+
+**Phase 2 did the job it was kept on the roadmap for.** It was retained because it was "still able
+to delete a large part of the ASTRA 2.0 proposal", and it deleted the location-only monitorability
+metric: M reads sustained `imu_dropout` as mildly elevated while the monitor runs 25x quieter than
+its own clean baseline. The phase-aware framing survives and is vindicated; the location-only
+statistic does not.
+
+### Why E21 now gates E19
+
+E19 asks **where to place a monitor**. E18-R3c says the monitor we have is blind to sustained sensor
+failure, and a live observation showed L1 reporting `IMU=DEGRADED` and L3's Trust Index at 0.06 on a
+tick where L6 returned `PASS`.
+
+If a one-line health check detects what the conformal gate misses, then the placement question
+changes shape entirely — and designing E19 first would mean measuring placement for a monitor that
+should not be the one being placed. E21 is paired with R3c, uses detectors that have been committed
+since P2.7 with untouched thresholds, and costs about an hour.
+
+**Nothing new is added to the roadmap by this update.** E21 was always implied by the negative
+result; it had simply never been run.
