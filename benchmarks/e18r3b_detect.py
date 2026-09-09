@@ -66,7 +66,9 @@ def _run_faulted(policy: Any, fault: str, mag: float | None, seed: int, ticks: i
     drive_closed_loop(
         policy=policy, ticks=ticks, seed=seed, observer=obs,
         fault=_build_injector(fault, mag, seed),
-        redundant=_sensing(fault, mag, seed, True),
+        # The true run length, not the 400-tick module default: this caller is
+        # the one the scaling bug was found in.
+        redundant=_sensing(fault, mag, seed, True, ticks=ticks),
     )
     return {"scores": scores, "est_y": est_y}
 

@@ -103,11 +103,21 @@ def _build_injector(fault: str, magnitude: float | None, seed: int):
     return FaultInjector(specs, seed=seed, sigmas=CHANNEL_SIGMAS)
 
 
-def _sensing(fault: str, magnitude: float | None, seed: int, active: bool):
-    """Redundant spec. Position faults inject here; everything else stays clean."""
+def _sensing(fault: str, magnitude: float | None, seed: int, active: bool,
+             ticks: int = TICKS):
+    """Redundant spec. Position faults inject here; everything else stays clean.
+
+    ``ticks`` is the run length the drift is being scaled for, and it must be the
+    run length actually driven. It used to be read from the module constant, so
+    a caller that ran longer than 400 ticks got a per-tick rate calibrated for a
+    200-tick window and then applied for the whole run: E18-R3b drove 3,400 ticks
+    and reached roughly 32 m of drift instead of the specified 2 m, which
+    partially invalidated that result. Defaulting to ``TICKS`` keeps every
+    400-tick run bit-identical to the ones already recorded.
+    """
     if fault not in POSITION_FAULTS or not active:
         return RedundantSensing.build(sigmas=DEFAULT_CHANNEL_SIGMAS, seed=seed)
-    span = TICKS - 1 - _FAULT_FIRST
+    span = ticks - 1 - _FAULT_FIRST
     return RedundantSensing.build(
         sigmas=DEFAULT_CHANNEL_SIGMAS, seed=seed,
         faulted=SensorModality.IMU, also_faulted=(SensorModality.GPS,),
