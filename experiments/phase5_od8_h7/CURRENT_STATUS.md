@@ -5,8 +5,8 @@ as running; R1, R2, R3, R3b, R3c and Phase 2 have all completed since.
 
 | | |
 |---|---|
-| Active experiment | **E21 — baseline comparison** (running) |
-| Last completed | **Phase 2 — monitorability** |
+| Active experiment | none — **E21 complete: BASELINE WINS** |
+| Last completed | **E21 — baseline comparison** |
 | E18 series | **Closed.** R3c is the terminal result |
 | E19 | Unblocked for P1, **not** pre-registered. Waiting on E21 |
 | E20 | Future |
@@ -33,7 +33,7 @@ the ASTRA 2.0 proposal**, which is what it was for:
 - `D_s` is confirmed dead as a predictor a second time, now with no algebraic path to the outcome:
   ρ = 0.077, p = 0.7192.
 
-## What E21 is deciding, right now
+## What E21 decided
 
 E18-R3c's negative result has never been compared against anything. `benchmarks/detectors.py` has
 held three simple detectors since P2.7 — one of which its own docstring calls "the principled
@@ -42,9 +42,13 @@ candidate" — and none has ever been run against OD-8.
 E21 asks whether they detect the faults OD-8 misses. Pre-registered at `ae997b3`, paired with R3c
 on the same 30 seeds, same six faults, sustained injection, 3,400 ticks, plus a clean arm.
 
-**If a baseline wins, the contribution reframes** from "conformal monitoring is blind" to "the fault
-evidence was available two layers upstream and the gate does not consult it" — a claim about
-architecture rather than about conformal prediction.
+**A baseline won.** `health` detects `imu_dropout` 30/30 at 0.000 clean false positives, against
+OD-8's 0/30, with a median latency of 5 ticks. **The contribution reframes: the blind spot is
+architectural.** The evidence was present at L1 and the gate does not consult it.
+
+`trust` was disqualified by firing on 77 % of clean runs — predicted as the risk in §9 of the
+pre-registration. `innovation`, the detector its own docstring calls "the principled candidate",
+detected essentially nothing. `speed_bias` and `speed_stuck` are undetected by **everything** tested.
 
 ## Immediate next steps
 

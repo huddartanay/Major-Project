@@ -1,6 +1,6 @@
 {
   "experiment_id": "E21-BASELINE",
-  "seeds": 2,
+  "seeds": 30,
   "ticks": 3400,
   "fault_first": 200,
   "detection_bar": 0.9,
@@ -16,7 +16,7 @@
   "clean_false_positive": {
     "health": 0.0,
     "innovation": 0.0,
-    "trust": 0.5
+    "trust": 0.7666666666666667
   },
   "cells": [
     {
@@ -38,9 +38,9 @@
     {
       "fault": "position_bias",
       "detector": "trust",
-      "detection_rate": 1.0,
-      "clean_fp": 0.5,
-      "median_latency_ticks": 27.5,
+      "detection_rate": 0.6333333333333333,
+      "clean_fp": 0.7666666666666667,
+      "median_latency_ticks": 8,
       "detects": false
     },
     {
@@ -48,7 +48,7 @@
       "detector": "health",
       "detection_rate": 1.0,
       "clean_fp": 0.0,
-      "median_latency_ticks": 1107.5,
+      "median_latency_ticks": 1082.5,
       "detects": true
     },
     {
@@ -62,9 +62,9 @@
     {
       "fault": "position_drift",
       "detector": "trust",
-      "detection_rate": 1.0,
-      "clean_fp": 0.5,
-      "median_latency_ticks": 380.5,
+      "detection_rate": 0.6333333333333333,
+      "clean_fp": 0.7666666666666667,
+      "median_latency_ticks": 357,
       "detects": false
     },
     {
@@ -86,9 +86,9 @@
     {
       "fault": "imu_dropout",
       "detector": "trust",
-      "detection_rate": 1.0,
-      "clean_fp": 0.5,
-      "median_latency_ticks": 12.0,
+      "detection_rate": 0.6333333333333333,
+      "clean_fp": 0.7666666666666667,
+      "median_latency_ticks": 11,
       "detects": false
     },
     {
@@ -102,17 +102,17 @@
     {
       "fault": "lateral_noise",
       "detector": "innovation",
-      "detection_rate": 0.0,
+      "detection_rate": 0.2,
       "clean_fp": 0.0,
-      "median_latency_ticks": null,
+      "median_latency_ticks": 2154.0,
       "detects": false
     },
     {
       "fault": "lateral_noise",
       "detector": "trust",
-      "detection_rate": 1.0,
-      "clean_fp": 0.5,
-      "median_latency_ticks": 3.5,
+      "detection_rate": 0.6333333333333333,
+      "clean_fp": 0.7666666666666667,
+      "median_latency_ticks": 4,
       "detects": false
     },
     {
@@ -134,9 +134,9 @@
     {
       "fault": "speed_bias",
       "detector": "trust",
-      "detection_rate": 0.5,
-      "clean_fp": 0.5,
-      "median_latency_ticks": 113,
+      "detection_rate": 0.36666666666666664,
+      "clean_fp": 0.7666666666666667,
+      "median_latency_ticks": 542,
       "detects": false
     },
     {
@@ -158,9 +158,9 @@
     {
       "fault": "speed_stuck",
       "detector": "trust",
-      "detection_rate": 0.0,
-      "clean_fp": 0.5,
-      "median_latency_ticks": null,
+      "detection_rate": 0.2,
+      "clean_fp": 0.7666666666666667,
+      "median_latency_ticks": 1518.5,
       "detects": false
     }
   ],

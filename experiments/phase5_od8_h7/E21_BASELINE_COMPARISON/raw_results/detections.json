@@ -60,6 +60,846 @@
   "detected": false
  },
  {
+  "fault": "clean",
+  "seed": 20260733,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "clean",
+  "seed": 20260733,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "clean",
+  "seed": 20260733,
+  "detector": "trust",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "clean",
+  "seed": 20260734,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "clean",
+  "seed": 20260734,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "clean",
+  "seed": 20260734,
+  "detector": "trust",
+  "fired_at": 5,
+  "latency_ticks": null,
+  "fired_ticks": 20,
+  "false_alarm": true,
+  "detected": true
+ },
+ {
+  "fault": "clean",
+  "seed": 20260735,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "clean",
+  "seed": 20260735,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "clean",
+  "seed": 20260735,
+  "detector": "trust",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "clean",
+  "seed": 20260736,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "clean",
+  "seed": 20260736,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "clean",
+  "seed": 20260736,
+  "detector": "trust",
+  "fired_at": 941,
+  "latency_ticks": null,
+  "fired_ticks": 2,
+  "false_alarm": true,
+  "detected": true
+ },
+ {
+  "fault": "clean",
+  "seed": 20260737,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "clean",
+  "seed": 20260737,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "clean",
+  "seed": 20260737,
+  "detector": "trust",
+  "fired_at": 1643,
+  "latency_ticks": null,
+  "fired_ticks": 1,
+  "false_alarm": true,
+  "detected": true
+ },
+ {
+  "fault": "clean",
+  "seed": 20260738,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "clean",
+  "seed": 20260738,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "clean",
+  "seed": 20260738,
+  "detector": "trust",
+  "fired_at": 330,
+  "latency_ticks": null,
+  "fired_ticks": 1,
+  "false_alarm": true,
+  "detected": true
+ },
+ {
+  "fault": "clean",
+  "seed": 20260739,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "clean",
+  "seed": 20260739,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "clean",
+  "seed": 20260739,
+  "detector": "trust",
+  "fired_at": 1090,
+  "latency_ticks": null,
+  "fired_ticks": 2,
+  "false_alarm": true,
+  "detected": true
+ },
+ {
+  "fault": "clean",
+  "seed": 20260740,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "clean",
+  "seed": 20260740,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "clean",
+  "seed": 20260740,
+  "detector": "trust",
+  "fired_at": 742,
+  "latency_ticks": null,
+  "fired_ticks": 3,
+  "false_alarm": true,
+  "detected": true
+ },
+ {
+  "fault": "clean",
+  "seed": 20260741,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "clean",
+  "seed": 20260741,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "clean",
+  "seed": 20260741,
+  "detector": "trust",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "clean",
+  "seed": 20260742,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "clean",
+  "seed": 20260742,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "clean",
+  "seed": 20260742,
+  "detector": "trust",
+  "fired_at": 585,
+  "latency_ticks": null,
+  "fired_ticks": 2,
+  "false_alarm": true,
+  "detected": true
+ },
+ {
+  "fault": "clean",
+  "seed": 20260743,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "clean",
+  "seed": 20260743,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "clean",
+  "seed": 20260743,
+  "detector": "trust",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "clean",
+  "seed": 20260744,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "clean",
+  "seed": 20260744,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "clean",
+  "seed": 20260744,
+  "detector": "trust",
+  "fired_at": 368,
+  "latency_ticks": null,
+  "fired_ticks": 1,
+  "false_alarm": true,
+  "detected": true
+ },
+ {
+  "fault": "clean",
+  "seed": 20260745,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "clean",
+  "seed": 20260745,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "clean",
+  "seed": 20260745,
+  "detector": "trust",
+  "fired_at": 1959,
+  "latency_ticks": null,
+  "fired_ticks": 2,
+  "false_alarm": true,
+  "detected": true
+ },
+ {
+  "fault": "clean",
+  "seed": 20260746,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "clean",
+  "seed": 20260746,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "clean",
+  "seed": 20260746,
+  "detector": "trust",
+  "fired_at": 5,
+  "latency_ticks": null,
+  "fired_ticks": 2,
+  "false_alarm": true,
+  "detected": true
+ },
+ {
+  "fault": "clean",
+  "seed": 20260747,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "clean",
+  "seed": 20260747,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "clean",
+  "seed": 20260747,
+  "detector": "trust",
+  "fired_at": 4,
+  "latency_ticks": null,
+  "fired_ticks": 13,
+  "false_alarm": true,
+  "detected": true
+ },
+ {
+  "fault": "clean",
+  "seed": 20260748,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "clean",
+  "seed": 20260748,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "clean",
+  "seed": 20260748,
+  "detector": "trust",
+  "fired_at": 5,
+  "latency_ticks": null,
+  "fired_ticks": 2,
+  "false_alarm": true,
+  "detected": true
+ },
+ {
+  "fault": "clean",
+  "seed": 20260749,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "clean",
+  "seed": 20260749,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "clean",
+  "seed": 20260749,
+  "detector": "trust",
+  "fired_at": 5,
+  "latency_ticks": null,
+  "fired_ticks": 15,
+  "false_alarm": true,
+  "detected": true
+ },
+ {
+  "fault": "clean",
+  "seed": 20260750,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "clean",
+  "seed": 20260750,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "clean",
+  "seed": 20260750,
+  "detector": "trust",
+  "fired_at": 1230,
+  "latency_ticks": null,
+  "fired_ticks": 1,
+  "false_alarm": true,
+  "detected": true
+ },
+ {
+  "fault": "clean",
+  "seed": 20260751,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "clean",
+  "seed": 20260751,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "clean",
+  "seed": 20260751,
+  "detector": "trust",
+  "fired_at": 5,
+  "latency_ticks": null,
+  "fired_ticks": 14,
+  "false_alarm": true,
+  "detected": true
+ },
+ {
+  "fault": "clean",
+  "seed": 20260752,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "clean",
+  "seed": 20260752,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "clean",
+  "seed": 20260752,
+  "detector": "trust",
+  "fired_at": 10,
+  "latency_ticks": null,
+  "fired_ticks": 11,
+  "false_alarm": true,
+  "detected": true
+ },
+ {
+  "fault": "clean",
+  "seed": 20260753,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "clean",
+  "seed": 20260753,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "clean",
+  "seed": 20260753,
+  "detector": "trust",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "clean",
+  "seed": 20260754,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "clean",
+  "seed": 20260754,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "clean",
+  "seed": 20260754,
+  "detector": "trust",
+  "fired_at": 125,
+  "latency_ticks": null,
+  "fired_ticks": 2,
+  "false_alarm": true,
+  "detected": true
+ },
+ {
+  "fault": "clean",
+  "seed": 20260755,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "clean",
+  "seed": 20260755,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "clean",
+  "seed": 20260755,
+  "detector": "trust",
+  "fired_at": 4,
+  "latency_ticks": null,
+  "fired_ticks": 1,
+  "false_alarm": true,
+  "detected": true
+ },
+ {
+  "fault": "clean",
+  "seed": 20260756,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "clean",
+  "seed": 20260756,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "clean",
+  "seed": 20260756,
+  "detector": "trust",
+  "fired_at": 2244,
+  "latency_ticks": null,
+  "fired_ticks": 2,
+  "false_alarm": true,
+  "detected": true
+ },
+ {
+  "fault": "clean",
+  "seed": 20260757,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "clean",
+  "seed": 20260757,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "clean",
+  "seed": 20260757,
+  "detector": "trust",
+  "fired_at": 2033,
+  "latency_ticks": null,
+  "fired_ticks": 1,
+  "false_alarm": true,
+  "detected": true
+ },
+ {
+  "fault": "clean",
+  "seed": 20260758,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "clean",
+  "seed": 20260758,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "clean",
+  "seed": 20260758,
+  "detector": "trust",
+  "fired_at": 5,
+  "latency_ticks": null,
+  "fired_ticks": 22,
+  "false_alarm": true,
+  "detected": true
+ },
+ {
+  "fault": "clean",
+  "seed": 20260759,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "clean",
+  "seed": 20260759,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "clean",
+  "seed": 20260759,
+  "detector": "trust",
+  "fired_at": 43,
+  "latency_ticks": null,
+  "fired_ticks": 4,
+  "false_alarm": true,
+  "detected": true
+ },
+ {
+  "fault": "clean",
+  "seed": 20260760,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "clean",
+  "seed": 20260760,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "clean",
+  "seed": 20260760,
+  "detector": "trust",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
   "fault": "position_bias",
   "seed": 20260731,
   "detector": "health",
@@ -116,6 +956,846 @@
   "fired_at": 227,
   "latency_ticks": 27,
   "fired_ticks": 3134,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "position_bias",
+  "seed": 20260733,
+  "detector": "health",
+  "fired_at": 213,
+  "latency_ticks": 13,
+  "fired_ticks": 3029,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "position_bias",
+  "seed": 20260733,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "position_bias",
+  "seed": 20260733,
+  "detector": "trust",
+  "fired_at": 208,
+  "latency_ticks": 8,
+  "fired_ticks": 2545,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "position_bias",
+  "seed": 20260734,
+  "detector": "health",
+  "fired_at": 213,
+  "latency_ticks": 13,
+  "fired_ticks": 3047,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "position_bias",
+  "seed": 20260734,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "position_bias",
+  "seed": 20260734,
+  "detector": "trust",
+  "fired_at": 5,
+  "latency_ticks": -195,
+  "fired_ticks": 2952,
+  "false_alarm": true,
+  "detected": false
+ },
+ {
+  "fault": "position_bias",
+  "seed": 20260735,
+  "detector": "health",
+  "fired_at": 213,
+  "latency_ticks": 13,
+  "fired_ticks": 3033,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "position_bias",
+  "seed": 20260735,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "position_bias",
+  "seed": 20260735,
+  "detector": "trust",
+  "fired_at": 202,
+  "latency_ticks": 2,
+  "fired_ticks": 867,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "position_bias",
+  "seed": 20260736,
+  "detector": "health",
+  "fired_at": 213,
+  "latency_ticks": 13,
+  "fired_ticks": 3073,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "position_bias",
+  "seed": 20260736,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "position_bias",
+  "seed": 20260736,
+  "detector": "trust",
+  "fired_at": 202,
+  "latency_ticks": 2,
+  "fired_ticks": 1301,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "position_bias",
+  "seed": 20260737,
+  "detector": "health",
+  "fired_at": 213,
+  "latency_ticks": 13,
+  "fired_ticks": 3027,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "position_bias",
+  "seed": 20260737,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "position_bias",
+  "seed": 20260737,
+  "detector": "trust",
+  "fired_at": 204,
+  "latency_ticks": 4,
+  "fired_ticks": 250,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "position_bias",
+  "seed": 20260738,
+  "detector": "health",
+  "fired_at": 213,
+  "latency_ticks": 13,
+  "fired_ticks": 3061,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "position_bias",
+  "seed": 20260738,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "position_bias",
+  "seed": 20260738,
+  "detector": "trust",
+  "fired_at": 204,
+  "latency_ticks": 4,
+  "fired_ticks": 1141,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "position_bias",
+  "seed": 20260739,
+  "detector": "health",
+  "fired_at": 213,
+  "latency_ticks": 13,
+  "fired_ticks": 2949,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "position_bias",
+  "seed": 20260739,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "position_bias",
+  "seed": 20260739,
+  "detector": "trust",
+  "fired_at": 208,
+  "latency_ticks": 8,
+  "fired_ticks": 1175,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "position_bias",
+  "seed": 20260740,
+  "detector": "health",
+  "fired_at": 213,
+  "latency_ticks": 13,
+  "fired_ticks": 3033,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "position_bias",
+  "seed": 20260740,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "position_bias",
+  "seed": 20260740,
+  "detector": "trust",
+  "fired_at": 209,
+  "latency_ticks": 9,
+  "fired_ticks": 1055,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "position_bias",
+  "seed": 20260741,
+  "detector": "health",
+  "fired_at": 213,
+  "latency_ticks": 13,
+  "fired_ticks": 3075,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "position_bias",
+  "seed": 20260741,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "position_bias",
+  "seed": 20260741,
+  "detector": "trust",
+  "fired_at": 225,
+  "latency_ticks": 25,
+  "fired_ticks": 922,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "position_bias",
+  "seed": 20260742,
+  "detector": "health",
+  "fired_at": 213,
+  "latency_ticks": 13,
+  "fired_ticks": 2949,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "position_bias",
+  "seed": 20260742,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "position_bias",
+  "seed": 20260742,
+  "detector": "trust",
+  "fired_at": 208,
+  "latency_ticks": 8,
+  "fired_ticks": 140,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "position_bias",
+  "seed": 20260743,
+  "detector": "health",
+  "fired_at": 219,
+  "latency_ticks": 19,
+  "fired_ticks": 3069,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "position_bias",
+  "seed": 20260743,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "position_bias",
+  "seed": 20260743,
+  "detector": "trust",
+  "fired_at": 232,
+  "latency_ticks": 32,
+  "fired_ticks": 3043,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "position_bias",
+  "seed": 20260744,
+  "detector": "health",
+  "fired_at": 213,
+  "latency_ticks": 13,
+  "fired_ticks": 2991,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "position_bias",
+  "seed": 20260744,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "position_bias",
+  "seed": 20260744,
+  "detector": "trust",
+  "fired_at": 217,
+  "latency_ticks": 17,
+  "fired_ticks": 594,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "position_bias",
+  "seed": 20260745,
+  "detector": "health",
+  "fired_at": 213,
+  "latency_ticks": 13,
+  "fired_ticks": 3019,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "position_bias",
+  "seed": 20260745,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "position_bias",
+  "seed": 20260745,
+  "detector": "trust",
+  "fired_at": 208,
+  "latency_ticks": 8,
+  "fired_ticks": 970,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "position_bias",
+  "seed": 20260746,
+  "detector": "health",
+  "fired_at": 213,
+  "latency_ticks": 13,
+  "fired_ticks": 2998,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "position_bias",
+  "seed": 20260746,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "position_bias",
+  "seed": 20260746,
+  "detector": "trust",
+  "fired_at": 5,
+  "latency_ticks": -195,
+  "fired_ticks": 1079,
+  "false_alarm": true,
+  "detected": false
+ },
+ {
+  "fault": "position_bias",
+  "seed": 20260747,
+  "detector": "health",
+  "fired_at": 213,
+  "latency_ticks": 13,
+  "fired_ticks": 2976,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "position_bias",
+  "seed": 20260747,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "position_bias",
+  "seed": 20260747,
+  "detector": "trust",
+  "fired_at": 4,
+  "latency_ticks": -196,
+  "fired_ticks": 1151,
+  "false_alarm": true,
+  "detected": false
+ },
+ {
+  "fault": "position_bias",
+  "seed": 20260748,
+  "detector": "health",
+  "fired_at": 213,
+  "latency_ticks": 13,
+  "fired_ticks": 3023,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "position_bias",
+  "seed": 20260748,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "position_bias",
+  "seed": 20260748,
+  "detector": "trust",
+  "fired_at": 5,
+  "latency_ticks": -195,
+  "fired_ticks": 300,
+  "false_alarm": true,
+  "detected": false
+ },
+ {
+  "fault": "position_bias",
+  "seed": 20260749,
+  "detector": "health",
+  "fired_at": 213,
+  "latency_ticks": 13,
+  "fired_ticks": 3044,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "position_bias",
+  "seed": 20260749,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "position_bias",
+  "seed": 20260749,
+  "detector": "trust",
+  "fired_at": 5,
+  "latency_ticks": -195,
+  "fired_ticks": 260,
+  "false_alarm": true,
+  "detected": false
+ },
+ {
+  "fault": "position_bias",
+  "seed": 20260750,
+  "detector": "health",
+  "fired_at": 213,
+  "latency_ticks": 13,
+  "fired_ticks": 3055,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "position_bias",
+  "seed": 20260750,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "position_bias",
+  "seed": 20260750,
+  "detector": "trust",
+  "fired_at": 228,
+  "latency_ticks": 28,
+  "fired_ticks": 799,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "position_bias",
+  "seed": 20260751,
+  "detector": "health",
+  "fired_at": 213,
+  "latency_ticks": 13,
+  "fired_ticks": 2996,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "position_bias",
+  "seed": 20260751,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "position_bias",
+  "seed": 20260751,
+  "detector": "trust",
+  "fired_at": 5,
+  "latency_ticks": -195,
+  "fired_ticks": 3050,
+  "false_alarm": true,
+  "detected": false
+ },
+ {
+  "fault": "position_bias",
+  "seed": 20260752,
+  "detector": "health",
+  "fired_at": 213,
+  "latency_ticks": 13,
+  "fired_ticks": 2995,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "position_bias",
+  "seed": 20260752,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "position_bias",
+  "seed": 20260752,
+  "detector": "trust",
+  "fired_at": 10,
+  "latency_ticks": -190,
+  "fired_ticks": 933,
+  "false_alarm": true,
+  "detected": false
+ },
+ {
+  "fault": "position_bias",
+  "seed": 20260753,
+  "detector": "health",
+  "fired_at": 216,
+  "latency_ticks": 16,
+  "fired_ticks": 3030,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "position_bias",
+  "seed": 20260753,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "position_bias",
+  "seed": 20260753,
+  "detector": "trust",
+  "fired_at": 203,
+  "latency_ticks": 3,
+  "fired_ticks": 1035,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "position_bias",
+  "seed": 20260754,
+  "detector": "health",
+  "fired_at": 213,
+  "latency_ticks": 13,
+  "fired_ticks": 2950,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "position_bias",
+  "seed": 20260754,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "position_bias",
+  "seed": 20260754,
+  "detector": "trust",
+  "fired_at": 125,
+  "latency_ticks": -75,
+  "fired_ticks": 1363,
+  "false_alarm": true,
+  "detected": false
+ },
+ {
+  "fault": "position_bias",
+  "seed": 20260755,
+  "detector": "health",
+  "fired_at": 214,
+  "latency_ticks": 14,
+  "fired_ticks": 2935,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "position_bias",
+  "seed": 20260755,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "position_bias",
+  "seed": 20260755,
+  "detector": "trust",
+  "fired_at": 4,
+  "latency_ticks": -196,
+  "fired_ticks": 1961,
+  "false_alarm": true,
+  "detected": false
+ },
+ {
+  "fault": "position_bias",
+  "seed": 20260756,
+  "detector": "health",
+  "fired_at": 213,
+  "latency_ticks": 13,
+  "fired_ticks": 2964,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "position_bias",
+  "seed": 20260756,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "position_bias",
+  "seed": 20260756,
+  "detector": "trust",
+  "fired_at": 203,
+  "latency_ticks": 3,
+  "fired_ticks": 615,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "position_bias",
+  "seed": 20260757,
+  "detector": "health",
+  "fired_at": 213,
+  "latency_ticks": 13,
+  "fired_ticks": 3001,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "position_bias",
+  "seed": 20260757,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "position_bias",
+  "seed": 20260757,
+  "detector": "trust",
+  "fired_at": 228,
+  "latency_ticks": 28,
+  "fired_ticks": 3155,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "position_bias",
+  "seed": 20260758,
+  "detector": "health",
+  "fired_at": 213,
+  "latency_ticks": 13,
+  "fired_ticks": 3005,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "position_bias",
+  "seed": 20260758,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "position_bias",
+  "seed": 20260758,
+  "detector": "trust",
+  "fired_at": 5,
+  "latency_ticks": -195,
+  "fired_ticks": 1119,
+  "false_alarm": true,
+  "detected": false
+ },
+ {
+  "fault": "position_bias",
+  "seed": 20260759,
+  "detector": "health",
+  "fired_at": 213,
+  "latency_ticks": 13,
+  "fired_ticks": 3073,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "position_bias",
+  "seed": 20260759,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "position_bias",
+  "seed": 20260759,
+  "detector": "trust",
+  "fired_at": 43,
+  "latency_ticks": -157,
+  "fired_ticks": 138,
+  "false_alarm": true,
+  "detected": false
+ },
+ {
+  "fault": "position_bias",
+  "seed": 20260760,
+  "detector": "health",
+  "fired_at": 213,
+  "latency_ticks": 13,
+  "fired_ticks": 3047,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "position_bias",
+  "seed": 20260760,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "position_bias",
+  "seed": 20260760,
+  "detector": "trust",
+  "fired_at": 227,
+  "latency_ticks": 27,
+  "fired_ticks": 379,
   "false_alarm": false,
   "detected": true
  },
@@ -180,6 +1860,846 @@
   "detected": true
  },
  {
+  "fault": "position_drift",
+  "seed": 20260733,
+  "detector": "health",
+  "fired_at": 1309,
+  "latency_ticks": 1109,
+  "fired_ticks": 1890,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "position_drift",
+  "seed": 20260733,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "position_drift",
+  "seed": 20260733,
+  "detector": "trust",
+  "fired_at": 454,
+  "latency_ticks": 254,
+  "fired_ticks": 1420,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "position_drift",
+  "seed": 20260734,
+  "detector": "health",
+  "fired_at": 1300,
+  "latency_ticks": 1100,
+  "fired_ticks": 1900,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "position_drift",
+  "seed": 20260734,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "position_drift",
+  "seed": 20260734,
+  "detector": "trust",
+  "fired_at": 5,
+  "latency_ticks": -195,
+  "fired_ticks": 1656,
+  "false_alarm": true,
+  "detected": false
+ },
+ {
+  "fault": "position_drift",
+  "seed": 20260735,
+  "detector": "health",
+  "fired_at": 1334,
+  "latency_ticks": 1134,
+  "fired_ticks": 1908,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "position_drift",
+  "seed": 20260735,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "position_drift",
+  "seed": 20260735,
+  "detector": "trust",
+  "fired_at": 522,
+  "latency_ticks": 322,
+  "fired_ticks": 110,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "position_drift",
+  "seed": 20260736,
+  "detector": "health",
+  "fired_at": 1340,
+  "latency_ticks": 1140,
+  "fired_ticks": 1860,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "position_drift",
+  "seed": 20260736,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "position_drift",
+  "seed": 20260736,
+  "detector": "trust",
+  "fired_at": 524,
+  "latency_ticks": 324,
+  "fired_ticks": 1152,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "position_drift",
+  "seed": 20260737,
+  "detector": "health",
+  "fired_at": 1284,
+  "latency_ticks": 1084,
+  "fired_ticks": 1953,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "position_drift",
+  "seed": 20260737,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "position_drift",
+  "seed": 20260737,
+  "detector": "trust",
+  "fired_at": 337,
+  "latency_ticks": 137,
+  "fired_ticks": 1139,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "position_drift",
+  "seed": 20260738,
+  "detector": "health",
+  "fired_at": 1265,
+  "latency_ticks": 1065,
+  "fired_ticks": 1883,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "position_drift",
+  "seed": 20260738,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "position_drift",
+  "seed": 20260738,
+  "detector": "trust",
+  "fired_at": 746,
+  "latency_ticks": 546,
+  "fired_ticks": 1488,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "position_drift",
+  "seed": 20260739,
+  "detector": "health",
+  "fired_at": 1246,
+  "latency_ticks": 1046,
+  "fired_ticks": 1905,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "position_drift",
+  "seed": 20260739,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "position_drift",
+  "seed": 20260739,
+  "detector": "trust",
+  "fired_at": 638,
+  "latency_ticks": 438,
+  "fired_ticks": 1294,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "position_drift",
+  "seed": 20260740,
+  "detector": "health",
+  "fired_at": 1297,
+  "latency_ticks": 1097,
+  "fired_ticks": 1891,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "position_drift",
+  "seed": 20260740,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "position_drift",
+  "seed": 20260740,
+  "detector": "trust",
+  "fired_at": 592,
+  "latency_ticks": 392,
+  "fired_ticks": 1000,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "position_drift",
+  "seed": 20260741,
+  "detector": "health",
+  "fired_at": 1302,
+  "latency_ticks": 1102,
+  "fired_ticks": 1895,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "position_drift",
+  "seed": 20260741,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "position_drift",
+  "seed": 20260741,
+  "detector": "trust",
+  "fired_at": 808,
+  "latency_ticks": 608,
+  "fired_ticks": 1776,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "position_drift",
+  "seed": 20260742,
+  "detector": "health",
+  "fired_at": 1157,
+  "latency_ticks": 957,
+  "fired_ticks": 1951,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "position_drift",
+  "seed": 20260742,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "position_drift",
+  "seed": 20260742,
+  "detector": "trust",
+  "fired_at": 557,
+  "latency_ticks": 357,
+  "fired_ticks": 1921,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "position_drift",
+  "seed": 20260743,
+  "detector": "health",
+  "fired_at": 1269,
+  "latency_ticks": 1069,
+  "fired_ticks": 1897,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "position_drift",
+  "seed": 20260743,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "position_drift",
+  "seed": 20260743,
+  "detector": "trust",
+  "fired_at": 680,
+  "latency_ticks": 480,
+  "fired_ticks": 864,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "position_drift",
+  "seed": 20260744,
+  "detector": "health",
+  "fired_at": 1237,
+  "latency_ticks": 1037,
+  "fired_ticks": 1885,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "position_drift",
+  "seed": 20260744,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "position_drift",
+  "seed": 20260744,
+  "detector": "trust",
+  "fired_at": 368,
+  "latency_ticks": 168,
+  "fired_ticks": 1035,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "position_drift",
+  "seed": 20260745,
+  "detector": "health",
+  "fired_at": 1297,
+  "latency_ticks": 1097,
+  "fired_ticks": 1869,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "position_drift",
+  "seed": 20260745,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "position_drift",
+  "seed": 20260745,
+  "detector": "trust",
+  "fired_at": 618,
+  "latency_ticks": 418,
+  "fired_ticks": 1008,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "position_drift",
+  "seed": 20260746,
+  "detector": "health",
+  "fired_at": 1288,
+  "latency_ticks": 1088,
+  "fired_ticks": 1891,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "position_drift",
+  "seed": 20260746,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "position_drift",
+  "seed": 20260746,
+  "detector": "trust",
+  "fired_at": 5,
+  "latency_ticks": -195,
+  "fired_ticks": 1893,
+  "false_alarm": true,
+  "detected": false
+ },
+ {
+  "fault": "position_drift",
+  "seed": 20260747,
+  "detector": "health",
+  "fired_at": 1275,
+  "latency_ticks": 1075,
+  "fired_ticks": 1897,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "position_drift",
+  "seed": 20260747,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "position_drift",
+  "seed": 20260747,
+  "detector": "trust",
+  "fired_at": 4,
+  "latency_ticks": -196,
+  "fired_ticks": 1542,
+  "false_alarm": true,
+  "detected": false
+ },
+ {
+  "fault": "position_drift",
+  "seed": 20260748,
+  "detector": "health",
+  "fired_at": 1288,
+  "latency_ticks": 1088,
+  "fired_ticks": 1880,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "position_drift",
+  "seed": 20260748,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "position_drift",
+  "seed": 20260748,
+  "detector": "trust",
+  "fired_at": 5,
+  "latency_ticks": -195,
+  "fired_ticks": 1575,
+  "false_alarm": true,
+  "detected": false
+ },
+ {
+  "fault": "position_drift",
+  "seed": 20260749,
+  "detector": "health",
+  "fired_at": 1281,
+  "latency_ticks": 1081,
+  "fired_ticks": 1963,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "position_drift",
+  "seed": 20260749,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "position_drift",
+  "seed": 20260749,
+  "detector": "trust",
+  "fired_at": 5,
+  "latency_ticks": -195,
+  "fired_ticks": 1439,
+  "false_alarm": true,
+  "detected": false
+ },
+ {
+  "fault": "position_drift",
+  "seed": 20260750,
+  "detector": "health",
+  "fired_at": 1178,
+  "latency_ticks": 978,
+  "fired_ticks": 1913,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "position_drift",
+  "seed": 20260750,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "position_drift",
+  "seed": 20260750,
+  "detector": "trust",
+  "fired_at": 527,
+  "latency_ticks": 327,
+  "fired_ticks": 1354,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "position_drift",
+  "seed": 20260751,
+  "detector": "health",
+  "fired_at": 1206,
+  "latency_ticks": 1006,
+  "fired_ticks": 1932,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "position_drift",
+  "seed": 20260751,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "position_drift",
+  "seed": 20260751,
+  "detector": "trust",
+  "fired_at": 5,
+  "latency_ticks": -195,
+  "fired_ticks": 1191,
+  "false_alarm": true,
+  "detected": false
+ },
+ {
+  "fault": "position_drift",
+  "seed": 20260752,
+  "detector": "health",
+  "fired_at": 1215,
+  "latency_ticks": 1015,
+  "fired_ticks": 1857,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "position_drift",
+  "seed": 20260752,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "position_drift",
+  "seed": 20260752,
+  "detector": "trust",
+  "fired_at": 10,
+  "latency_ticks": -190,
+  "fired_ticks": 1204,
+  "false_alarm": true,
+  "detected": false
+ },
+ {
+  "fault": "position_drift",
+  "seed": 20260753,
+  "detector": "health",
+  "fired_at": 1255,
+  "latency_ticks": 1055,
+  "fired_ticks": 1917,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "position_drift",
+  "seed": 20260753,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "position_drift",
+  "seed": 20260753,
+  "detector": "trust",
+  "fired_at": 558,
+  "latency_ticks": 358,
+  "fired_ticks": 1199,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "position_drift",
+  "seed": 20260754,
+  "detector": "health",
+  "fired_at": 1268,
+  "latency_ticks": 1068,
+  "fired_ticks": 1873,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "position_drift",
+  "seed": 20260754,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "position_drift",
+  "seed": 20260754,
+  "detector": "trust",
+  "fired_at": 125,
+  "latency_ticks": -75,
+  "fired_ticks": 608,
+  "false_alarm": true,
+  "detected": false
+ },
+ {
+  "fault": "position_drift",
+  "seed": 20260755,
+  "detector": "health",
+  "fired_at": 1292,
+  "latency_ticks": 1092,
+  "fired_ticks": 1844,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "position_drift",
+  "seed": 20260755,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "position_drift",
+  "seed": 20260755,
+  "detector": "trust",
+  "fired_at": 4,
+  "latency_ticks": -196,
+  "fired_ticks": 1198,
+  "false_alarm": true,
+  "detected": false
+ },
+ {
+  "fault": "position_drift",
+  "seed": 20260756,
+  "detector": "health",
+  "fired_at": 1234,
+  "latency_ticks": 1034,
+  "fired_ticks": 1861,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "position_drift",
+  "seed": 20260756,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "position_drift",
+  "seed": 20260756,
+  "detector": "trust",
+  "fired_at": 719,
+  "latency_ticks": 519,
+  "fired_ticks": 1098,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "position_drift",
+  "seed": 20260757,
+  "detector": "health",
+  "fired_at": 1187,
+  "latency_ticks": 987,
+  "fired_ticks": 1930,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "position_drift",
+  "seed": 20260757,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "position_drift",
+  "seed": 20260757,
+  "detector": "trust",
+  "fired_at": 493,
+  "latency_ticks": 293,
+  "fired_ticks": 1403,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "position_drift",
+  "seed": 20260758,
+  "detector": "health",
+  "fired_at": 1292,
+  "latency_ticks": 1092,
+  "fired_ticks": 1932,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "position_drift",
+  "seed": 20260758,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "position_drift",
+  "seed": 20260758,
+  "detector": "trust",
+  "fired_at": 5,
+  "latency_ticks": -195,
+  "fired_ticks": 1592,
+  "false_alarm": true,
+  "detected": false
+ },
+ {
+  "fault": "position_drift",
+  "seed": 20260759,
+  "detector": "health",
+  "fired_at": 1339,
+  "latency_ticks": 1139,
+  "fired_ticks": 1893,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "position_drift",
+  "seed": 20260759,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "position_drift",
+  "seed": 20260759,
+  "detector": "trust",
+  "fired_at": 43,
+  "latency_ticks": -157,
+  "fired_ticks": 1243,
+  "false_alarm": true,
+  "detected": false
+ },
+ {
+  "fault": "position_drift",
+  "seed": 20260760,
+  "detector": "health",
+  "fired_at": 1301,
+  "latency_ticks": 1101,
+  "fired_ticks": 1965,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "position_drift",
+  "seed": 20260760,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "position_drift",
+  "seed": 20260760,
+  "detector": "trust",
+  "fired_at": 381,
+  "latency_ticks": 181,
+  "fired_ticks": 1733,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
   "fault": "imu_dropout",
   "seed": 20260731,
   "detector": "health",
@@ -236,6 +2756,846 @@
   "fired_at": 207,
   "latency_ticks": 7,
   "fired_ticks": 787,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "imu_dropout",
+  "seed": 20260733,
+  "detector": "health",
+  "fired_at": 205,
+  "latency_ticks": 5,
+  "fired_ticks": 3195,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "imu_dropout",
+  "seed": 20260733,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "imu_dropout",
+  "seed": 20260733,
+  "detector": "trust",
+  "fired_at": 238,
+  "latency_ticks": 38,
+  "fired_ticks": 69,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "imu_dropout",
+  "seed": 20260734,
+  "detector": "health",
+  "fired_at": 205,
+  "latency_ticks": 5,
+  "fired_ticks": 3195,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "imu_dropout",
+  "seed": 20260734,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "imu_dropout",
+  "seed": 20260734,
+  "detector": "trust",
+  "fired_at": 5,
+  "latency_ticks": -195,
+  "fired_ticks": 1530,
+  "false_alarm": true,
+  "detected": false
+ },
+ {
+  "fault": "imu_dropout",
+  "seed": 20260735,
+  "detector": "health",
+  "fired_at": 205,
+  "latency_ticks": 5,
+  "fired_ticks": 3195,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "imu_dropout",
+  "seed": 20260735,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "imu_dropout",
+  "seed": 20260735,
+  "detector": "trust",
+  "fired_at": 226,
+  "latency_ticks": 26,
+  "fired_ticks": 139,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "imu_dropout",
+  "seed": 20260736,
+  "detector": "health",
+  "fired_at": 205,
+  "latency_ticks": 5,
+  "fired_ticks": 3195,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "imu_dropout",
+  "seed": 20260736,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "imu_dropout",
+  "seed": 20260736,
+  "detector": "trust",
+  "fired_at": 217,
+  "latency_ticks": 17,
+  "fired_ticks": 1735,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "imu_dropout",
+  "seed": 20260737,
+  "detector": "health",
+  "fired_at": 205,
+  "latency_ticks": 5,
+  "fired_ticks": 3195,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "imu_dropout",
+  "seed": 20260737,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "imu_dropout",
+  "seed": 20260737,
+  "detector": "trust",
+  "fired_at": 226,
+  "latency_ticks": 26,
+  "fired_ticks": 18,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "imu_dropout",
+  "seed": 20260738,
+  "detector": "health",
+  "fired_at": 205,
+  "latency_ticks": 5,
+  "fired_ticks": 3195,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "imu_dropout",
+  "seed": 20260738,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "imu_dropout",
+  "seed": 20260738,
+  "detector": "trust",
+  "fired_at": 204,
+  "latency_ticks": 4,
+  "fired_ticks": 1713,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "imu_dropout",
+  "seed": 20260739,
+  "detector": "health",
+  "fired_at": 205,
+  "latency_ticks": 5,
+  "fired_ticks": 3195,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "imu_dropout",
+  "seed": 20260739,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "imu_dropout",
+  "seed": 20260739,
+  "detector": "trust",
+  "fired_at": 204,
+  "latency_ticks": 4,
+  "fired_ticks": 1073,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "imu_dropout",
+  "seed": 20260740,
+  "detector": "health",
+  "fired_at": 205,
+  "latency_ticks": 5,
+  "fired_ticks": 3195,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "imu_dropout",
+  "seed": 20260740,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "imu_dropout",
+  "seed": 20260740,
+  "detector": "trust",
+  "fired_at": 332,
+  "latency_ticks": 132,
+  "fired_ticks": 71,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "imu_dropout",
+  "seed": 20260741,
+  "detector": "health",
+  "fired_at": 205,
+  "latency_ticks": 5,
+  "fired_ticks": 3195,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "imu_dropout",
+  "seed": 20260741,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "imu_dropout",
+  "seed": 20260741,
+  "detector": "trust",
+  "fired_at": 247,
+  "latency_ticks": 47,
+  "fired_ticks": 64,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "imu_dropout",
+  "seed": 20260742,
+  "detector": "health",
+  "fired_at": 205,
+  "latency_ticks": 5,
+  "fired_ticks": 3195,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "imu_dropout",
+  "seed": 20260742,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "imu_dropout",
+  "seed": 20260742,
+  "detector": "trust",
+  "fired_at": 210,
+  "latency_ticks": 10,
+  "fired_ticks": 3185,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "imu_dropout",
+  "seed": 20260743,
+  "detector": "health",
+  "fired_at": 205,
+  "latency_ticks": 5,
+  "fired_ticks": 3195,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "imu_dropout",
+  "seed": 20260743,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "imu_dropout",
+  "seed": 20260743,
+  "detector": "trust",
+  "fired_at": 595,
+  "latency_ticks": 395,
+  "fired_ticks": 78,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "imu_dropout",
+  "seed": 20260744,
+  "detector": "health",
+  "fired_at": 205,
+  "latency_ticks": 5,
+  "fired_ticks": 3195,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "imu_dropout",
+  "seed": 20260744,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "imu_dropout",
+  "seed": 20260744,
+  "detector": "trust",
+  "fired_at": 204,
+  "latency_ticks": 4,
+  "fired_ticks": 2460,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "imu_dropout",
+  "seed": 20260745,
+  "detector": "health",
+  "fired_at": 205,
+  "latency_ticks": 5,
+  "fired_ticks": 3195,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "imu_dropout",
+  "seed": 20260745,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "imu_dropout",
+  "seed": 20260745,
+  "detector": "trust",
+  "fired_at": 211,
+  "latency_ticks": 11,
+  "fired_ticks": 875,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "imu_dropout",
+  "seed": 20260746,
+  "detector": "health",
+  "fired_at": 205,
+  "latency_ticks": 5,
+  "fired_ticks": 3195,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "imu_dropout",
+  "seed": 20260746,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "imu_dropout",
+  "seed": 20260746,
+  "detector": "trust",
+  "fired_at": 5,
+  "latency_ticks": -195,
+  "fired_ticks": 798,
+  "false_alarm": true,
+  "detected": false
+ },
+ {
+  "fault": "imu_dropout",
+  "seed": 20260747,
+  "detector": "health",
+  "fired_at": 205,
+  "latency_ticks": 5,
+  "fired_ticks": 3195,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "imu_dropout",
+  "seed": 20260747,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "imu_dropout",
+  "seed": 20260747,
+  "detector": "trust",
+  "fired_at": 4,
+  "latency_ticks": -196,
+  "fired_ticks": 3203,
+  "false_alarm": true,
+  "detected": false
+ },
+ {
+  "fault": "imu_dropout",
+  "seed": 20260748,
+  "detector": "health",
+  "fired_at": 205,
+  "latency_ticks": 5,
+  "fired_ticks": 3195,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "imu_dropout",
+  "seed": 20260748,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "imu_dropout",
+  "seed": 20260748,
+  "detector": "trust",
+  "fired_at": 5,
+  "latency_ticks": -195,
+  "fired_ticks": 1268,
+  "false_alarm": true,
+  "detected": false
+ },
+ {
+  "fault": "imu_dropout",
+  "seed": 20260749,
+  "detector": "health",
+  "fired_at": 205,
+  "latency_ticks": 5,
+  "fired_ticks": 3195,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "imu_dropout",
+  "seed": 20260749,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "imu_dropout",
+  "seed": 20260749,
+  "detector": "trust",
+  "fired_at": 5,
+  "latency_ticks": -195,
+  "fired_ticks": 1010,
+  "false_alarm": true,
+  "detected": false
+ },
+ {
+  "fault": "imu_dropout",
+  "seed": 20260750,
+  "detector": "health",
+  "fired_at": 205,
+  "latency_ticks": 5,
+  "fired_ticks": 3195,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "imu_dropout",
+  "seed": 20260750,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "imu_dropout",
+  "seed": 20260750,
+  "detector": "trust",
+  "fired_at": 203,
+  "latency_ticks": 3,
+  "fired_ticks": 1046,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "imu_dropout",
+  "seed": 20260751,
+  "detector": "health",
+  "fired_at": 205,
+  "latency_ticks": 5,
+  "fired_ticks": 3195,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "imu_dropout",
+  "seed": 20260751,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "imu_dropout",
+  "seed": 20260751,
+  "detector": "trust",
+  "fired_at": 5,
+  "latency_ticks": -195,
+  "fired_ticks": 209,
+  "false_alarm": true,
+  "detected": false
+ },
+ {
+  "fault": "imu_dropout",
+  "seed": 20260752,
+  "detector": "health",
+  "fired_at": 205,
+  "latency_ticks": 5,
+  "fired_ticks": 3195,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "imu_dropout",
+  "seed": 20260752,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "imu_dropout",
+  "seed": 20260752,
+  "detector": "trust",
+  "fired_at": 10,
+  "latency_ticks": -190,
+  "fired_ticks": 1894,
+  "false_alarm": true,
+  "detected": false
+ },
+ {
+  "fault": "imu_dropout",
+  "seed": 20260753,
+  "detector": "health",
+  "fired_at": 205,
+  "latency_ticks": 5,
+  "fired_ticks": 3195,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "imu_dropout",
+  "seed": 20260753,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "imu_dropout",
+  "seed": 20260753,
+  "detector": "trust",
+  "fired_at": 203,
+  "latency_ticks": 3,
+  "fired_ticks": 3197,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "imu_dropout",
+  "seed": 20260754,
+  "detector": "health",
+  "fired_at": 205,
+  "latency_ticks": 5,
+  "fired_ticks": 3195,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "imu_dropout",
+  "seed": 20260754,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "imu_dropout",
+  "seed": 20260754,
+  "detector": "trust",
+  "fired_at": 125,
+  "latency_ticks": -75,
+  "fired_ticks": 348,
+  "false_alarm": true,
+  "detected": false
+ },
+ {
+  "fault": "imu_dropout",
+  "seed": 20260755,
+  "detector": "health",
+  "fired_at": 205,
+  "latency_ticks": 5,
+  "fired_ticks": 3195,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "imu_dropout",
+  "seed": 20260755,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "imu_dropout",
+  "seed": 20260755,
+  "detector": "trust",
+  "fired_at": 4,
+  "latency_ticks": -196,
+  "fired_ticks": 1968,
+  "false_alarm": true,
+  "detected": false
+ },
+ {
+  "fault": "imu_dropout",
+  "seed": 20260756,
+  "detector": "health",
+  "fired_at": 205,
+  "latency_ticks": 5,
+  "fired_ticks": 3195,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "imu_dropout",
+  "seed": 20260756,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "imu_dropout",
+  "seed": 20260756,
+  "detector": "trust",
+  "fired_at": 203,
+  "latency_ticks": 3,
+  "fired_ticks": 1562,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "imu_dropout",
+  "seed": 20260757,
+  "detector": "health",
+  "fired_at": 205,
+  "latency_ticks": 5,
+  "fired_ticks": 3195,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "imu_dropout",
+  "seed": 20260757,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "imu_dropout",
+  "seed": 20260757,
+  "detector": "trust",
+  "fired_at": 204,
+  "latency_ticks": 4,
+  "fired_ticks": 513,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "imu_dropout",
+  "seed": 20260758,
+  "detector": "health",
+  "fired_at": 205,
+  "latency_ticks": 5,
+  "fired_ticks": 3195,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "imu_dropout",
+  "seed": 20260758,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "imu_dropout",
+  "seed": 20260758,
+  "detector": "trust",
+  "fired_at": 5,
+  "latency_ticks": -195,
+  "fired_ticks": 260,
+  "false_alarm": true,
+  "detected": false
+ },
+ {
+  "fault": "imu_dropout",
+  "seed": 20260759,
+  "detector": "health",
+  "fired_at": 205,
+  "latency_ticks": 5,
+  "fired_ticks": 3195,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "imu_dropout",
+  "seed": 20260759,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "imu_dropout",
+  "seed": 20260759,
+  "detector": "trust",
+  "fired_at": 43,
+  "latency_ticks": -157,
+  "fired_ticks": 1327,
+  "false_alarm": true,
+  "detected": false
+ },
+ {
+  "fault": "imu_dropout",
+  "seed": 20260760,
+  "detector": "health",
+  "fired_at": 205,
+  "latency_ticks": 5,
+  "fired_ticks": 3195,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "imu_dropout",
+  "seed": 20260760,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "imu_dropout",
+  "seed": 20260760,
+  "detector": "trust",
+  "fired_at": 221,
+  "latency_ticks": 21,
+  "fired_ticks": 1601,
   "false_alarm": false,
   "detected": true
  },
@@ -300,6 +3660,846 @@
   "detected": true
  },
  {
+  "fault": "lateral_noise",
+  "seed": 20260733,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "lateral_noise",
+  "seed": 20260733,
+  "detector": "innovation",
+  "fired_at": 625,
+  "latency_ticks": 425,
+  "fired_ticks": 1,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "lateral_noise",
+  "seed": 20260733,
+  "detector": "trust",
+  "fired_at": 204,
+  "latency_ticks": 4,
+  "fired_ticks": 2454,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "lateral_noise",
+  "seed": 20260734,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "lateral_noise",
+  "seed": 20260734,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "lateral_noise",
+  "seed": 20260734,
+  "detector": "trust",
+  "fired_at": 5,
+  "latency_ticks": -195,
+  "fired_ticks": 2341,
+  "false_alarm": true,
+  "detected": false
+ },
+ {
+  "fault": "lateral_noise",
+  "seed": 20260735,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "lateral_noise",
+  "seed": 20260735,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "lateral_noise",
+  "seed": 20260735,
+  "detector": "trust",
+  "fired_at": 202,
+  "latency_ticks": 2,
+  "fired_ticks": 2452,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "lateral_noise",
+  "seed": 20260736,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "lateral_noise",
+  "seed": 20260736,
+  "detector": "innovation",
+  "fired_at": 3107,
+  "latency_ticks": 2907,
+  "fired_ticks": 2,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "lateral_noise",
+  "seed": 20260736,
+  "detector": "trust",
+  "fired_at": 202,
+  "latency_ticks": 2,
+  "fired_ticks": 2425,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "lateral_noise",
+  "seed": 20260737,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "lateral_noise",
+  "seed": 20260737,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "lateral_noise",
+  "seed": 20260737,
+  "detector": "trust",
+  "fired_at": 204,
+  "latency_ticks": 4,
+  "fired_ticks": 2434,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "lateral_noise",
+  "seed": 20260738,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "lateral_noise",
+  "seed": 20260738,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "lateral_noise",
+  "seed": 20260738,
+  "detector": "trust",
+  "fired_at": 204,
+  "latency_ticks": 4,
+  "fired_ticks": 2282,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "lateral_noise",
+  "seed": 20260739,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "lateral_noise",
+  "seed": 20260739,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "lateral_noise",
+  "seed": 20260739,
+  "detector": "trust",
+  "fired_at": 204,
+  "latency_ticks": 4,
+  "fired_ticks": 2331,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "lateral_noise",
+  "seed": 20260740,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "lateral_noise",
+  "seed": 20260740,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "lateral_noise",
+  "seed": 20260740,
+  "detector": "trust",
+  "fired_at": 204,
+  "latency_ticks": 4,
+  "fired_ticks": 2371,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "lateral_noise",
+  "seed": 20260741,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "lateral_noise",
+  "seed": 20260741,
+  "detector": "innovation",
+  "fired_at": 578,
+  "latency_ticks": 378,
+  "fired_ticks": 3,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "lateral_noise",
+  "seed": 20260741,
+  "detector": "trust",
+  "fired_at": 204,
+  "latency_ticks": 4,
+  "fired_ticks": 2377,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "lateral_noise",
+  "seed": 20260742,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "lateral_noise",
+  "seed": 20260742,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "lateral_noise",
+  "seed": 20260742,
+  "detector": "trust",
+  "fired_at": 207,
+  "latency_ticks": 7,
+  "fired_ticks": 2389,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "lateral_noise",
+  "seed": 20260743,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "lateral_noise",
+  "seed": 20260743,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "lateral_noise",
+  "seed": 20260743,
+  "detector": "trust",
+  "fired_at": 204,
+  "latency_ticks": 4,
+  "fired_ticks": 2396,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "lateral_noise",
+  "seed": 20260744,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "lateral_noise",
+  "seed": 20260744,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "lateral_noise",
+  "seed": 20260744,
+  "detector": "trust",
+  "fired_at": 204,
+  "latency_ticks": 4,
+  "fired_ticks": 2325,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "lateral_noise",
+  "seed": 20260745,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "lateral_noise",
+  "seed": 20260745,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "lateral_noise",
+  "seed": 20260745,
+  "detector": "trust",
+  "fired_at": 204,
+  "latency_ticks": 4,
+  "fired_ticks": 2324,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "lateral_noise",
+  "seed": 20260746,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "lateral_noise",
+  "seed": 20260746,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "lateral_noise",
+  "seed": 20260746,
+  "detector": "trust",
+  "fired_at": 5,
+  "latency_ticks": -195,
+  "fired_ticks": 2367,
+  "false_alarm": true,
+  "detected": false
+ },
+ {
+  "fault": "lateral_noise",
+  "seed": 20260747,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "lateral_noise",
+  "seed": 20260747,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "lateral_noise",
+  "seed": 20260747,
+  "detector": "trust",
+  "fired_at": 4,
+  "latency_ticks": -196,
+  "fired_ticks": 2331,
+  "false_alarm": true,
+  "detected": false
+ },
+ {
+  "fault": "lateral_noise",
+  "seed": 20260748,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "lateral_noise",
+  "seed": 20260748,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "lateral_noise",
+  "seed": 20260748,
+  "detector": "trust",
+  "fired_at": 5,
+  "latency_ticks": -195,
+  "fired_ticks": 2364,
+  "false_alarm": true,
+  "detected": false
+ },
+ {
+  "fault": "lateral_noise",
+  "seed": 20260749,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "lateral_noise",
+  "seed": 20260749,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "lateral_noise",
+  "seed": 20260749,
+  "detector": "trust",
+  "fired_at": 5,
+  "latency_ticks": -195,
+  "fired_ticks": 2295,
+  "false_alarm": true,
+  "detected": false
+ },
+ {
+  "fault": "lateral_noise",
+  "seed": 20260750,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "lateral_noise",
+  "seed": 20260750,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "lateral_noise",
+  "seed": 20260750,
+  "detector": "trust",
+  "fired_at": 203,
+  "latency_ticks": 3,
+  "fired_ticks": 2371,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "lateral_noise",
+  "seed": 20260751,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "lateral_noise",
+  "seed": 20260751,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "lateral_noise",
+  "seed": 20260751,
+  "detector": "trust",
+  "fired_at": 5,
+  "latency_ticks": -195,
+  "fired_ticks": 2328,
+  "false_alarm": true,
+  "detected": false
+ },
+ {
+  "fault": "lateral_noise",
+  "seed": 20260752,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "lateral_noise",
+  "seed": 20260752,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "lateral_noise",
+  "seed": 20260752,
+  "detector": "trust",
+  "fired_at": 10,
+  "latency_ticks": -190,
+  "fired_ticks": 2500,
+  "false_alarm": true,
+  "detected": false
+ },
+ {
+  "fault": "lateral_noise",
+  "seed": 20260753,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "lateral_noise",
+  "seed": 20260753,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "lateral_noise",
+  "seed": 20260753,
+  "detector": "trust",
+  "fired_at": 203,
+  "latency_ticks": 3,
+  "fired_ticks": 2301,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "lateral_noise",
+  "seed": 20260754,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "lateral_noise",
+  "seed": 20260754,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "lateral_noise",
+  "seed": 20260754,
+  "detector": "trust",
+  "fired_at": 125,
+  "latency_ticks": -75,
+  "fired_ticks": 2343,
+  "false_alarm": true,
+  "detected": false
+ },
+ {
+  "fault": "lateral_noise",
+  "seed": 20260755,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "lateral_noise",
+  "seed": 20260755,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "lateral_noise",
+  "seed": 20260755,
+  "detector": "trust",
+  "fired_at": 4,
+  "latency_ticks": -196,
+  "fired_ticks": 2357,
+  "false_alarm": true,
+  "detected": false
+ },
+ {
+  "fault": "lateral_noise",
+  "seed": 20260756,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "lateral_noise",
+  "seed": 20260756,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "lateral_noise",
+  "seed": 20260756,
+  "detector": "trust",
+  "fired_at": 203,
+  "latency_ticks": 3,
+  "fired_ticks": 2382,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "lateral_noise",
+  "seed": 20260757,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "lateral_noise",
+  "seed": 20260757,
+  "detector": "innovation",
+  "fired_at": 3054,
+  "latency_ticks": 2854,
+  "fired_ticks": 1,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "lateral_noise",
+  "seed": 20260757,
+  "detector": "trust",
+  "fired_at": 204,
+  "latency_ticks": 4,
+  "fired_ticks": 2388,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "lateral_noise",
+  "seed": 20260758,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "lateral_noise",
+  "seed": 20260758,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "lateral_noise",
+  "seed": 20260758,
+  "detector": "trust",
+  "fired_at": 5,
+  "latency_ticks": -195,
+  "fired_ticks": 2387,
+  "false_alarm": true,
+  "detected": false
+ },
+ {
+  "fault": "lateral_noise",
+  "seed": 20260759,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "lateral_noise",
+  "seed": 20260759,
+  "detector": "innovation",
+  "fired_at": 3296,
+  "latency_ticks": 3096,
+  "fired_ticks": 1,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "lateral_noise",
+  "seed": 20260759,
+  "detector": "trust",
+  "fired_at": 43,
+  "latency_ticks": -157,
+  "fired_ticks": 2411,
+  "false_alarm": true,
+  "detected": false
+ },
+ {
+  "fault": "lateral_noise",
+  "seed": 20260760,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "lateral_noise",
+  "seed": 20260760,
+  "detector": "innovation",
+  "fired_at": 1654,
+  "latency_ticks": 1454,
+  "fired_ticks": 1,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "lateral_noise",
+  "seed": 20260760,
+  "detector": "trust",
+  "fired_at": 204,
+  "latency_ticks": 4,
+  "fired_ticks": 2409,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
   "fault": "speed_bias",
   "seed": 20260731,
   "detector": "health",
@@ -360,6 +4560,846 @@
   "detected": false
  },
  {
+  "fault": "speed_bias",
+  "seed": 20260733,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_bias",
+  "seed": 20260733,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_bias",
+  "seed": 20260733,
+  "detector": "trust",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_bias",
+  "seed": 20260734,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_bias",
+  "seed": 20260734,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_bias",
+  "seed": 20260734,
+  "detector": "trust",
+  "fired_at": 5,
+  "latency_ticks": -195,
+  "fired_ticks": 20,
+  "false_alarm": true,
+  "detected": false
+ },
+ {
+  "fault": "speed_bias",
+  "seed": 20260735,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_bias",
+  "seed": 20260735,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_bias",
+  "seed": 20260735,
+  "detector": "trust",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_bias",
+  "seed": 20260736,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_bias",
+  "seed": 20260736,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_bias",
+  "seed": 20260736,
+  "detector": "trust",
+  "fired_at": 371,
+  "latency_ticks": 171,
+  "fired_ticks": 3,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "speed_bias",
+  "seed": 20260737,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_bias",
+  "seed": 20260737,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_bias",
+  "seed": 20260737,
+  "detector": "trust",
+  "fired_at": 640,
+  "latency_ticks": 440,
+  "fired_ticks": 2,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "speed_bias",
+  "seed": 20260738,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_bias",
+  "seed": 20260738,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_bias",
+  "seed": 20260738,
+  "detector": "trust",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_bias",
+  "seed": 20260739,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_bias",
+  "seed": 20260739,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_bias",
+  "seed": 20260739,
+  "detector": "trust",
+  "fired_at": 1090,
+  "latency_ticks": 890,
+  "fired_ticks": 2,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "speed_bias",
+  "seed": 20260740,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_bias",
+  "seed": 20260740,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_bias",
+  "seed": 20260740,
+  "detector": "trust",
+  "fired_at": 742,
+  "latency_ticks": 542,
+  "fired_ticks": 3,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "speed_bias",
+  "seed": 20260741,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_bias",
+  "seed": 20260741,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_bias",
+  "seed": 20260741,
+  "detector": "trust",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_bias",
+  "seed": 20260742,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_bias",
+  "seed": 20260742,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_bias",
+  "seed": 20260742,
+  "detector": "trust",
+  "fired_at": 585,
+  "latency_ticks": 385,
+  "fired_ticks": 2,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "speed_bias",
+  "seed": 20260743,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_bias",
+  "seed": 20260743,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_bias",
+  "seed": 20260743,
+  "detector": "trust",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_bias",
+  "seed": 20260744,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_bias",
+  "seed": 20260744,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_bias",
+  "seed": 20260744,
+  "detector": "trust",
+  "fired_at": 368,
+  "latency_ticks": 168,
+  "fired_ticks": 1,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "speed_bias",
+  "seed": 20260745,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_bias",
+  "seed": 20260745,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_bias",
+  "seed": 20260745,
+  "detector": "trust",
+  "fired_at": 1959,
+  "latency_ticks": 1759,
+  "fired_ticks": 2,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "speed_bias",
+  "seed": 20260746,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_bias",
+  "seed": 20260746,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_bias",
+  "seed": 20260746,
+  "detector": "trust",
+  "fired_at": 5,
+  "latency_ticks": -195,
+  "fired_ticks": 2,
+  "false_alarm": true,
+  "detected": false
+ },
+ {
+  "fault": "speed_bias",
+  "seed": 20260747,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_bias",
+  "seed": 20260747,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_bias",
+  "seed": 20260747,
+  "detector": "trust",
+  "fired_at": 4,
+  "latency_ticks": -196,
+  "fired_ticks": 13,
+  "false_alarm": true,
+  "detected": false
+ },
+ {
+  "fault": "speed_bias",
+  "seed": 20260748,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_bias",
+  "seed": 20260748,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_bias",
+  "seed": 20260748,
+  "detector": "trust",
+  "fired_at": 5,
+  "latency_ticks": -195,
+  "fired_ticks": 2,
+  "false_alarm": true,
+  "detected": false
+ },
+ {
+  "fault": "speed_bias",
+  "seed": 20260749,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_bias",
+  "seed": 20260749,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_bias",
+  "seed": 20260749,
+  "detector": "trust",
+  "fired_at": 5,
+  "latency_ticks": -195,
+  "fired_ticks": 15,
+  "false_alarm": true,
+  "detected": false
+ },
+ {
+  "fault": "speed_bias",
+  "seed": 20260750,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_bias",
+  "seed": 20260750,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_bias",
+  "seed": 20260750,
+  "detector": "trust",
+  "fired_at": 1230,
+  "latency_ticks": 1030,
+  "fired_ticks": 1,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "speed_bias",
+  "seed": 20260751,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_bias",
+  "seed": 20260751,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_bias",
+  "seed": 20260751,
+  "detector": "trust",
+  "fired_at": 5,
+  "latency_ticks": -195,
+  "fired_ticks": 14,
+  "false_alarm": true,
+  "detected": false
+ },
+ {
+  "fault": "speed_bias",
+  "seed": 20260752,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_bias",
+  "seed": 20260752,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_bias",
+  "seed": 20260752,
+  "detector": "trust",
+  "fired_at": 10,
+  "latency_ticks": -190,
+  "fired_ticks": 11,
+  "false_alarm": true,
+  "detected": false
+ },
+ {
+  "fault": "speed_bias",
+  "seed": 20260753,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_bias",
+  "seed": 20260753,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_bias",
+  "seed": 20260753,
+  "detector": "trust",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_bias",
+  "seed": 20260754,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_bias",
+  "seed": 20260754,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_bias",
+  "seed": 20260754,
+  "detector": "trust",
+  "fired_at": 125,
+  "latency_ticks": -75,
+  "fired_ticks": 2,
+  "false_alarm": true,
+  "detected": false
+ },
+ {
+  "fault": "speed_bias",
+  "seed": 20260755,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_bias",
+  "seed": 20260755,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_bias",
+  "seed": 20260755,
+  "detector": "trust",
+  "fired_at": 4,
+  "latency_ticks": -196,
+  "fired_ticks": 1,
+  "false_alarm": true,
+  "detected": false
+ },
+ {
+  "fault": "speed_bias",
+  "seed": 20260756,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_bias",
+  "seed": 20260756,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_bias",
+  "seed": 20260756,
+  "detector": "trust",
+  "fired_at": 2244,
+  "latency_ticks": 2044,
+  "fired_ticks": 2,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "speed_bias",
+  "seed": 20260757,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_bias",
+  "seed": 20260757,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_bias",
+  "seed": 20260757,
+  "detector": "trust",
+  "fired_at": 2033,
+  "latency_ticks": 1833,
+  "fired_ticks": 1,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "speed_bias",
+  "seed": 20260758,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_bias",
+  "seed": 20260758,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_bias",
+  "seed": 20260758,
+  "detector": "trust",
+  "fired_at": 5,
+  "latency_ticks": -195,
+  "fired_ticks": 22,
+  "false_alarm": true,
+  "detected": false
+ },
+ {
+  "fault": "speed_bias",
+  "seed": 20260759,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_bias",
+  "seed": 20260759,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_bias",
+  "seed": 20260759,
+  "detector": "trust",
+  "fired_at": 43,
+  "latency_ticks": -157,
+  "fired_ticks": 4,
+  "false_alarm": true,
+  "detected": false
+ },
+ {
+  "fault": "speed_bias",
+  "seed": 20260760,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_bias",
+  "seed": 20260760,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_bias",
+  "seed": 20260760,
+  "detector": "trust",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
   "fault": "speed_stuck",
   "seed": 20260731,
   "detector": "health",
@@ -418,5 +5458,845 @@
   "fired_ticks": 0,
   "false_alarm": false,
   "detected": false
+ },
+ {
+  "fault": "speed_stuck",
+  "seed": 20260733,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_stuck",
+  "seed": 20260733,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_stuck",
+  "seed": 20260733,
+  "detector": "trust",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_stuck",
+  "seed": 20260734,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_stuck",
+  "seed": 20260734,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_stuck",
+  "seed": 20260734,
+  "detector": "trust",
+  "fired_at": 5,
+  "latency_ticks": -195,
+  "fired_ticks": 18,
+  "false_alarm": true,
+  "detected": false
+ },
+ {
+  "fault": "speed_stuck",
+  "seed": 20260735,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_stuck",
+  "seed": 20260735,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_stuck",
+  "seed": 20260735,
+  "detector": "trust",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_stuck",
+  "seed": 20260736,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_stuck",
+  "seed": 20260736,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_stuck",
+  "seed": 20260736,
+  "detector": "trust",
+  "fired_at": 941,
+  "latency_ticks": 741,
+  "fired_ticks": 1,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "speed_stuck",
+  "seed": 20260737,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_stuck",
+  "seed": 20260737,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_stuck",
+  "seed": 20260737,
+  "detector": "trust",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_stuck",
+  "seed": 20260738,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_stuck",
+  "seed": 20260738,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_stuck",
+  "seed": 20260738,
+  "detector": "trust",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_stuck",
+  "seed": 20260739,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_stuck",
+  "seed": 20260739,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_stuck",
+  "seed": 20260739,
+  "detector": "trust",
+  "fired_at": 2798,
+  "latency_ticks": 2598,
+  "fired_ticks": 1,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "speed_stuck",
+  "seed": 20260740,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_stuck",
+  "seed": 20260740,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_stuck",
+  "seed": 20260740,
+  "detector": "trust",
+  "fired_at": 742,
+  "latency_ticks": 542,
+  "fired_ticks": 1,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "speed_stuck",
+  "seed": 20260741,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_stuck",
+  "seed": 20260741,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_stuck",
+  "seed": 20260741,
+  "detector": "trust",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_stuck",
+  "seed": 20260742,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_stuck",
+  "seed": 20260742,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_stuck",
+  "seed": 20260742,
+  "detector": "trust",
+  "fired_at": 585,
+  "latency_ticks": 385,
+  "fired_ticks": 2,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "speed_stuck",
+  "seed": 20260743,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_stuck",
+  "seed": 20260743,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_stuck",
+  "seed": 20260743,
+  "detector": "trust",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_stuck",
+  "seed": 20260744,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_stuck",
+  "seed": 20260744,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_stuck",
+  "seed": 20260744,
+  "detector": "trust",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_stuck",
+  "seed": 20260745,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_stuck",
+  "seed": 20260745,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_stuck",
+  "seed": 20260745,
+  "detector": "trust",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_stuck",
+  "seed": 20260746,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_stuck",
+  "seed": 20260746,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_stuck",
+  "seed": 20260746,
+  "detector": "trust",
+  "fired_at": 5,
+  "latency_ticks": -195,
+  "fired_ticks": 2,
+  "false_alarm": true,
+  "detected": false
+ },
+ {
+  "fault": "speed_stuck",
+  "seed": 20260747,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_stuck",
+  "seed": 20260747,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_stuck",
+  "seed": 20260747,
+  "detector": "trust",
+  "fired_at": 4,
+  "latency_ticks": -196,
+  "fired_ticks": 13,
+  "false_alarm": true,
+  "detected": false
+ },
+ {
+  "fault": "speed_stuck",
+  "seed": 20260748,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_stuck",
+  "seed": 20260748,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_stuck",
+  "seed": 20260748,
+  "detector": "trust",
+  "fired_at": 5,
+  "latency_ticks": -195,
+  "fired_ticks": 1,
+  "false_alarm": true,
+  "detected": false
+ },
+ {
+  "fault": "speed_stuck",
+  "seed": 20260749,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_stuck",
+  "seed": 20260749,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_stuck",
+  "seed": 20260749,
+  "detector": "trust",
+  "fired_at": 5,
+  "latency_ticks": -195,
+  "fired_ticks": 14,
+  "false_alarm": true,
+  "detected": false
+ },
+ {
+  "fault": "speed_stuck",
+  "seed": 20260750,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_stuck",
+  "seed": 20260750,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_stuck",
+  "seed": 20260750,
+  "detector": "trust",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_stuck",
+  "seed": 20260751,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_stuck",
+  "seed": 20260751,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_stuck",
+  "seed": 20260751,
+  "detector": "trust",
+  "fired_at": 5,
+  "latency_ticks": -195,
+  "fired_ticks": 14,
+  "false_alarm": true,
+  "detected": false
+ },
+ {
+  "fault": "speed_stuck",
+  "seed": 20260752,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_stuck",
+  "seed": 20260752,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_stuck",
+  "seed": 20260752,
+  "detector": "trust",
+  "fired_at": 10,
+  "latency_ticks": -190,
+  "fired_ticks": 9,
+  "false_alarm": true,
+  "detected": false
+ },
+ {
+  "fault": "speed_stuck",
+  "seed": 20260753,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_stuck",
+  "seed": 20260753,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_stuck",
+  "seed": 20260753,
+  "detector": "trust",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_stuck",
+  "seed": 20260754,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_stuck",
+  "seed": 20260754,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_stuck",
+  "seed": 20260754,
+  "detector": "trust",
+  "fired_at": 125,
+  "latency_ticks": -75,
+  "fired_ticks": 2,
+  "false_alarm": true,
+  "detected": false
+ },
+ {
+  "fault": "speed_stuck",
+  "seed": 20260755,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_stuck",
+  "seed": 20260755,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_stuck",
+  "seed": 20260755,
+  "detector": "trust",
+  "fired_at": 4,
+  "latency_ticks": -196,
+  "fired_ticks": 1,
+  "false_alarm": true,
+  "detected": false
+ },
+ {
+  "fault": "speed_stuck",
+  "seed": 20260756,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_stuck",
+  "seed": 20260756,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_stuck",
+  "seed": 20260756,
+  "detector": "trust",
+  "fired_at": 3225,
+  "latency_ticks": 3025,
+  "fired_ticks": 1,
+  "false_alarm": false,
+  "detected": true
+ },
+ {
+  "fault": "speed_stuck",
+  "seed": 20260757,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_stuck",
+  "seed": 20260757,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_stuck",
+  "seed": 20260757,
+  "detector": "trust",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_stuck",
+  "seed": 20260758,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_stuck",
+  "seed": 20260758,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_stuck",
+  "seed": 20260758,
+  "detector": "trust",
+  "fired_at": 5,
+  "latency_ticks": -195,
+  "fired_ticks": 22,
+  "false_alarm": true,
+  "detected": false
+ },
+ {
+  "fault": "speed_stuck",
+  "seed": 20260759,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_stuck",
+  "seed": 20260759,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_stuck",
+  "seed": 20260759,
+  "detector": "trust",
+  "fired_at": 43,
+  "latency_ticks": -157,
+  "fired_ticks": 4,
+  "false_alarm": true,
+  "detected": false
+ },
+ {
+  "fault": "speed_stuck",
+  "seed": 20260760,
+  "detector": "health",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_stuck",
+  "seed": 20260760,
+  "detector": "innovation",
+  "fired_at": null,
+  "latency_ticks": null,
+  "fired_ticks": 0,
+  "false_alarm": false,
+  "detected": false
+ },
+ {
+  "fault": "speed_stuck",
+  "seed": 20260760,
+  "detector": "trust",
+  "fired_at": 2496,
+  "latency_ticks": 2296,
+  "fired_ticks": 6,
+  "false_alarm": false,
+  "detected": true
  }
 ]
