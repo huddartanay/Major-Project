@@ -54,8 +54,9 @@ frozen thresholds):
 - Apparent detection of that fault came almost entirely from the **post-fault recovery transient**.
   Where the fault never ends, detection never happens.
 - Of six injected fault classes, only **three** are detected under sustained injection.
-- **Statistical discriminability does not predict operational detection.** Faulted and clean runs
-  separate at AUC ≈ 0.998 for a fault the monitor never alarms on. Across cells, sensor-level
+- **Statistical discriminability does not predict operational detection.** For a fault the monitor
+  never alarms on, faulted and clean runs separate at AUC ≈ 0.998 at the *sensor* and 0.737 at the
+  *monitor's own score*. Across cells, sensor-level
   discriminability is *anti-correlated* with detection (Spearman ρ = −0.480, p = 0.0088).
 - Conformal validity failed because the calibration set was not exchangeable with live scores
   (a calibration-provenance failure, not a bad threshold value).
