@@ -1,0 +1,214 @@
+# Manual novelty check — worksheet
+
+**For a person to work through by hand.** The novelty estimates in `NOVELTY_REVERIFICATION.md` were
+built mostly from automated extraction of web pages and some abstracts. This sheet tells you exactly
+what to open, where to look, what yes/no question to answer, and what each answer does to the claims.
+
+Work top to bottom — items are ordered by how much they can change the verdict. Record answers in the
+table in §5.
+
+---
+
+## 0 · Before you start
+
+**Access.** Use the BMSCE library for IEEE Xplore, ACM Digital Library and Springer. Most items below also
+have a free arXiv version — use it where given.
+
+**Tools.**
+- **Google Scholar** — search the title, click **Cited by**, then tick **Search within citing articles**.
+- **Semantic Scholar** — same, with better filtering by year.
+- **Connected Papers** (connectedpapers.com) — paste a title to see nearby work you might not find by
+  keyword.
+
+**Rule while reading.** Answer only from what the paper says. If it is ambiguous, mark it ambiguous —
+do not resolve it in ASTRA's favour.
+
+**Known weak spots in the automated reading** (check these especially):
+- Zhao et al.: "no guarantee on detection power" is **my reading** of the guarantee's form, not a
+  sentence in the paper.
+- CoCo, HALO, DeLorean, Orf et al.: read through automated HTML extraction, not by a person.
+- Antonante et al., Boursinos & Koutsoukos, Tsai & Hariri's scope, Rober et al.: abstract level only.
+- Both closed-loop masking papers: abstract only.
+
+---
+
+## 1 · Decisive — can change the core finding
+
+### 1.1 CoCo — the biggest threat
+
+**Ruchkin, Cleaveland, Ivanov, Lu, Carpenter, Sokolsky & Lee, *Confidence Composition for Monitors of
+Verification Assumptions*, ICCPS 2022** — https://arxiv.org/abs/2111.03782
+
+| look at | question | if YES | if NO |
+|---|---|---|---|
+| §4.2 (assumptions) | Is any monitored assumption about **sensor observations / state estimation** being correct? | N1 must cite CoCo as monitoring observation assumptions (already planned) | N1 strengthens |
+| §5 case studies | Does any case study inject a **sensor fault** (dropout, bias, stuck value) during operation? | Read how the composed confidence responds — go to next row | CoCo does not test the regime ASTRA measures; core finding strengthens |
+| §5 results | When that fault occurs, does CoCo's confidence **drop** — i.e. would it have flagged that the safety guarantee no longer holds? | **Core finding narrows sharply**: an assumption monitor catches the case. ASTRA's distinction must move to faults assumption monitors *miss* (speed faults) | Core finding holds for that fault |
+| §4.3 / discussion | Does it consider a monitor becoming **uninformative** — alive but unable to detect? | **B1 (Paper 2) threatened directly** | B1's distinction holds |
+
+### 1.2 Papers citing CoCo — the most likely place the gap was closed since 2022
+
+Google Scholar → CoCo → **Cited by** → **Search within citing articles**, one search at a time:
+
+`sensor fault` · `monitor failure` · `detection capability` · `blind` · `silent` ·
+`runtime assurance` · `observation model` · `conformal`
+
+| for each hit, ask | if YES |
+|---|---|
+| Does it detect at runtime that a **safety monitor or gate can no longer detect** faults (not just that it is offline or unconfident)? | **Core finding and B1 at risk.** Record the paper; this is the paper to position against |
+| Does it evaluate assumption monitors under **persistent sensor faults** in closed loop? | N1 and N3 narrow |
+
+**Expected effort:** 2–4 hours. **This item alone decides most of the novelty estimate.**
+
+### 1.3 Synergistic Simplex — Assumption 8
+
+**Bansal, Yeghiazaryan, Khachatryan, Zhu, Kim, Hovakimyan & Sha, arXiv 2605.08190 (2026)** —
+https://arxiv.org/abs/2605.08190
+
+| look at | question |
+|---|---|
+| Assumptions list | Does **Assumption 8** state that sensors operate nominally and sensor failure is out of scope? Record the page number |
+| Anywhere | Does it cite a specific method it relies on for sensor failures? If so, open that paper — it may close N1 |
+
+---
+
+## 2 · Important — can narrow individual claims
+
+### 2.1 PID-Piper — §II-E threat model (N3)
+
+**Dash, Li, Chen, Karimibiuki & Pattabiraman, DSN 2021** —
+https://people.ece.ubc.ca/zitaoc/files/Pid-Piper-DSN21.pdf
+
+- §II-E: confirm it **excludes attacks causing persistent drastic sensor manipulation** and **attacks on
+  all sensors simultaneously**. Record the exact page.
+- §IV-B: confirm the feed-forward controller takes current state and sensor-derived features as input.
+
+### 2.2 DeLorean — duration and detector (N3)
+
+**Dash, Li, Karimibiuki & Pattabiraman, ASIA CCS 2024** — https://arxiv.org/abs/2209.04554
+
+| look at | question | if YES |
+|---|---|---|
+| §2.3 threat model | Does it say anything about **attack duration**? | Record it |
+| §6 evaluation | Does any attack **persist for the rest of the mission**? | **N3 narrows** — "not evaluated" becomes false |
+| §5.4 | Does it rely on PID-Piper's detector without measuring its misses? | Supports L2 |
+
+Then: **papers citing DeLorean** — search within citing articles for `persistent`, `long-duration`,
+`entire mission`, `continuous attack`.
+
+### 2.3 Closed-loop fault masking — full texts (N4)
+
+- **Gómez-González, Fischer et al.**, *Anomaly Detection Under Closed-Loop Fault Masking … Two-Tank*,
+  Springer, doi 10.1007/978-3-032-29254-4_6 — **needs library access or an email to the authors**.
+- **Zhang, Yang, Dandago & Li**, *The negative impact of closed-loop control on fault detection*,
+  Springer 2026 — https://research.manchester.ac.uk/en/publications/the-negative-impact-of-closed-loop-control-on-fault-detection/
+
+| question | if YES |
+|---|---|
+| Does either report a detector's alarm rate falling **below its healthy / fault-free rate** during a fault? | **N4 becomes a replication** — reframe as extending a known result |
+| Does either use a **learned (RL / neural) controller**? | **N4 dies** |
+| Confirm the Gómez-González venue and year (SOCO 2025 or 2026?) | Fix the citation |
+
+### 2.4 Conformal assurance monitors (N2)
+
+- **Boursinos & Koutsoukos**, arXiv 2001.05014 and arXiv 2110.03120 (AI EDAM 2021).
+- ***Fault-Adaptive Autonomy in Systems with Learning-Enabled Components***, Sensors 21(18):6089, 2021 —
+  https://pmc.ncbi.nlm.nih.gov/articles/PMC8470782/
+
+| question | if YES |
+|---|---|
+| Is a conformal monitor evaluated for **missed detections / false negatives** under faults? | N2 narrows |
+| Are **sensor** faults (not only thruster/actuator degradation) injected? | N2 narrows |
+| Is the monitored system closed-loop, with faults persisting? | N2 narrows further |
+
+### 2.5 Cross-layer monitors (N5)
+
+- **Orf et al.**, *Modular Fault Diagnosis Framework for Complex Autonomous Driving Systems*, arXiv 2411.09643 —
+  https://arxiv.org/abs/2411.09643
+- **Antonante, Nilsen & Carlone**, *Monitoring of Perception Systems*, arXiv 2205.10906 —
+  https://arxiv.org/abs/2205.10906
+- **Harder, Kulkarni & Behl**, *HALO*, arXiv 2503.10341 — https://arxiv.org/abs/2503.10341
+
+| paper | question | if YES |
+|---|---|---|
+| Orf et al. §IV–VI | Is **disagreement** between modules used as fault evidence (not only dependency propagation)? Any quantitative results? | N5 narrows or dies |
+| Antonante et al. | Do the diagnostic graphs include **localization / state estimation**? Any closed-loop evaluation? | N5 narrows |
+| HALO §10 | Any mechanism acting on disagreement between data-health and behavioural monitors? Confirm §10.2 heartbeat watchdog | N5 narrows |
+
+### 2.6 Integrity used in decisions (N1)
+
+- **Lee, Seo & Kassas**, *Integrity-Based Path Planning Strategy…*, ION GNSS+ 2020 —
+  https://ece.osu.edu/sites/default/files/2022-09/Integrity_Based_Path_Planning_Strategy_for_Urban_Autonomous_Vehicular_Navigation_Using_GPS_and_Cellular_Signals.pdf
+- **Nayak & Barth**, arXiv 2502.04874 — follow its references for any work using **protection levels
+  inside a controller, safety filter or runtime monitor** online.
+
+| question | if YES |
+|---|---|
+| Does any work consume protection levels **online** in a safety gate or controller of an autonomous vehicle? | **N1 narrows sharply** |
+
+---
+
+## 3 · Confirmatory — quick checks of statements already relied on
+
+| paper | check |
+|---|---|
+| **Rober, Jia & How**, arXiv 2608.20467 | Abstract says most safety filters assume perfect state information — confirm wording |
+| **Zhao, Hoxha, Fainekos, Deshmukh & Lindemann**, arXiv 2311.09482 | Assumptions: known f-divergence bound, calibration from training distribution. Does it say anything about detection power? (My reading, not a quote) |
+| **Strawn, Ayanian & Lindemann**, RA-L 2023, arXiv 2306.02551 | Guarantee is coverage of trajectory prediction; no sensor faults |
+| **Tsai & Hariri**, arXiv 2606.06996 | Table II varies duration; faults are mission-command, not sensor |
+| **Yang, Chen, Chen & Su**, Sensors 2021 | Introspection predicts object-detector false negatives; camera only |
+| **Zudaire et al.**, ICRA 2021 | Assumption monitoring for task plans; "silent mission failure" term |
+| **Aslam et al.**, arXiv 2604.27728 | Two monitors, sequential, qualitative evaluation only |
+| **Martinez Gil et al.**, arXiv 2604.20122 | False-alarm control only; no closed loop or sensor faults |
+| **Volkhonskiy et al.**, arXiv 1706.03415 | Conformal martingales for change-point detection |
+| **Or**, arXiv 2606.00090 | §9.5 open questions include evaluating silent failures beyond task completion |
+
+---
+
+## 4 · Independent searches — to catch what I missed
+
+Run each in **Google Scholar** and **Semantic Scholar**, filter **2022 onward**, and scan the first two
+pages. The same idea goes by different names in control theory and in machine learning, so run both
+columns.
+
+| control / dependability vocabulary | machine-learning vocabulary |
+|---|---|
+| `runtime assurance monitor detectability loss` | `safety monitor failure detection at runtime` |
+| `fault detection capability degradation online` | `monitor blind spot runtime` |
+| `monitor of monitors cyber-physical` | `meta-monitoring learning-enabled` |
+| `closed-loop fault masking neural controller` | `anomaly detector silent failure closed loop` |
+| `integrity monitoring safety filter` | `conformal monitor missed detection sensor fault` |
+| `persistent sensor fault runtime assurance` | `OOD detector fails under sensor degradation` |
+| `watchdog monitor detection coverage` | `assumption monitoring neural network controller sensor fault` |
+
+For any hit that looks close: read the abstract, then ask the §1.1 question — *does it detect that a
+monitor can no longer detect?*
+
+---
+
+## 5 · Record
+
+Copy this table and fill one row per paper checked.
+
+| # | paper | read level (PDF / abstract) | question | answer (yes / no / ambiguous) | page / section | effect on claim |
+|---|---|---|---|---|---|---|
+| 1 | CoCo | | sensor fault injected? | | | |
+| 2 | CoCo | | confidence drops on it? | | | |
+| 3 | CoCo | | uninformative monitor considered? | | | |
+| 4 | CoCo citing papers | | gate blindness detected? | | | |
+| … | | | | | | |
+
+---
+
+## 6 · How to turn answers into a verdict
+
+| finding | effect |
+|---|---|
+| Any paper detects at runtime that a safety monitor **can no longer detect** faults | **Core finding and B1 at risk** — reposition against that paper before anything else |
+| CoCo-style confidence drops for sensor faults like `imu_dropout` | Core finding narrows to faults assumption monitors miss (e.g. speed faults); the planned monitor-comparison experiment becomes essential |
+| A masking paper reports **below-baseline** alarms | N4 becomes "extends a known result" |
+| A detect-and-recover paper evaluates **whole-mission** persistent faults | N3 narrows |
+| Nothing found on §1.1 or §1.2 after the searches | Core finding's estimate rises — record the searches run as evidence |
+
+**Bring the filled table back** and the claims, estimates and objectives can be updated from your
+reading rather than the automated one.
