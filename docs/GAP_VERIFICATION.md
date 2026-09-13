@@ -8,6 +8,25 @@ file, the commit that recorded it, a way to reproduce it, and the result that wo
 check each element independently and reach a verdict without trusting the author. If any element
 fails, the gap statement in §1 must be narrowed or withdrawn; §5 says which.
 
+### Where the evidence lives — check this first
+
+The evidence is on **branch `3.0`**, at or after commit **`b66ceb3`**. It is **not** on `main`, which
+ends at `833ce4d` (31 July 2026) and predates every experiment cited here.
+
+A first verification attempt on 13 September was run against `main` and correctly found none of the
+cited files, modules or commits. That is what this section exists to prevent. Before checking any
+element, confirm you are looking at the right tree:
+
+```bash
+git fetch --all
+git checkout 3.0
+git merge-base --is-ancestor b66ceb3 HEAD && echo "evidence present" || echo "WRONG TREE"
+git cat-file -t 4615cdc   # must print: commit
+```
+
+If `4615cdc` is not a valid object, the branch you have is behind the one this document was written
+against, and nothing below can be verified from it.
+
 ---
 
 ## 1 · The gap
@@ -148,10 +167,10 @@ Each was opened and checked on 13 September 2026.
 
 | work | what it establishes | what it does not do |
 |---|---|---|
-| Gómez-González, Fischer et al., *Anomaly Detection Under Closed-Loop Fault Masking: A Case Study … Two-Tank Level Control System*, SOCO 2026 (Springer, doi 10.1007/978-3-032-29254-4_6) | **Closed-loop fault masking of data-driven detectors is a recognised problem**, on a real plant (SVDD, autoencoder, MLP; adaptive PID/RLS) | Abstract does not report alarm rates **below** baseline; no conformal monitor; no learned controller. **Full text not read — paywalled** |
+| Gómez-González, Fischer et al., *Anomaly Detection Under Closed-Loop Fault Masking: A Case Study … Two-Tank Level Control System*, Springer (doi 10.1007/978-3-032-29254-4_6). **Venue and year unconfirmed**: a search summary gave SOCO 2026; an independent check saw a 2025 date. Resolve from the full text before citing | **Closed-loop fault masking of data-driven detectors is a recognised problem**, on a real plant (SVDD, autoencoder, MLP; adaptive PID/RLS) | Abstract does not report alarm rates **below** baseline; no conformal monitor; no learned controller. **Full text not read — paywalled** |
 | Phan, Grosu, Jansen, Paoletti, Smolka, Stoller, *Neural Simplex Architecture*, NFM 2020 (arXiv 1908.00528) | Simplex-style runtime assurance over neural controllers | No conformal gate, no twin, no sensor faults |
 | Strawn, Ayanian, Lindemann, *Conformal Predictive Safety Filter for RL Controllers in Dynamic Environments*, IEEE RA-L 2023 (arXiv 2306.02551) | Conformal prediction as a safety filter over RL | Guarantees coverage of **trajectory-prediction** uncertainty; **no sensor faults, no detection rates** |
-| Rashidi, *Benchmark AUC Is Not Deployable Reliability*, arXiv 2606.29506 (2026) | AUC does not predict deployed reliability | **Cross-dataset** shift in video; no runtime monitor, no closed loop, no faults |
+| Mohammadreza Rashidi, *Benchmark AUC Is Not Deployable Reliability*, arXiv 2606.29506, submitted 28 June 2026 (author confirmed from the arXiv landing page) | AUC does not predict deployed reliability | **Cross-dataset** shift in video; no runtime monitor, no closed loop, no faults |
 
 **Consequence for the claim:** masking cannot be presented as a finding, the architecture cannot be
 presented as a contribution, and "AUC isn't deployment" is a commonplace. What the verified papers do
@@ -251,4 +270,11 @@ timestamps and commit fields.
   RA-L 2023.
 - The 11 September review's recommended root cause, "calibration-provenance failure", is
   **contradicted by E1**: the blind spot occurs with valid calibration. It explains the earlier OD-8
-  false-alarm problem, not this gap.
+  false-alarm problem, not this gap. As an independent verifier pointed out, this contradiction is
+  only as strong as E1 is exhibitable — see the next bullet.
+- **An independent verification on 13 September found all seven E-elements unverifiable**, and was
+  right to. It was run against `main` at `833ce4d`, which is 144 commits behind the branch this
+  document describes; the team remote's `3.0` was itself 44 commits behind. The evidence existed but
+  had never been pushed where a collaborator could reach it, and this document named "this
+  repository" without naming the branch or commit. The "Where the evidence lives" section at the top
+  was added in response.
