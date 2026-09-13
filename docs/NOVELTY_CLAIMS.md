@@ -1,7 +1,16 @@
 # Novelty claims for the conference submission
 
-**Revised 13 September 2026** against the closest-work pass in `docs/CLOSEST_WORK.md`. Supersedes the
-earlier version of this file.
+**Revised 13 September 2026** against the closest-work pass in `docs/CLOSEST_WORK.md`, and again
+against the literature re-verification in `docs/NOVELTY_REVERIFICATION.md`. Supersedes earlier versions.
+
+> **Re-verification result.** No published paper found makes any of these claims, but **all six were
+> narrowed**, and four assumptions about the literature were corrected: integrity information *is* used
+> in planning decisions; monitors *are* monitored — for liveness (HALO), per-decision confidence
+> (conformal assurance monitors) and assumption validity (**CoCo, Ruchkin et al., ICCPS 2022**); the
+> persistent-fault exclusion is PID-Piper's, not the whole line of work (DeLorean evaluates 15–30 s
+> attacks); and cross-layer diagnosis aggregation exists. **The boundary every claim now rests on:
+> liveness and confidence are checked in prior work; functional detection capability of the safety
+> gate is not.**
 
 For Paper 1 (target IEEE ITSC; alternative IEEE ISSRE). Evidence is on branch `3.0`; see
 `docs/GAP_VERIFICATION.md`.
@@ -65,7 +74,7 @@ that detecting a wrong estimate is a mature field.
 
 | | |
 |---|---|
-| **Closest work** | **Nayak & Barth**, integrity monitoring for CAVs, arXiv 2502.04874 (2025): detects hazardously misleading information in the **position estimate**; does not address a downstream safety monitor reading that estimate; names integrity of AI/ML systems as largely unexplored. **Dean et al.**, measurement-robust CBFs, CoRL 2020: safety under **bounded** estimation error, no fault detection. **Bansal et al.**, Synergistic Simplex, 2026: assumes nominal sensors (**Assumption 8**). **Bansal et al.**, Perception Simplex, STVR 2024: cross-checks **obstacle-detection** faults, not state sensors |
+| **Closest work** | **Nayak & Barth**, integrity monitoring for CAVs, arXiv 2502.04874 (2025): detects hazardously misleading information in the **position estimate**; does not address a downstream safety monitor reading that estimate; names integrity of AI/ML systems as largely unexplored. **Dean et al.**, measurement-robust CBFs, CoRL 2020: safety under **bounded** estimation error, no fault detection. **Bansal et al.**, Synergistic Simplex, 2026: assumes nominal sensors (**Assumption 8**). **Bansal et al.**, Perception Simplex, STVR 2024: cross-checks **obstacle-detection** faults, not state sensors. **Ruchkin et al.**, *Confidence Composition for Monitors of Verification Assumptions* (CoCo), ICCPS 2022: monitors **observation-model assumptions** of verified NN controllers at runtime and composes them into confidence that guarantees hold. **Lee, Seo & Kassas**, ION GNSS+ 2020: **protection levels used as cost and constraint in path planning** (offline). **Rober, Jia & How**, arXiv 2608.20467 (2026): states that most safety filters assume perfect state information |
 | **What remains unreached** | A runtime-assurance **gate** for a **learned controller** measured under **persistent** sensor failure — beyond the bound robust filters assume, and inside the regime Synergistic Simplex declares out of scope — and shown to fail while integrity-style evidence in the same stack does not |
 | **Claim** | Integrity failure is shown at the **safety gate** of a learned-controller runtime-assurance stack: the gate reports no hazard throughout a persistent sensor failure, while an integrity-style sensor-layer check detects it |
 | **Evidence** | Gate **0 / 30** under sustained `imu_dropout`; sensor-layer health check **30 / 30**, **0 / 30** clean false positives, median **5 ticks** (E18-R3c, E21) |
@@ -83,14 +92,14 @@ substance.
 
 | | |
 |---|---|
-| **Closest work** | **Zhao et al.**, robust conformal STL verification, 2024: coverage under a known f-divergence bound; open-loop; perfect observation. **Strawn, Ayanian & Lindemann**, RA-L 2023: coverage of trajectory-prediction uncertainty; no sensor faults. **Martinez Gil et al.**, adaptive conformal anomaly detection, arXiv 2604.20122 (2026): false-alarm control under shift; no closed loop or sensor faults mentioned. **Guérin et al.**, AAAI 2023: monitors can give a false impression of safety — offline, perception |
+| **Closest work** | **Zhao et al.**, robust conformal STL verification, 2024: coverage under a known f-divergence bound; open-loop; perfect observation. **Strawn, Ayanian & Lindemann**, RA-L 2023: coverage of trajectory-prediction uncertainty; no sensor faults. **Martinez Gil et al.**, adaptive conformal anomaly detection, arXiv 2604.20122 (2026): false-alarm control under shift; no closed loop or sensor faults mentioned. **Guérin et al.**, AAAI 2023: monitors can give a false impression of safety — offline, perception. **Conformal assurance monitors** — Boursinos & Koutsoukos (2020–2021); *Fault-Adaptive Autonomy in Systems with Learning-Enabled Components*, Sensors 2021 — calibrated confidence on learned components; **missed detections not evaluated**, and faults are actuator degradation |
 | **What remains unreached** | A conformal runtime monitor measured to **meet** its false-alarm specification while **detecting nothing**, under closed-loop persistent sensor failure |
-| **Claim** | The gate's coverage guarantee holds on every run and its detection is zero: the guarantee is satisfied while the safety function fails |
+| **Claim** | The gate's false-alarm rate stays within its specification on every run while its detection of a persistent sensor fault is zero: the specification is met while the gate's detection function fails. *(A conformal guarantee is marginal, not per-run — do not write that "the guarantee holds on every run".)* |
 | **Evidence** | Calibration in band on **30 / 30** runs, clean false-alarm median **5.84 %** (E18-R3); **0 / 30** detection, alarm rate **≈ 0.2 %** under sustained fault (E18-R3c) |
 | **Evidence rating** | Strong |
 | **Novelty rating** | **Medium** |
 | **Must do** | **A2(c): run adaptive conformal inference and the Martinez Gil et al. weighted-conformal detector** on the shared protocol. If either catches sustained `imu_dropout`, restrict this claim to split conformal. A2(b) confidence intervals |
-| **Wording** | *"The monitor satisfies its false-alarm guarantee on every run and detects no persistent fault."* Never "conformal prediction fails" |
+| **Wording** | *"The monitor's false-alarm rate stays within specification on every run, and it detects no persistent sensor fault."* Never "conformal prediction fails" |
 
 ---
 
@@ -100,14 +109,14 @@ substance.
 
 | | |
 |---|---|
-| **Closest work** | **Dash et al.**, PID-Piper, DSN 2021 (`PDF-READ`): detects and recovers using a learned model of the controller whose deviation from the real controller is thresholded; its **threat model excludes persistent drastic sensor manipulation and attacks on all sensors at once (§II-E)**. **Dash, Chan & Pattabiraman**, SpecGuard, CCS 2024: detection out of scope; detector not measured. **Tatbul et al.**; **TaPR**: account for post-anomaly periods in time-series evaluation (*not yet read*) |
-| **What remains unreached** | Detection measured **in the persistent-fault regime these works exclude**, with a duration-matched control showing that detection measured on faults that end does not transfer to faults that persist |
-| **Claim** | In the persistent-sensor-failure regime excluded by prior detect-and-recover work, a residual gate that compares a learned controller's output against a learned reference detects nothing; its apparent detection on transient faults came from the recovery transient |
+| **Closest work** | **Dash et al.**, PID-Piper, DSN 2021 (`PDF-READ`): detects and recovers using a learned model of the controller whose deviation from the real controller is thresholded; its **threat model excludes persistent drastic sensor manipulation and attacks on all sensors at once (§II-E)**. **Dash, Li, Karimibiuki & Pattabiraman**, DeLorean, ASIA CCS 2024: lifts the all-sensor exclusion; attack duration not stated in its threat model; **evaluated attacks last 15–30 s**; **assumes an existing detector** (PID-Piper's). **Dash, Chan & Pattabiraman**, SpecGuard, CCS 2024: detection out of scope; detector not measured. **Tatbul et al.**; **TaPR**: account for post-anomaly periods in time-series evaluation (*not yet read*) |
+| **What remains unreached** | Detection measured for faults that **persist for the remainder of the mission** — excluded by PID-Piper and not evaluated by DeLorean or SpecGuard — with a duration-matched control showing that detection measured on faults that end does not transfer to faults that persist |
+| **Claim** | For sensor faults that persist for the remainder of a mission — a regime prior detect-and-recover work either excludes or does not evaluate — a residual gate comparing a learned controller's output against a learned reference fails to detect a persistent sensor dropout, and its apparent detection of that fault when transient came from the recovery transient |
 | **Evidence** | Ticks 400–999 alarm rate **99.06 %** when the fault ends against **0.18 %** when it persists; identical 0.38 % during the fault (E18-R3b vs R3c) |
 | **Evidence rating** | Strong |
-| **Novelty rating** | **Medium–high.** The exclusion is stated by the closest work itself |
+| **Novelty rating** | **Medium.** Downgraded from medium–high: the explicit exclusion is PID-Piper's alone; DeLorean evaluates attacks of tens of seconds rather than excluding persistence |
 | **Must do** | Read Tatbul et al. and TaPR; forward citations of PID-Piper for anyone who has lifted the exclusion |
-| **Wording** | *"Prior detect-and-recover work excludes persistent sensor manipulation from its threat model [PID-Piper, §II-E]. We evaluate that regime."* **Do not** claim that PID-Piper itself would fail — ASTRA's gate is only *structurally similar* to its detector, and PID-Piper was not run |
+| **Wording** | *"Prior detect-and-recover work either excludes persistent sensor manipulation [PID-Piper, §II-E] or evaluates attacks lasting tens of seconds while assuming a working detector [DeLorean]. We evaluate faults that persist for the rest of the mission."* **Do not** claim that PID-Piper itself would fail — ASTRA's gate is only *structurally similar* to its detector, and PID-Piper was not run |
 
 ---
 
@@ -134,8 +143,8 @@ substance.
 
 | | |
 |---|---|
-| **Closest work** | **Aslam et al.**, Connected Dependability Cage, arXiv 2604.27728 (2026): a function monitor **voting across redundant perception models** plus an anomaly monitor; run **sequentially**, not cross-checked; **qualitative evaluation only**. **Perception Simplex** (Bansal et al. 2024): verifiable cross-check **within perception**. **Hua et al.** 2025: budgeted **score** combination, AI code review. **Ferreira et al.** survey §8: combining monitors and verifying consistency is open |
-| **What remains unreached** | Monitors observing **different layers** — a sensor-integrity check and a statistical gate on the controller's output — whose **disagreement** is shown to carry detection evidence, **quantitatively, in closed loop** |
+| **Closest work** | **Aslam et al.**, Connected Dependability Cage, arXiv 2604.27728 (2026): a function monitor **voting across redundant perception models** plus an anomaly monitor; run **sequentially**, not cross-checked; **qualitative evaluation only**. **Perception Simplex** (Bansal et al. 2024): verifiable cross-check **within perception**. **Hua et al.** 2025: budgeted **score** combination, AI code review. **Ferreira et al.** survey §8: combining monitors and verifying consistency is open. **Orf et al.**, arXiv 2411.09643 (2024): **cross-layer dependency-graph aggregation** from sensors to execution — OR-aggregation and root-cause traversal, not disagreement; qualitative. **Antonante, Nilsen & Carlone**, arXiv 2205.10906 (2022): diagnostic graphs of **consistency tests between perception modules**. **Harder et al.**, HALO (2025): data-health and behavioural monitors run independently, no arbitration. **CoCo** (2022): composes monitor confidences |
+| **What remains unreached** | Monitors observing **different layers** — a sensor-integrity check and a statistical gate on the controller's output — whose **disagreement** is used as **evidence that one of them is blind**, **quantitatively, in closed loop**. Complementarity alone is not distinctive. **Novelty downgraded to low–medium** |
 | **Claim** | Across layers, the stack's monitors are complementary: each is blind where the other sees, and their disagreement locates the faults the gate misses |
 | **Evidence** | Health check catches `imu_dropout` (gate 0.00); gate catches `lateral_noise` (health 0.00); union 4 of 6 against the gate's 3 of 6; 30 seeds, clean-arm bar (E21) |
 | **Evidence rating** | Strong for complementarity; **systematic disagreement signature not yet measured** |
@@ -151,8 +160,8 @@ substance.
 
 | | |
 |---|---|
-| **Closest work** | **Or**, Silent Failures in Physical AI, arXiv 2606.00090 (2026): lists **what evaluation methods detect silent failures beyond task completion** as an open question (§9.5). **Ferreira et al.** §8: no unified benchmark. **Guérin et al.**, AAAI 2023: evaluate monitors on errors caught, not OOD scores. **Guérin et al.** 2022: single-monitor, offline metrics |
-| **What remains unreached** | A released, pre-registered protocol for runtime monitors under **persistent** faults, in **closed loop** |
+| **Closest work** | **Or**, Silent Failures in Physical AI, arXiv 2606.00090 (2026): lists **what evaluation methods detect silent failures beyond task completion** as an open question (§9.5). **Ferreira et al.** §8: no unified benchmark. **Guérin et al.**, AAAI 2023: evaluate monitors on errors caught, not OOD scores. **Guérin et al.** 2022: single-monitor, offline metrics. **Tsai & Hariri**, arXiv 2606.06996 (2026): fault injection **varying duration — persistent versus partial recovery** — but for mission-command faults, without during-versus-after comparison or nominal false-alarm evaluation |
+| **What remains unreached** | A released, pre-registered protocol for runtime **monitors** under persistent **sensor** faults, in closed loop, with a **duration-matched** comparison of detection **during versus after** the fault and a clean-arm false-alarm bar. Duration as a parameter alone is not distinctive. **Novelty downgraded to low–medium** |
 | **Claim** | A pre-registered evaluation protocol that exposes silent gate failure: sustained versus transient injection with a duration-matched control; phase-resolved detection; a clean-arm false-positive bar alongside detection; the run as the unit; frozen thresholds; recorded withdrawals |
 | **Evidence** | Applied across E17–E21 and Phase 2; pre-registrations precede results (`ae997b3` → `4615cdc`; `db090f2` → `236330e`) |
 | **Evidence rating** | Strong |
@@ -166,20 +175,21 @@ substance.
 
 | rank | claim | evidence | novelty | ready? |
 |---|---|---|---|---|
-| 1 | **N3** evaluating the excluded regime | strong | **medium–high** | after TaPR / Tatbul and PID-Piper forward citations |
-| 2 | **N1** integrity failure at the gate | strong | medium | **after the integrity-monitoring read**, V1, A1 |
-| 3 | **N2** guarantee holds, detection zero | strong | medium | after A2(c) |
-| 4 | **N5** cross-layer disagreement | strong / partial | medium | after A4, V2 |
-| 5 | **N6** protocol | strong | medium | when released |
-| 6 | **N4** below-baseline masking | strong | **low–medium** | after V3 and A3 |
+| 1 | **N1** integrity failure at the gate | strong | medium | after reading CoCo's case studies and papers citing CoCo; V1; A1 |
+| 2 | **N3** faults persisting for the mission | strong | medium | after papers citing DeLorean; TaPR / Tatbul |
+| 3 | **N2** specification met, detection zero | strong | medium | after A2(c) and Boursinos & Koutsoukos full texts |
+| 4 | **N4** below-baseline masking | strong | low–medium | after V3 and A3 |
+| 5 | **N5** cross-layer disagreement as evidence of blindness | strong / partial | **low–medium** | after A4; Antonante et al. full text |
+| 6 | **N6** protocol | strong | **low–medium** | when released |
 
-**What changed from the previous ranking:** N3 moves to the top because its novelty now rests on a
-limitation the closest detect-and-recover work states about itself. N1 drops from first to second
-because the integrity-monitoring literature solves its estimator-level form, and its remaining novelty
-depends on a read not yet done.
+**What changed after re-verification:** N3 drops from medium–high to medium, because the explicit
+exclusion belongs to PID-Piper alone. N5 and N6 drop to low–medium, because cross-layer diagnosis
+aggregation and duration-varied fault injection both exist. N1 returns to first: it rests on the one
+boundary that held across every search — **no work checks whether a safety gate can still detect**.
 
-**Lead with N3 and N1 together:** the regime prior work excludes, and the layer prior work does not
-reach.
+**Frame Paper 1 as one sharp finding, not six contributions:** *a runtime-assurance gate can be alive,
+calibrated and confident while blind to a persistent sensor fault — a failure that liveness watchdogs,
+confidence monitors and assumption monitors are not designed to catch.* N2–N6 support it.
 
 ---
 
@@ -201,6 +211,15 @@ reach.
 | Monitors that look good while missing errors | Guérin et al., AAAI 2023 | abstract |
 | Closed-loop fault masking | Zhang et al. 2026; Gómez-González et al. | abstract |
 | Offline metrics vs deployed reliability (general) | Rashidi, 2026 | full text |
+| **Monitoring a verified system's assumptions, including observation models, and composing confidence that guarantees hold** | **Ruchkin et al., CoCo, ICCPS 2022** | full text |
+| Liveness watchdogs on safety monitors | Harder, Kulkarni & Behl, HALO, 2025 | full text |
+| Conformal (ICP) assurance monitors on learned components | Boursinos & Koutsoukos 2020–2021; Fault-Adaptive Autonomy, Sensors 2021 | abstract / full text |
+| Protection levels used in path-planning decisions | Lee, Seo & Kassas, ION GNSS+ 2020 | PDF p. 1 |
+| Cross-layer dependency-aware fault-diagnosis aggregation | Orf et al., arXiv 2411.09643, 2024 | full text |
+| Consistency tests between perception modules with guarantees | Antonante, Nilsen & Carlone, arXiv 2205.10906, 2022 | abstract |
+| Recovery from attacks on multiple sensors, detection assumed | Dash et al., DeLorean, ASIA CCS 2024 | full text |
+| Fault duration as an injection parameter | Tsai & Hariri, arXiv 2606.06996, 2026 | full text |
+| Sequential conformal change-point detection | Volkhonskiy et al., arXiv 1706.03415, 2017 | abstract |
 | Semantic anomaly detection | Elhafsi et al., 2023 | abstract |
 | Secure state estimation under attack | Fawzi/Tabuada; Pasqualetti et al. | **not yet read** |
 
@@ -210,11 +229,11 @@ reach.
 
 | future claim | closes | positioning after the closest-work pass |
 |---|---|---|
-| **B1** runtime detection that a safety gate has gone blind | L4 | **Introspection for safety gates** — extends runtime failure prediction from perception components (Yang et al. 2021) and assumption monitoring from plans (Zudaire et al. 2021) to the gate. Candidate formalism: integrity-style **protection levels** answering "can this gate currently see?" |
+| **B1** runtime detection that a safety gate has gone blind | L4 | **Introspection for safety gates** — extends runtime failure prediction from perception components (Yang et al. 2021) and assumption monitoring from plans (Zudaire et al. 2021) to the gate. **Must be positioned against CoCo** (assumption confidence), HALO (liveness) and conformal assurance monitors (per-decision confidence), and must show on the same protocol that those do **not** flag the blindness B1 flags. Candidate formalism: integrity-style **protection levels** answering "can this gate currently see?" |
 | **B2** cross-layer consistency fusion | L3 | Beyond within-function voting (Dependability Cage) and within-perception cross-checks (Perception Simplex) |
 | **B3** governed stack with no sustained silence | L1 | Consumes integrity information at the gate, relaxing Assumption 8 |
 | **B4** recovery gated on trusted detection | L2 | Recovery in the persistent regime PID-Piper excludes |
-| **B5** masking-robust detection statistic | L5, L6 | Comparators: adaptive conformal inference; Martinez Gil et al. |
+| **B5** masking-robust detection statistic | L5, L6 | An **application** of sequential conformal change-point detection (Volkhonskiy et al. 2017), not a new method. Comparators: adaptive conformal inference; Martinez Gil et al. |
 
 Paper 1 may say this motivates monitor-aware runtime assurance as future work. It may not claim any of
 it.
@@ -247,10 +266,11 @@ Brackets must be resolved by §7 before submission.
 > The safety gate between them is not itself checked. We measure a gate that fails silently. Our
 > contributions are:
 >
-> 1. **The excluded regime, evaluated.** Detect-and-recover work excludes persistent sensor manipulation
->    from its threat model. In that regime, a residual gate comparing a learned controller's output with
->    a learned reference detects nothing, and its apparent detection on transient faults came from the
->    recovery transient.
+> 1. **Faults that persist, evaluated.** Detect-and-recover work either excludes persistent sensor
+>    manipulation or evaluates attacks lasting tens of seconds while assuming a working detector. For a
+>    sensor dropout persisting for the rest of the mission, a residual gate comparing a learned
+>    controller's output with a learned reference does not detect it, and its apparent detection of the
+>    same fault when transient came from the recovery transient.
 > 2. **Integrity failure at the gate.** Throughout a persistent sensor failure the gate reports no
 >    hazard, while an integrity-style check on the sensor layer of the same stack detects the fault
 >    within five ticks on every run, without false alarms.
@@ -282,3 +302,8 @@ Brackets must be resolved by §7 before submission.
 | "The gate separates faulted from clean at AUC 0.998" | 0.998 is the sensor layer | "0.998 at the sensor, 0.737 at the gate's score" |
 | "about 5 % false alarms" | measured 5.84 % | "5.84 % (median)" |
 | "90 % fewer false alarms" | inverts the finding — the low rate is a miss | "the alarm rate falls below the healthy baseline" |
+| "Integrity information is not used in decisions" | Lee, Seo & Kassas 2020 use protection levels in path planning | "not consumed online by a runtime-assurance gate" |
+| "Nothing monitors the monitors" | HALO (liveness), conformal assurance monitors (confidence), CoCo (assumptions) | "nothing checks whether the gate can still *detect*" |
+| "Prior work excludes persistent faults" | only PID-Piper excludes; DeLorean evaluates 15–30 s attacks | "excludes or does not evaluate faults persisting for the mission" |
+| "The conformal guarantee holds on every run" | conformal guarantees are marginal | "the false-alarm rate stays within specification on every run" |
+| "We are the first to aggregate faults across layers" | Orf et al. 2024 | "disagreement as evidence of blindness" |
