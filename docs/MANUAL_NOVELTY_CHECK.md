@@ -192,9 +192,12 @@ Copy this table and fill one row per paper checked.
 
 | # | paper | read level (PDF / abstract) | question | answer (yes / no / ambiguous) | page / section | effect on claim |
 |---|---|---|---|---|---|---|
-| 1 | CoCo | | sensor fault injected? | | | |
-| 2 | CoCo | | confidence drops on it? | | | |
-| 3 | CoCo | | uninformative monitor considered? | | | |
+| 0 | CoCo | PDF (all 13 pp.) | observation assumptions monitored? | **yes** — observation models capturing sensor uncertainty; noise-parameter bounds | §4.2, pp. 4–5; §5.1–5.2 | N1 must cite CoCo |
+| 1 | CoCo | PDF | sensor fault injected? | **no** — steeper hill (dynamics), initial states outside verified set, stuck fin (actuator, UUV) | §5.1–5.2, pp. 8–9 | Core finding strengthens: CoCo not tested in this regime |
+| 2 | CoCo | PDF | confidence drops on it? | **n/a** — no sensor fault; results are episode-aggregate calibration and AUC only | Tables 1–2, p. 8 | — |
+| 3 | CoCo | PDF | uninformative monitor considered? | **no** — assumes monitors carry the relevant information (§4.4) and are "well-calibrated and accurate" (§6); lists monitoring the assumptions of other monitors as **future work** citing Henzinger & Saraç 2020 | §4.4 p. 5; §6 pp. 9–10 | B1 distinction holds; new lead added |
+| 3a | Henzinger & Saraç, *Monitorability Under Assumptions*, RV 2020 | | does it detect that a monitor cannot detect? | *to check* | | Could close B1 |
+| 3b | Carpenter et al., *ModelGuard*, ADHS 2021 | | would model invalidation flag sensor dropout / bias? | *to check* | | Must be a baseline in experiment 2.4 |
 | 4 | CoCo citing papers | | gate blindness detected? | | | |
 | … | | | | | | |
 

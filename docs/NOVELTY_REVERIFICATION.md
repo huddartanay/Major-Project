@@ -280,7 +280,9 @@ method.
 
 | item | why it matters | effort |
 |---|---|---|
-| **CoCo full evaluation** — does any case study inject sensor faults that blind a monitor? | Could close N1 and B1 | hours |
+| ~~CoCo full evaluation~~ — **done 13 Sept, PDF read in full; see §5** | — | done |
+| **Henzinger & Saraç, *Monitorability Under Assumptions*, RV 2020** — cited by CoCo for monitoring other monitors' assumptions | Could close B1 | hours |
+| **Carpenter et al., *ModelGuard*, ADHS 2021** — would its model invalidation flag sensor dropout? | Decides the baseline in experiment 2.4 | hours |
 | **Papers citing CoCo** (2022–2026) | The most likely place for "gate blindness" to have been addressed since | hours |
 | **Antonante et al. full text** — do the diagnostic graphs include localization / state estimation? | Could close N5 | hours |
 | **Papers citing DeLorean** — whole-mission persistent attacks? | Could close N3 | hours |
@@ -288,3 +290,34 @@ method.
 | Both closed-loop masking papers in full | N4 | hours + access |
 | Hobbs et al. run-time assurance tutorial — its state assumption | A1 (fetch failed: file too large) | hours |
 | Bench2Drive-Robust | N6 | hours |
+
+---
+
+## 5 · CoCo — read in full from the PDF (13 September 2026)
+
+Ruchkin, Cleaveland, Ivanov, Lu, Carpenter, Sokolsky & Lee, *Confidence Composition for Monitors of
+Verification Assumptions*, ICCPS 2022, arXiv 2111.03782v3. **All 13 pages read directly** (`PDF-READ`);
+this supersedes the earlier `FULL-TEXT` extraction. Page numbers are PDF pages.
+
+| question | answer | where |
+|---|---|---|
+| Are observation / sensor assumptions monitored? | **Yes.** Verification rests on initial states, dynamics, and observation models capturing known sensor uncertainty; case-study assumptions bound measurement-noise parameters, monitored by a particle filter and by statistical model invalidation (ModelGuard) | §4.2 pp. 4–5; §4.3 p. 5; §5.1–5.2 pp. 8–9 |
+| Is a sensor fault injected during operation? | **No.** Violations come from a steeper hill than modelled (mountain car), initial states outside the verified set, and a 33 % chance of a stuck fin — an actuator fault — in the underwater vehicle | §5.1–5.2 pp. 8–9 |
+| Does confidence respond to a sensor fault over time? | **Not evaluated.** Results are episode-aggregate calibration error, Brier score and AUC | Tables 1–2 p. 8; §5.3 p. 9 |
+| Is a monitor that runs but cannot detect considered? | **No.** Composition assumes each monitor carries the relevant information about its assumption; the discussion conditions detection on monitors being well-calibrated and accurate | §4.4 p. 5; §6 pp. 9–10 |
+| Is monitoring other monitors discussed? | **As future work only.** A longer-term goal is to monitor the assumptions of other monitors, citing Henzinger & Saraç (RV 2020) | §6 p. 10 |
+
+**Structural note.** CoCo's monitors consume the same observations the controller consumes, so a faulted
+sensor corrupts their inputs as well — the shared-path condition ASTRA's gate-blindness monitor must avoid.
+Its model-invalidation monitor, however, tests the consistency of the observation trace with the dynamics
+and could plausibly flag a sensor dropout; this is untested in the paper.
+
+**Effect.**
+
+| item | change |
+|---|---|
+| Core finding | **Strengthened** — CoCo does not test sensor faults and presumes its monitors stay accurate |
+| B1 | **Distinction holds** — the closest work lists monitoring other monitors as future work (2022) |
+| Experiment 2.4 | **ModelGuard-style model invalidation added as a required baseline** |
+| New must-reads | Henzinger & Saraç, *Monitorability Under Assumptions*, RV 2020 (could close B1); Carpenter et al., *ModelGuard*, ADHS 2021; Ruchkin et al. 2021, *Confidence Monitoring and Composition for Dynamic Assurance of Learning-Enabled Autonomous Systems*; Cimatti et al., assumption-based runtime verification with partial observability; Sokolsky et al., monitoring assumptions in assume-guarantee contracts |
+| Still open | Papers citing CoCo, 2022–2026 |

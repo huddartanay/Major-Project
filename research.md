@@ -248,6 +248,7 @@ not ticks; report 95 % intervals and a per-fault breakdown. Use `benchmarks/e17_
 | Liveness | HALO | does the gate produce a verdict every tick? (it always does — record it) |
 | Confidence | conformal assurance monitors | the gate's own conformal p-value / credibility on each decision |
 | Assumption validity | CoCo | calibrated monitors of observation-model assumptions: innovation consistency, sensor staleness, redundancy cross-check; combined into a confidence |
+| Model invalidation | ModelGuard (Carpenter et al., ADHS 2021), used inside CoCo | statistical test of whether the recent observation trace is consistent with the dynamics and measurement model. **Added after reading CoCo in full: this is the baseline most likely to catch sensor dropout** — if it does, narrow the paper's boundary to the faults it misses |
 
 **Protocol:** P1, six faults, sustained from tick 200, 3,400 ticks, 30 development seeds plus a 30-run
 clean arm. Metric: for each baseline, does it flag **the gate as untrustworthy** during the fault, at a
