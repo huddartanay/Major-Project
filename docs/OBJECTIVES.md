@@ -1,148 +1,256 @@
 # ASTRA — Objectives
 
-**Finalised 13 September 2026.** Supersedes objectives stated in earlier plans where they conflict.
-Every objective has a measurable completion condition. An objective is not done because work was
-done on it; it is done when its condition is met and recorded in the claim ledger.
+**Revised 13 September 2026 — gap-driven.** Supersedes the version at `93648b7`, which organised
+objectives around ASTRA's own shortfalls. This version organises them around the **limitations of
+existing published work** recorded in `docs/LITERATURE_GAPS.md` (gaps L1–L6), so that every objective
+exists to close a gap someone else's work leaves open. A mapping from the old numbering is in §9.
 
-Evidence referred to below is on branch `3.0`; see `docs/GAP_VERIFICATION.md`.
-
----
-
-## 0 · Two corrections that change decisions
-
-1. **SAFECOMP is not an IEEE venue.** It is published by Springer (LNCS). Earlier advice recommended
-   "ITSC or SAFECOMP"; for an IEEE submission the candidates are **IEEE ITSC**, **IEEE ISSRE**, and
-   **IEEE/IFIP DSN**. See §3.
-2. **comma2k19 is logged data, so replaying it is open-loop.** The recorded vehicle's trajectory does
-   not respond to ASTRA's commands, which means **closed-loop fault masking — the mechanism behind the
-   central finding — cannot occur in a replay.** External validation on comma2k19 can test the
-   sensor- and estimator-level parts of the claim on real noise; it cannot reproduce the blind spot
-   itself. O4 is scoped accordingly, and a reviewer must be told this rather than left to discover it.
+Evidence referred to is on branch `3.0`; see `docs/GAP_VERIFICATION.md`.
 
 ---
 
-## 1 · The north star
+## 0 · Corrections carried forward
 
-> **A runtime governance system for a learned controller that detects faults — including ones that
-> persist — without going quiet; knows which sensor is at fault; responds to *that* fault by restoring
-> the best functional state available rather than only degrading toward a stop; and stays safe when a
-> sensor is compromised or a reading is semantically wrong.**
-
-What the literature review established about this goal, and must shape it:
-
-- Fault-tolerant reconfiguration, secure estimation under sensor attack, and semantic anomaly
-  detection **each already exist as fields**. ASTRA will not be novel for having any of them.
-- ASTRA's differentiator has to be what the evidence uncovered: **a governance stack whose layers can
-  disagree, and which treats that disagreement — especially a monitor that has gone blind — as a
-  first-class signal.** Every capability is organised around that.
-
-The north star is reached in two stages. Stage 1 proves the problem exists and locates it. Stage 2
-builds against it.
+1. **SAFECOMP is not IEEE** (Springer LNCS). IEEE candidates: ITSC, ISSRE, DSN.
+2. **comma2k19 replay is open-loop**, so closed-loop masking cannot occur in it. External validation
+   there tests sensor- and estimator-level evidence only.
+3. **The placeholder policy is not a classical-controller baseline.** `KinematicPlaceholderPolicy`
+   holds speed and centres steering and does not read lateral position, so it cannot compensate a
+   position fault. Any learned-versus-classical comparison needs a matched controller (see A3).
 
 ---
 
-## 2 · Stage 1 — Paper 1: establish and locate the gap
+## 1 · The direction
 
-**Thesis.** Calibration validity, statistical separability and operational detectability are three
-different properties of a runtime monitor. A conformal monitor of a learned controller can have the
-first two and lack the third — going quieter than its own healthy baseline while a sensor failure
-persists — and the failure is architectural: the evidence is present elsewhere in the stack and the
-gate does not consult it.
+> **Monitor-aware runtime assurance.** An architecture that does not assume its monitors see the
+> truth. It measures at runtime whether each monitor can currently detect faults, using consistency
+> between layers as the evidence; it routes decisions away from monitors that have gone blind; and it
+> triggers fault-specific recovery only on detections it has reason to trust.
 
-**Gate.** Nothing is submitted with an open P0 (`conference.md`).
+Existing runtime assurance asks *"is the action safe?"* ASTRA adds the question it does not ask:
+**"can my monitor currently see?"**
 
-| # | Objective | Done when | Status |
+| gap in existing work | Paper 1 establishes | Paper 2 closes |
+|---|---|---|
+| **L1** Runtime assurance assumes the monitor sees the true state | A1 | B3 |
+| **L2** Recovery assumes detection is solved | A5 | B4 |
+| **L3** Combining monitors and checking consistency is open | A6 | B2 |
+| **L4** Nothing tells a monitor it has gone blind | A4 | **B1 — the core contribution** |
+| **L5** Conformal guarantees bound false alarms, not missed detection | A2 | B5 |
+| **L6** Masking studied only under classical control | A3 | B5 |
+
+---
+
+## 2 · Rules every objective is held to
+
+1. **Pre-registered before any run.** Design, metric and decision rule committed first.
+2. **The run is the unit.** Ticks are never samples.
+3. **Development and evaluation seeds are separate.** Seeds `20260731 + i`, `i < 30`, are
+   *development* — already seen by E17–E21. Every Paper 2 method is tuned on those and evaluated on a
+   **held-out block `20261201 + i`, `i < 30`**, with every threshold frozen before the held-out runs
+   are touched.
+4. **No algebraic path from method to metric.** Checked explicitly, after Phase 2's identity confound.
+5. **Runtime methods may not read ground truth.** Nothing deployed may use the injected-fault identity,
+   the injector's state, or simulator truth (`truth_y`, `truth_speed`). Ground truth is used only to
+   *score*.
+6. **Confidence intervals on every headline number.**
+7. **No novelty claim before V1 and V2** (§3).
+8. **Every result updates the claim ledger**, including failures.
+
+### The shared protocol
+
+Unless stated otherwise every objective is scored on the E21 design: policy P1; six fault classes at
+`medium` severity; **sustained** injection opening at tick 200 and never closing; 3,400 ticks; 30
+faulted runs per class and a 30-run clean arm.
+
+- **Detection** — the run's monitor fires at any point after onset.
+- **Clean false positive** — the monitor fires at all on a clean run.
+- **Bars** — detection ≥ 0.90 and clean false positive ≤ 0.10.
+
+### Definition used by A4 and B1
+
+A monitor is **blind** to a fault over a window when the fault is active for the whole window and the
+monitor's alarm rate in that window is at or below its own clean median false-alarm rate. Windows are
+200 ticks. This is a **scoring label**, computed from ground truth offline; it is never available to a
+runtime method.
+
+---
+
+## 3 · Literature verification — gates on every claim
+
+| # | Objective | Done when |
+|---|---|---|
+| **V1** | Confirm the evidence for L1–L6 in the PDFs | Synergistic Simplex Assumption 8, SpecGuard's threat model, the monitoring survey's §8, and Zhao et al.'s assumptions each confirmed first-hand, with page numbers recorded |
+| **V2** | Confirm L3 and L4 are unclaimed since 2024 | Targeted searches run and logged for runtime detection of monitor blindness or degradation, cross-monitor consistency checking, detector health monitoring and monitor self-assessment; papers citing Synergistic Simplex, SpecGuard and the Ferreira survey checked. **Gates any novelty claim for B1 and B2** |
+| **V3** | Read both closed-loop masking papers in full | Full text of Gómez-González et al. and Zhang et al. read; venue and year of the former confirmed; recorded whether either reports alarms falling below baseline. **Gates A3's framing** |
+
+---
+
+## 4 · Paper 1 — establish that the gaps are real
+
+**Thesis.** The assumptions behind runtime assurance fail in a measurable way: a calibrated monitor
+reading the fused estimate goes quieter than its healthy baseline for as long as a sensor failure
+persists, while another layer of the same stack sees the fault — and nothing in the architecture
+consumes that disagreement.
+
+| # | Gap | Objective | Done when | Status |
+|---|---|---|---|---|
+| **A1** | L1 | **The monitor does not see the true state** | Shown on the shared protocol that a monitor reading the fused estimate misses a sustained sensor fault that sensor-level evidence catches; **independently reproduced from branch `3.0`** | Measured: gate 0/30, health 30/30 (R3c, E21). **Awaiting push and independent reproduction** |
+| **A2** | L5 | **A satisfied conformal guarantee coexists with zero detection — and not only for vanilla split-conformal** | (a) Calibration in band on 30/30 runs alongside 0/30 detection — *met*. (b) Bootstrap CIs and a per-fault breakdown for the discriminability–detection correlation. (c) **Adaptive conformal inference** run on the shared protocol at ε = 0.05; outcome recorded either way — if ACI also misses sustained `imu_dropout`, the failure is architectural; if it catches it, the claim narrows to split-conformal | (a) met; (b), (c) not started |
+| **A3** | L6 | **Masking under a learned policy — is it the policy?** | A **matched classical controller** — lateral and speed feedback reading the same estimated state the learned policy reads — run on the same faults and seeds. Recorded whether it also drives the gate below its clean baseline. *Same outcome:* the finding is about runtime-assurance monitors under closed-loop control. *Learned policy only:* the finding is specific to learned controllers | Not started. **Requires building the matched controller** |
+| **A4** | L4 | **The blindness signature is systematic** | Pre-registered, 30 seeds: the fraction of post-onset ticks in which L1 or L3 reports degradation **while** L6 is not alarming, against the same fraction on clean runs, with CIs, for every fault class. Supports L4 when, under sustained `imu_dropout`, the signature holds on ≥ 90 % of post-onset ticks and ≤ 10 % of clean ticks | Observed on single ticks only |
+| **A5** | L2 | **A recovery pipeline gated on this monitor would never trigger** | For all six faults: the fraction of runs in which a detect-then-recover pipeline gated on the gate would trigger, and the trigger-latency distribution — from recorded detections, with the health check for comparison | Derivable from R3c and E21; not written up |
+| **A6** | L3 | **Monitors are complementary; their disagreement carries information** | Coverage of each monitor and of their union on the shared protocol | **Met**: health catches `imu_dropout` (gate 0.00), gate catches `lateral_noise` (health 0.00); union 4/6 against the gate's 3/6 (E21) |
+| **A7** | L1 | **Sensor-level evidence holds on real sensor noise** | comma2k19 acquired and split frozen; the cross-check and L1 evidence of A1 reproduced on real logs with injected faults; first `[M-ext]` row; the open-loop limitation stated | Not started. The long pole |
+| **A8** | — | **Paper written and submitted** | Every claim maps to a ledger row and a table; every number re-measured from `3.0`; prior art cited (Simplex, conformal safety filters, masking); zero open P0; submitted to the chosen venue | Not started |
+
+**Out of scope for Paper 1:** proposing a fix beyond A6's indicative union, adversarial sensors,
+semantic errors, recovery, CARLA, P2 and P3, severities other than `medium`.
+
+---
+
+## 5 · Paper 2 — ASTRA 2.0 closes the gaps
+
+Every B-objective is tuned on development seeds and scored on the held-out block.
+
+### B1 — Runtime blind-monitor detection *(closes L4 — the core contribution)*
+
+A runtime estimator that flags when a given monitor has lost the ability to detect, from
+cross-layer consistency, without reading ground truth.
+
+**Done when, on held-out seeds:**
+- it flags ground-truth blindness of the conformal gate under sustained `imu_dropout` in **≥ 27 / 30**
+  runs, within **20 ticks (1 s)** of the blindness window opening;
+- it raises a false blindness flag on **≤ 3 / 30** clean runs;
+- **leave-one-fault-out:** tuned without a given fault class, it still flags blindness for that class
+  in ≥ 0.80 of runs — for every class where some other layer carries evidence;
+- it beats two naive baselines: using the raw L1 health flag as a blindness proxy, and counting
+  disagreeing monitors.
+
+**Stated limit.** Consistency-based blindness detection can only flag blindness where *some* layer
+still sees the fault. Today no monitor sees `speed_bias` or `speed_stuck`, so B1 cannot flag the gate's
+blindness to them. That is closed by B3's coverage requirement, not by B1.
+
+### B2 — Consistency-based monitor fusion *(closes L3)*
+
+A principled way to combine monitors that uses their agreement and disagreement, not just their
+scores.
+
+**Done when, on held-out seeds:**
+- the fused decision reaches detection ≥ 0.90 on **every fault class that at least one member monitor
+  detects**, at clean false positive ≤ 0.10;
+- it achieves a lower false-positive rate than the OR-union of its members;
+- it achieves higher detection, at matched false-positive rate, than majority vote and than
+  likelihood-ratio score combination of the kind used for budgeted monitor ensembles.
+
+### B3 — No sustained silence *(closes L1)*
+
+The governed stack does not assume its monitors see the truth: decisions are routed away from monitors
+B1 flags as blind, and every sensor channel is observed by at least one monitor.
+
+**Done when, on held-out seeds:**
+- for **every** sustained fault class, the governed stack's alarm rate during the fault is **never
+  below** its clean false-alarm rate;
+- **all six** fault classes are detected at ≥ 0.90 with clean false positive ≤ 0.10 — which requires a
+  monitor that observes the speed channel;
+- an ablation with blind-monitor routing **disabled** — the "no sensor failure" assumption of existing
+  runtime assurance, in force — reproduces the sustained silence, and with routing **enabled** it does
+  not.
+
+### B4 — Recovery gated on trusted detection *(closes L2)*
+
+Fault isolation first, then recovery that acts on the specific faulty channel.
+
+**Done when, on held-out seeds:**
+- the faulty channel is correctly isolated in ≥ 0.90 of runs;
+- recovery triggers in ≥ 0.90 of sustained-fault runs;
+- after recovery the vehicle returns to NOMINAL, and its mean absolute lateral deviation is lower than
+  under the graduated fallback (NOMINAL → DEGRADED → LIMP → HALT), by a paired Wilcoxon test across
+  30 seeds at p < 0.05;
+- it outperforms the **same recovery gated on the conformal gate alone** — the detect-then-recover
+  structure of existing work — which A5 predicts will rarely trigger.
+
+### B5 — Detection that survives masking *(closes L5 and L6)*
+
+Show that the statistic itself — not only the plumbing — can be made robust to masking.
+
+**Done when, on held-out seeds:**
+- a detector operating on the L6 score **without access to L1 health** detects sustained
+  `imu_dropout` at ≥ 0.90 with clean false positive ≤ 0.10, by responding to changes in spread and to
+  persistence rather than to level alone;
+- a dispersion-augmented monitorability metric, **pre-registered fresh**, predicts detection at
+  identity-free ρ ≥ 0.70;
+- the monitor reports an estimate of its detection power per fault class alongside its coverage
+  guarantee.
+
+---
+
+## 6 · Beyond Paper 2
+
+| # | Gap it extends | Objective | Precondition |
 |---|---|---|---|
-| **O1** | **Make the empirical gap verifiable by someone else** | `3.0` pushed to the team remote; an independent verifier resolves E1–E5 against it; E6 has a bootstrap CI on ρ and a per-fault breakdown | **Blocked on push.** Evidence exists locally; E6 lacks CIs |
-| **O2** | **Confirm the gap is not already published** | Full text of the closed-loop fault-masking paper read; the eight searches in `GAP_VERIFICATION.md` §4 run and logged; the seven unverified citations read first-hand; verdict recorded for the conjunction | **Open.** Four works verified; none contains the conjunction |
-| **O3** | **Show the blind spot is architectural, not a calibration choice** | Pre-registered experiment: adaptive conformal inference on the E21 protocol. If ACI also misses sustained `imu_dropout`, recorded as supporting the architectural reading; if it catches it, the thesis narrows to "vanilla split-conformal" | **Not started** |
-| **O4** | **External validation of what replay can test** | comma2k19 acquired and split frozen; the sensor-level cross-check and L1 evidence of E2/E5 reproduced on real sensor noise with injected faults; **first `[M-ext]` row**; the open-loop limitation stated in the paper | **Not started.** The long pole |
-| **O5** | **Indicative remedy** *(decision required — §5)* | A cross-layer disagreement signal evaluated on the E21 protocol, reported as indicative: expected to cover at most 4 of 6 faults, with `speed_bias` and `speed_stuck` stated as unsolved | **Not started** |
-| **O6** | **Paper rewritten on the corrected thesis** | Every claim maps to a ledger row and a table; every number re-measured from `3.0`; architecture presented as the instrument, not the contribution; fault masking, Simplex and conformal safety filters cited as prior art; zero open P0 | **Not started** |
-| **O7** | **Submit** | Compliance checklist in `conference.md` Step 20 complete; submitted to the venue chosen in §3 | — |
+| **B6** | L1, L4 under attack | A strategic attacker that deliberately exploits the masking channel is detected or tolerated; compared against secure-estimation baselines, with prior art conceded | B1–B4 met |
+| — | semantic anomalies | **Not targeted.** An established field. ASTRA's only possible contribution is routing semantic evidence through B1's blindness mechanism, and that is not yet shown to be a gap | V2 extended to semantic monitors |
 
-### Already achieved toward Stage 1
+---
 
-| | evidence |
+## 7 · Venue
+
+Deadlines must be taken from each official call for papers.
+
+| venue | fit |
 |---|---|
-| Calibration valid on P1 at 160 s — 30/30 in band | E18-R3 |
-| Monitor below its own baseline under sustained fault — 0/30 detected, ~0.2 % vs 5.84 % | E18-R3c |
-| Apparent detection was the recovery transient — 99.06 % vs 0.18 % | E18-R3b vs R3c |
-| Evidence caught upstream — `health` 30/30, 0 false positives, 5 ticks | E21 |
-| Separability is not detection — sensor 0.998, monitor score 0.737, alarms below baseline | E17, R3c |
-| Two previously assumed detectors are unusable (`trust`, `innovation`) | E21 |
-| Monitorability (location-only) withdrawn; `D_s` confirmed not predictive | Phase 2 |
-| Test suite green, brittle claims withdrawn with measured n | `1848dd6` |
-
-### Explicitly out of scope for Paper 1
-
-Architectural novelty · adversarial sensors · semantic errors · reactive recovery · CARLA · policies
-P2 and P3 · severities other than `medium`. Each is either not built or already in the literature,
-and including any of them invites an overclaim rejection.
+| **IEEE ITSC** — recommended for Paper 1 | Vehicle framing; most tolerant of simulation-based evaluation |
+| **IEEE ISSRE** — alternative | Runtime-monitor failure analysis and measurement methodology in scope |
+| **IEEE/IFIP DSN** | Hold until external validation is stronger than replay-only |
 
 ---
 
-## 3 · Venue
-
-Deadlines are not stated here; they must be taken from each official call for papers.
-
-| venue | publisher | fit | risk |
-|---|---|---|---|
-| **IEEE ITSC** | IEEE ITSS | Vehicle framing; most tolerant of simulation-based evaluation among IEEE AV venues | Broad scope; the negative result must be framed as a safety finding, not a methods critique |
-| **IEEE ISSRE** | IEEE | Software reliability; runtime-monitor failure analysis and measurement methodology are in scope | Fewer autonomy reviewers; the control-loop mechanism needs more explanation |
-| **IEEE/IFIP DSN** | IEEE / IFIP | Dependability; values rigorous measurement and negative results | Highly competitive; weakest fit for a single synthetic plant |
-
-**Recommendation: IEEE ITSC first, ISSRE as the alternative.** Hold DSN until external validation is
-stronger than replay-only.
-
----
-
-## 4 · Stage 2 — ASTRA 2.0: close the gap
-
-Every objective below is scored on the **same protocol Stage 1 used** — the E21 design: P1, 30 seeds,
-sustained injection opening at tick 200, 3,400 ticks, a 30-run clean arm, detection ≥ 0.90 at clean
-false-positive ≤ 0.10. That is what makes Stage 2 measurable rather than aspirational.
-
-| # | Objective | Done when | Depends on |
-|---|---|---|---|
-| **S1** | **Cross-layer evidence fusion** — evidence from every layer reaches the veto decision | `imu_dropout`, `position_bias`, `position_drift`, `lateral_noise` all ≥ 0.90 at clean FP ≤ 0.10 under sustained injection | Paper 1 |
-| **S2** | **Self-trust** — detect that a monitor has gone blind, and never score silence as safety | The blind condition (e.g. L1 degraded while L6 is quiet) flagged on `imu_dropout` 30/30 at clean FP ≤ 0.10; decisions routed away from the blind monitor | S1 |
-| **S3** | **Channel coverage** — the speed channel is observed | `speed_bias` and `speed_stuck` ≥ 0.90 at clean FP ≤ 0.10. Neither is detected by anything today | S1 |
-| **S4** | **Detectors that respond to persistence and spread** | A dispersion-augmented monitorability metric, pre-registered fresh, predicts detection at ρ ≥ 0.70 identity-free; a persistence-accumulating rule outperforms per-tick crossings on sustained faults | Phase 2 |
-| **S5** | **Fault isolation and fault-specific response** | The faulty channel is identified; it is excluded and the state re-estimated; the vehicle returns to NOMINAL, or holds a better state than graduated fallback, with lower lateral deviation — compared against a published attack-recovery baseline | S1, S2 |
-| **S6** | **Adversarial sensors** | A strategic attacker that deliberately exploits the masking channel is detected or tolerated; compared against secure-estimation baselines; prior art conceded explicitly | S1–S5 |
-| **S7** | **Semantic errors** | Scoped only after S1–S5. Semantic anomaly detection is an established field; ASTRA's contribution, if any, is routing semantic evidence through the same self-trust mechanism | S2 |
-
-Stage 2 is **Paper 2**, not an extension of Paper 1.
-
----
-
-## 5 · Decisions that are yours to make
-
-1. **Venue** — ITSC or ISSRE (§3).
-2. **Whether O5 goes in Paper 1.** Including an indicative remedy makes the paper more useful and more
-   exposed: it must be reported as partial, since two of six faults would remain undetected.
-3. **Push `3.0` to the team remote.** O1 cannot complete until this happens.
-4. **Whether Paper 1 needs a second policy.** P1 only is honest but narrow; E18-R4 (recovering P3) is
-   the route to two policies and is currently optional.
-
----
-
-## 6 · Order of work
+## 8 · Order of work
 
 ```
-push 3.0 ──► O1 ──┐
-                  ├──► O6 ──► O7   (Paper 1)
-O2 ───────────────┤
-O3 ───────────────┤
-O4 ───────────────┤        (long pole — start early)
-O5 (if chosen) ───┘
+push 3.0 ─► A1 reproduced ─┐
+V1, V3 ────────────────────┤
+A2(b) CIs  ─ zero compute ─┤
+A5         ─ zero compute ─┤
+A2(c) ACI  ─ ~90 min ──────┼─► A8 ─► submit (Paper 1)
+A4         ─ ~90 min ──────┤
+A3 build controller, run ──┤
+A7 comma2k19 ── long pole ─┘   (start first)
 
-Paper 1 ──► S1 ──► S2, S3 ──► S5 ──► S6
-            S4 (can run alongside S1)
-            S7 (after S2)
+V2 ─┐
+    ├─► B1 ─► B2 ─► B3 ─► B4        (Paper 2)
+A4 ─┘      B5 alongside B1
 ```
 
-**O2 goes before O6.** If the full text of the fault-masking paper already reports below-baseline
-alarms, the thesis becomes an extension of a known result, and rewriting the paper first would be
-wasted work.
+**Zero-compute items first** (A2b, A5), then the ~90-minute pre-registered runs (A2c, A4). **A7 starts
+immediately** because it is the longest. **V2 before B1**, because B1 is the claimed contribution.
+
+---
+
+## 9 · Decisions that are yours
+
+1. **Venue** — ITSC or ISSRE.
+2. **Push `3.0` to the team remote** — A1 cannot complete without it.
+3. **Build the matched classical controller for A3** — adds a benchmark controller; without it L6 can be
+   evidenced but not attributed to the learned policy.
+4. **Whether Paper 1 needs a second policy** — P1 only is honest but narrow.
+
+### Mapping from the previous numbering (`93648b7`)
+
+| old | new |
+|---|---|
+| O1 make verifiable | A1 (+ A2b) |
+| O2 confirm unpublished | V1, V2, V3 |
+| O3 adaptive conformal | A2c |
+| O4 external validation | A7 |
+| O5 indicative remedy | A6 |
+| O6, O7 rewrite and submit | A8 |
+| S1 cross-layer fusion | B2 |
+| S2 self-trust | **B1** |
+| S3 channel coverage | B3 |
+| S4 persistence and spread | B5 |
+| S5 isolation and response | B4 |
+| S6 adversarial | B6 |
+| S7 semantic | not targeted |
+| — | **A3, A4, A5 are new**: they establish L6, L4 and L2 directly |
