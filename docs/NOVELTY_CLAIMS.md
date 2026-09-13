@@ -1,5 +1,11 @@
 # Novelty claims for the conference submission
 
+> **Revise before use — see `docs/CLOSEST_WORK.md` §4.** The closest-work pass requires: **N1** to cite
+> navigation integrity monitoring and measurement-robust CBFs and claim only the gate-level gap;
+> **N5** to cite the Connected Dependability Cage and Perception Simplex and claim only cross-layer
+> disagreement; **N3** is strengthened by PID-Piper's threat-model exclusion of persistent sensor
+> manipulation; and **"silent failure" must not be claimed as a new term**.
+
 **Prepared 13 September 2026** for Paper 1 (target IEEE ITSC; alternative IEEE ISSRE).
 Derived from the literature gaps in `docs/LITERATURE_GAPS.md` and the evidence in
 `docs/GAP_VERIFICATION.md`. Evidence is on branch `3.0`.

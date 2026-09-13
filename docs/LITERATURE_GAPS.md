@@ -1,5 +1,11 @@
 # Gaps in the existing literature — and the direction for ASTRA
 
+> **Superseded in part by `docs/CLOSEST_WORK.md`.** A later adversarial pass searched for the papers
+> closest to closing each gap. **No gap was closed, but L1 and L4 were narrowed** — navigation
+> integrity monitoring already detects a wrong estimate held with false confidence, and runtime
+> failure prediction exists for perception components. **Quote the restated gaps in
+> `CLOSEST_WORK.md` §3, not the statements below.**
+
 **Compiled 13 September 2026.** This document is about limitations of **other people's published
 work** that ASTRA can contribute to. It is not a list of ASTRA's own limitations
 (see `GAP_VERIFICATION.md` and `OBJECTIVES.md` for those).
