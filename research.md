@@ -78,7 +78,8 @@ They then check each element in `docs/GAP_VERIFICATION.md` against the files nam
 |---|---|---|
 | **Paper strategy** | one combined paper (finding + monitor) · or two papers | Combined is stronger; two is faster to a first submission |
 | **Venue** | IEEE ITSC · IEEE ISSRE | Get deadlines from the **official call for papers** — do not trust any date written in this repo |
-| **Preprint** | post on arXiv before submission · or not | **Check with Dr. Chaitra R. first** — the repository notice mentions an intended patent filing, and a preprint is a public disclosure |
+| **Preprint** | post on arXiv before submission · or not | **Recommended now that the patent application was rejected** — it timestamps the finding in a fast-moving area. Check the venue's preprint and anonymity policy in the call for papers first |
+| **Code release** | release under an open licence with the paper · or not | The patent rejection removes the reason for withholding code, which `conference.md` and `research/PAPER_REJECTION_RISK.md` flag as a rejection risk. Choosing a licence needs agreement from all four authors in `pyproject.toml` and your guide |
 
 Write the decisions at the top of `docs/OBJECTIVES.md` and commit.
 
@@ -182,7 +183,7 @@ Researchers do this routinely. Send one short email to the CoCo authors and one 
 > Thank you for your time.
 > [Name], BMS College of Engineering (guide: Dr. Chaitra R.)
 
-Do **not** attach code, data or architecture details (patent status).
+Keep the first email short. If they reply with interest, a preprint link is the easiest thing to share.
 
 ### 1.4 Decision gate
 
@@ -437,7 +438,8 @@ From `docs/NOVELTY_CLAIMS.md` §9. The most important:
 | 4 | Red-team | Give the draft to someone unfamiliar with it; ask them to find the weakest claim |
 | 5 | Zero open P0 | `conference.md` gate |
 | 6 | Venue compliance | Page limit, template, anonymisation rules, author list, no concurrent submission |
-| 7 | Guide sign-off | Dr. Chaitra R. — including patent status |
+| 7 | Guide sign-off | Dr. Chaitra R. — including the licence chosen for code release |
+| 9 | Stale confidentiality text removed | `README.md`, `NOTICE`, `LICENSE`, `docs/ASSUMPTIONS.md` (A-7), ADR-0014 and `conference.md` still describe a pending patent. A reviewer who finds "withheld pending patent" next to a public repository will ask why |
 | 8 | Reproducibility | Code and protocol ready to release, or a stated reason why not |
 
 ---
