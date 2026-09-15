@@ -394,3 +394,38 @@ device for ASTRA — the gap between gate-on-estimate and gate-on-truth is a dir
 | B1 | **Distinction holds** |
 | Experiment design | Add a ground-truth-fed gate as an oracle reference, following this paper's true-state monitor |
 | New must-read | Granig et al., *Weakness Monitors for Fail-Aware Systems*, FORMATS 2020 |
+
+---
+
+## 8 · Peper et al. — read in full from the PDF (15 September 2026)
+
+Peper, Miao, Mitra & Ruchkin, *Towards Unified Probabilistic Verification and Validation of Vision-Based
+Autonomy*, ATVA 2025 (Springer), arXiv 2508.14181v1. Cites CoCo. **All 31 pages read directly**
+(`PDF-READ`). Page numbers are PDF pages.
+
+**Method.** (1) Build an interval-MDP abstraction of the closed loop from training data, with
+Clopper–Pearson intervals on perception transition probabilities (confidence α). (2) Model-check a
+safety property (chance 1−β). (3) In a new environment, update a Dirichlet posterior over perception
+parameters from validation data and compute the posterior probability that it falls inside the IMDP
+intervals (confidence 1−γ, median over abstract states). Theorem 2 gives a nested guarantee that
+degrades with γ.
+
+| question | answer | where |
+|---|---|---|
+| Does it detect that the perception assumption no longer holds? | **Yes — offline.** Validation is framed as a design-time problem on a dataset of i.i.d. trajectories collected in the new environment | Problem 3 p. 5; §4.3 p. 11 |
+| Does it need ground truth? | **Yes.** Validation bins **state/estimate pairs**; the true state must be known for each sample | Alg. 3 lines 2–3 p. 13; §5.1 p. 16 |
+| Is a sensor fault injected? | **A persistent bias, as a separate environment.** State-estimate noise offset by a scalar; 1000 trajectories per environment. Shifts ≥ 2.45 → confidence 0.0000; in-distribution 0.65–0.78; **shifts between 0 and 2.45 excluded** as not conclusively in or out of distribution | §5.1 p. 17; Table 2 p. 18 |
+| Is it evaluated within a run, online? | **No.** One confidence value per environment dataset | Table 2 p. 18 |
+| Is a monitor that runs but cannot detect considered? | **No.** It validates the perception model, not a monitor's detection capability | §4.3; §6 p. 20 |
+| Statements usable as gap citations | Intro: a fundamental gap remains between assume-guarantee verification and the validity of the assumptions in the deployed system. Related work: perception-contract approaches have not been investigated under changed visual distributions | §1 p. 2; §2 p. 4 |
+
+**Effect.**
+
+| item | change |
+|---|---|
+| Core finding | **Holds, but must be worded precisely.** Detecting that a persistent estimation bias invalidates a perception-based guarantee **is done — offline, with ground truth, per environment dataset**. ASTRA's distinction: **online, within a run, at fault onset, with no ground truth** |
+| N3 | Persistent bias is studied as a *deployment environment*, not as a fault arriving mid-run |
+| B1 | **Distinction holds** — the object validated is a model, not a monitor's detection capability |
+| Positioning | **Closest analogue found so far.** Cite as the offline, ground-truth counterpart of what ASTRA does online |
+| Evaluation design | Their exclusion of small shifts (0–2.45) marks the hard, ambiguous regime; ASTRA should report detection across a magnitude sweep that *includes* it rather than excluding it |
+| New must-reads | Ruchkin et al., *Compositional Probabilistic Analysis of Temporal Properties over Stochastic Detectors*, IEEE TCAD 2020 (runtime confidence monitoring of model validity); Waite et al., arXiv 2502.21308; Dutta et al., HSCC 2025 |
