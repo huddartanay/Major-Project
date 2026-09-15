@@ -288,6 +288,7 @@ method.
 | **Luo et al., *Sample-Efficient Safety Assurances using Conformal Prediction*, arXiv 2109.14082** — conformal bound on an online monitor's false-negative rate | Could narrow the provable half of B1 | hours |
 | **Cairoli, Bortolussi & Paoletti, *Neural Predictive Monitoring under Partial Observability*, RV 2021** | Noisy observations inside a predictive-monitor guarantee | hours |
 | **Lukina, Schilling & Henzinger, *Into the Unknown: Active Monitoring of Neural Networks*, RV 2021** | A monitor that adapts when it meets the unknown | hours |
+| **Granig et al., *Weakness Monitors for Fail-Aware Systems*, FORMATS 2020** | Name suggests a monitor of a system's own weakness | hours |
 | **Antonante et al. full text** — do the diagnostic graphs include localization / state estimation? | Could close N5 | hours |
 | **Papers citing DeLorean** — whole-mission persistent attacks? | Could close N3 | hours |
 | Boursinos & Koutsoukos full texts — any false-negative evaluation? | N2 | hours |
@@ -355,3 +356,41 @@ shared-path condition as ASTRA's L6 gate (proposer and twin read the same L2 sta
 | B1 | **Distinction holds** — no mechanism signals that the marginal guarantee has lapsed |
 | Framing for the paper | The guarantee is valid only while the monitored trajectory resembles calibration data; a persistent sensor fault is exactly the case where it silently stops applying |
 | New must-reads (from its references) | Luo et al., arXiv 2109.14082 (conformal bound on a monitor's false-negative rate — **could narrow B1's provable half**); Cairoli, Bortolussi & Paoletti, RV 2021 (predictive monitoring under partial observability); Lukina, Schilling & Henzinger, RV 2021 (active monitoring of neural networks) |
+
+---
+
+## 7 · Cleaveland et al. — read in full from the PDF (15 September 2026)
+
+Cleaveland, Sokolsky, Lee & Ruchkin, *Conservative Safety Monitors of Stochastic Dynamical Systems*,
+arXiv 2301.11330v2 (venue listed by Semantic Scholar as NASA Formal Methods 2023; confirm). Same group as
+CoCo, and cites it. **All 17 pages read directly** (`PDF-READ`). Page numbers are PDF pages.
+
+**Method.** At design time the closed loop (dynamics, perception, state estimator, controller) is
+abstracted into a probabilistic automaton; PRISM computes bounded-time safety probability for every abstract
+state and control action into a lookup table. At runtime the state estimator's distribution is combined with
+the table to give a safety estimate.
+
+| question | answer | where |
+|---|---|---|
+| What does it guarantee? | Safety estimates are **conservative** provided (i) the abstraction is conservative, (ii) the state estimator is **well-calibrated**, and (iii) safety given the true state is independent of the monitor's output | Theorem 1 p. 10 |
+| Are observation / sensor assumptions monitored? | **No.** Estimator calibration is an assumption of the theorem, validated **once offline** (ECE 0.00656). The authors state conservatism of the perception/state-estimation part cannot be formally proved | §6 pp. 9–10; §7.2 p. 15 |
+| Is a sensor fault injected? | **Partly — in-distribution only.** Tank sensors have Gaussian noise and, with a constant probability each step, output 0 or full scale. These spurious readings are i.i.d., transient, and learned into the design-time perception-error model. No persistent or out-of-model fault | §7.1 p. 11; §5.1 p. 7 |
+| Per-tick behaviour reported? | **No.** Two example trials plotted per step; otherwise pooled calibration (ECE, a new conservative ECCE, Brier) and ROC-AUC over 500 trials (74 unsafe) | Figs. 2–4 pp. 13–14; Table 1 p. 15 |
+| Is a monitor that runs but cannot detect considered? | **No.** Conservative perception abstractions are future work | §8 p. 15 |
+
+**Structural note.** The monitor's only runtime input is the state estimator's output — the same estimate
+the controller acts on (U = c(X̂)). A persistent sensor fault that biases or freezes the estimator breaks
+assumption (ii), and the theorem's conservatism lapses with no signal: the shared-path condition again.
+The paper's **true-state monitor** (an oracle fed ground truth, AUC 0.870 vs 0.867) is a useful evaluation
+device for ASTRA — the gap between gate-on-estimate and gate-on-truth is a direct measure of blindness.
+
+**Effect.**
+
+| item | change |
+|---|---|
+| Core finding | **Strengthened** — a third monitor from the CoCo group conditions its guarantee on a calibrated estimator and never tests a fault outside the calibrated model |
+| A1 | **Theorem-level citation** — Theorem 1 explicitly assumes a well-calibrated state estimator |
+| N3 wording | Must say **persistent, out-of-model** sensor faults: modelled transient spurious readings *are* handled here |
+| B1 | **Distinction holds** |
+| Experiment design | Add a ground-truth-fed gate as an oracle reference, following this paper's true-state monitor |
+| New must-read | Granig et al., *Weakness Monitors for Fail-Aware Systems*, FORMATS 2020 |
