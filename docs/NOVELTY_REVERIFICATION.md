@@ -542,8 +542,8 @@ technique.
 **Consequences for the paper.**
 
 1. **B1 is not a new statistical method.** Its pieces — conformal p-values, test martingales, coverage-gap
-   theory — are established. The claim must be: *the first runtime detector of a safety gate's loss of
-   detection capability in closed loop, with evidence that it catches the silent failure*. Cite Volkhonskiy
+   theory — are established. The claim must be: *a runtime detector of a safety gate's loss of
+   detection capability in closed loop, with evidence that it catches the silent failure* — for which no prior work was found (never "the first"). Cite Volkhonskiy
    for the tool, Barber for the open question, Luo for the loud-versus-silent contrast.
 2. **Design requirement discovered.** A standard two-sided exchangeability test fires both when the gate
    correctly alarms on a fault and when it goes blind. The blindness monitor must test **one-sidedly for
