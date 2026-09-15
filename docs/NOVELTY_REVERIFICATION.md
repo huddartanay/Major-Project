@@ -429,3 +429,27 @@ degrades with γ.
 | Positioning | **Closest analogue found so far.** Cite as the offline, ground-truth counterpart of what ASTRA does online |
 | Evaluation design | Their exclusion of small shifts (0–2.45) marks the hard, ambiguous regime; ASTRA should report detection across a magnitude sweep that *includes* it rather than excluding it |
 | New must-reads | Ruchkin et al., *Compositional Probabilistic Analysis of Temporal Properties over Stochastic Detectors*, IEEE TCAD 2020 (runtime confidence monitoring of model validity); Waite et al., arXiv 2502.21308; Dutta et al., HSCC 2025 |
+
+---
+
+## 9 · Mao et al. 2025 — read from the PDF (15 September 2026)
+
+Mao, Umasudhan & Ruchkin, *How Safe Will I Be Given What I Saw? Calibrated Safety Prediction for
+Image-Controlled Autonomy*, arXiv 2508.09346v3 (March 2026; journal extension of L4DC 2023). Cites CoCo.
+Pages 1–25 read directly (`PDF-READ`); references skimmed.
+
+| question | answer | where |
+|---|---|---|
+| What is it? | Image-sequence safety-chance predictors (monolithic or world-model composite), post-hoc calibration, per-bin conformal bounds on calibration error, and test-time adaptation (MEMO) of the safety evaluator | §4 pp. 10–17 |
+| Is a shift detected at runtime? | **Ambiguous.** Introduction describes the adaptation module as detecting shifts; the method applies adaptation to every sample with no detection step | §1 p. 3; §4.3 pp. 13–15 |
+| Sensor faults? | **Not injected.** Shift is prediction-induced (decoder artifacts); OOD test subset is 500 manually labelled predicted images | §4.3; §5.2 p. 23 |
+| Assumptions | Calibration data drawn from independent trajectories to satisfy exchangeability. For trajectory-level OOD the paper **asserts** that predicted chances become more uncertain and intervals wider, alerting the controller — **no experiment tests this** | p. 10; p. 15; Thm 1 p. 17 |
+| Per-tick results? | **No** — pooled metrics per test set | Tables 1–4 |
+
+**Effect.**
+
+| item | change |
+|---|---|
+| Core finding | **Strengthened** — no sensor faults, no online detection |
+| Literature assumption | New, citable instance of the belief ASTRA's results contradict: **a calibrated monitor's uncertainty will rise when its inputs leave the training distribution** (asserted, untested, p. 15) |
+| B1 | **Distinction holds** |
