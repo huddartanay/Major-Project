@@ -282,10 +282,10 @@ method.
 | item | why it matters | effort |
 |---|---|---|
 | ~~CoCo full evaluation~~ — **done 13 Sept, PDF read in full; see §5** | — | done |
-| **Henzinger & Saraç, *Monitorability Under Assumptions*, RV 2020** — cited by CoCo for monitoring other monitors' assumptions | Could close B1 | hours |
-| **Carpenter et al., *ModelGuard*, ADHS 2021** — would its model invalidation flag sensor dropout? | Decides the baseline in experiment 2.4 | hours |
+| ~~Henzinger & Saraç~~ — **read 15 Sept (§11): theory only, B1 holds** | — | done |
+| ~~ModelGuard~~ — **read 15 Sept (§11): required baseline; bias may evade it** | — | done |
 | **Papers citing CoCo** (2022–2026) — 16 listed by Semantic Scholar; Lindemann et al. read (§6) | The most likely place for "gate blindness" to have been addressed since | hours |
-| **Luo et al., *Sample-Efficient Safety Assurances using Conformal Prediction*, arXiv 2109.14082** — conformal bound on an online monitor's false-negative rate | Could narrow the provable half of B1 | hours |
+| ~~Luo et al.~~ — **read 15 Sept (§11): narrows B1's provable half; sharpens the core-finding mechanism** | — | done |
 | **Cairoli, Bortolussi & Paoletti, *Neural Predictive Monitoring under Partial Observability*, RV 2021** | Noisy observations inside a predictive-monitor guarantee | hours |
 | **Lukina, Schilling & Henzinger, *Into the Unknown: Active Monitoring of Neural Networks*, RV 2021** | A monitor that adapts when it meets the unknown | hours |
 | **Granig et al., *Weakness Monitors for Fail-Aware Systems*, FORMATS 2020** | Name suggests a monitor of a system's own weakness | hours |
@@ -475,3 +475,52 @@ arXiv 2503.18077v3 (July 2025; venue not stated). Cites CoCo. **All 13 pages rea
 | Core finding / B1 | **No overlap** |
 | N3 | **Supporting citation** — the perception model is memoryless by construction, so temporally persistent faults (stuck or frozen outputs) lie outside what the guarantee can represent |
 | CoCo-citing papers | 5 of 15 now read in full; 8 cleared at abstract; 1 skipped; **only Arnez et al. 2022 remains** |
+
+---
+
+## 11 · ModelGuard, Luo et al., Henzinger & Saraç — read in full from the PDFs (15 September 2026)
+
+All three `PDF-READ`. Page numbers are PDF pages.
+
+### Carpenter, Ivanov, Lee & Weimer, *ModelGuard*, ADHS 2021, arXiv 2104.15006v1 (7 pp.)
+
+| question | answer | where |
+|---|---|---|
+| What is it? | Sampling-based runtime model validation for black-box Lipschitz models: a trace is *consistent* if some parameter (incl. initial state) reproduces it within ε (guaranteed), otherwise *inconsistent* with confidence γ | §2–3 pp. 2–4; Thm 2 |
+| Faults evaluated | Random noise added to half the mountain-car traces; UUV fin damage (actuator); real F1tenth LiDAR with no injected fault | §4.1–4.3 pp. 4–5 |
+| Online? | Sketched only: 1 s window, alarm if > 2/3 inconsistent, 4 F1tenth trials (would warn ~3 s before crash). Consistent labels < 0.5 s; high-confidence inconsistency infeasible at runtime | §4.4, Table 1, Fig. 4 p. 6 |
+| Monitors another monitor? | **No** | — |
+
+**My inference, not stated in the paper:** a frozen or dropped sensor contradicts the dynamics and should be flagged; a constant offset within the parameter bounds can be absorbed into the initial state and pass as consistent. **Effect:** required baseline for experiment 2.4 — include bias and drift, where it may fail. B1 holds.
+
+### Luo et al., *Sample-Efficient Safety Assurances using Conformal Prediction*, arXiv 2109.14082v5 (15 pp.)
+
+| question | answer | where |
+|---|---|---|
+| What does it guarantee? | Warning system with FNR ≤ ε + 1/(1+n), n = number of labelled unsafe calibration examples (class-conditional conformal) | Prop. 1 p. 7 |
+| Assumption | Each test sample exchangeable with the calibration pairs (simulator prediction, true future) | Assumption 1 p. 6 |
+| Faults? | **None.** nuScenes / Lyft with Trajectron++; DexNet grasping | §4–5 |
+| Uninformative detector | Surrogate score replaced by pure noise: FNR stays within bound, FPR rises to 0.90–0.95 — the system **always alarms** | Fig. 13d p. 13 |
+| Shift | Handled by recollecting calibration data; non-exchangeable conformal is future work | p. 6; §6 p. 13 |
+
+**Effect.**
+
+| item | change |
+|---|---|
+| B1 provable half | **Narrowed.** Few-sample conformal bounds on a warning system's error rate are prior art; ASTRA's bound on false "blind" flags is an application. Novelty rests on *what* is monitored — the gate's detection capability |
+| Core finding | **Mechanism sharpened, citable.** Under exchangeability an uninformative detector fails *loudly* (Luo, Fig. 13d). ASTRA's gate fails *silently* (≈0.2 % alarms under sustained `imu_dropout`) because the persistent fault breaks exchangeability — precisely the case outside the guarantee |
+
+### Henzinger & Saraç, *Monitorability Under Assumptions*, RV 2020 (16 pp.)
+
+| question | answer | where |
+|---|---|---|
+| What is it? | Theory of whether a trace property is monitorable in principle when traces are restricted to an assumption A: boolean closure, relative safety/co-safety, register-monitor resources, topological constructions of assumptions | §2–5 |
+| Is the assumption checked at runtime? | **No** — taken as given | — |
+| Monitoring monitors? | Assumptions may come from "another, connected monitor"; assume-guarantee monitoring and networks of monitors are **future work** | §1 p. 1; §6 p. 15 |
+| Probability, sensors, faults, experiments? | **None** | — |
+
+**Effect.** B1 distinction **holds** — CoCo's pointer to this paper leads to static theory, not a runtime check of a monitor. Vocabulary: *zero monitoring information* (Peled & Havelund 2019) is the qualitative analogue of a blind gate. Correction: Cimatti, Tian & Tonetta, *Assumption-based runtime verification with partial observability and resets*, is **RV 2019**.
+
+### Not read
+
+`1.pdf`, supplied for Granig et al., contains only the FORMATS 2020 front matter; the chapter (pp. 283–300) is still needed. The contents page adds a lead: Kempa et al., *Embedding Online Runtime Verification for Fault Disambiguation on Robonaut2*, FORMATS 2020.
