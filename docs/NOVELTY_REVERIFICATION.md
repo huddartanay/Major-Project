@@ -453,3 +453,25 @@ Pages 1–25 read directly (`PDF-READ`); references skimmed.
 | Core finding | **Strengthened** — no sensor faults, no online detection |
 | Literature assumption | New, citable instance of the belief ASTRA's results contradict: **a calibrated monitor's uncertainty will rise when its inputs leave the training distribution** (asserted, untested, p. 15) |
 | B1 | **Distinction holds** |
+
+---
+
+## 10 · Cleaveland et al. 2025 — read in full from the PDF (15 September 2026)
+
+Cleaveland, Lu, Sokolsky, Lee & Ruchkin, *Conservative Perception Models for Probabilistic Verification*,
+arXiv 2503.18077v3 (July 2025; venue not stated). Cites CoCo. **All 13 pages read directly** (`PDF-READ`).
+
+| question | answer | where |
+|---|---|---|
+| What is it? | Offline, data-driven construction of interval-MDP perception models that are provably conservative with probability 1−α: per-bin Clopper–Pearson intervals, enlarged by a logistic-regression estimate of within-bin change | §V pp. 5–7; Lemma 1, Thm 1 p. 7 |
+| Runtime monitoring? | **No** — verification only | — |
+| Sensor faults? | **No.** Synthetic detector with distance-dependent detection probability; YOLO11 in CARLA with constant-speed data collection | §VII pp. 8–9 |
+| Key assumptions | Detection depends only on current state with independent noise — **no temporal memory** (conditioning on previous outputs is future work); enlargement bounds within-bin variation (empirically "largely upheld", theory open); ground-truth states available for model construction | Eq. 7 p. 4; fn. 5 p. 7; §VIII p. 10 |
+
+**Effect.**
+
+| item | change |
+|---|---|
+| Core finding / B1 | **No overlap** |
+| N3 | **Supporting citation** — the perception model is memoryless by construction, so temporally persistent faults (stuck or frozen outputs) lie outside what the guarantee can represent |
+| CoCo-citing papers | 5 of 15 now read in full; 8 cleared at abstract; 1 skipped; **only Arnez et al. 2022 remains** |
