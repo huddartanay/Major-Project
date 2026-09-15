@@ -198,7 +198,14 @@ Copy this table and fill one row per paper checked.
 | 3 | CoCo | PDF | uninformative monitor considered? | **no** — assumes monitors carry the relevant information (§4.4) and are "well-calibrated and accurate" (§6); lists monitoring the assumptions of other monitors as **future work** citing Henzinger & Saraç 2020 | §4.4 p. 5; §6 pp. 9–10 | B1 distinction holds; new lead added |
 | 3a | Henzinger & Saraç, *Monitorability Under Assumptions*, RV 2020 | | does it detect that a monitor cannot detect? | *to check* | | Could close B1 |
 | 3b | Carpenter et al., *ModelGuard*, ADHS 2021 | | would model invalidation flag sensor dropout / bias? | *to check* | | Must be a baseline in experiment 2.4 |
-| 4 | CoCo citing papers | | gate blindness detected? | | | |
+| 4 | CoCo citing papers | Semantic Scholar list (16) | gate blindness detected? | *in progress* — 16 listed 15 Sept; Google Scholar "Cited by" still to cross-check | — | — |
+| 4a | Lindemann, Qin, Deshmukh & Pappas, *Conformal Prediction for STL Runtime Verification*, arXiv 2211.01539v2 (Allerton per Semantic Scholar; venue to confirm) | PDF (all 24 pp.) | observation assumptions monitored? | **no** — assumes calibration and test trajectories are i.i.d. draws from one distribution; nothing checks this at runtime | Assumption 1 p. 4; Remark 2 p. 8 | Core finding strengthens |
+| 4b | Lindemann et al. | PDF | sensor fault injected? | **no** — observed prefix treated as the true state; randomness is initial conditions (F-16) and Gaussian control noise (CARLA) | §2.3 p. 6; §4.1 p. 11; §4.2 p. 13 | Not tested in ASTRA's regime |
+| 4c | Lindemann et al. | PDF | per-tick detection reported? | **no** — one fixed evaluation time per case study; results are counts over 100 test trajectories (e.g. 96/100, 99/100) | §4.1 pp. 11–12; §4.2 p. 15 | — |
+| 4d | Lindemann et al. | PDF | uninformative monitor considered? | **no** — guarantee is marginal over the calibration distribution; a faulted trajectory falls outside it and the guarantee silently lapses, unaddressed | Remark 2 p. 8; §5 p. 16 | B1 distinction holds; the lapse is the gap stated in their own terms |
+| 4e | Luo, Zhao, Kuck, Ivanovic, Savarese, Schmerling & Pavone, *Sample-Efficient Safety Assurances using Conformal Prediction*, arXiv 2109.14082 | | does it bound a monitor's **miss rate** at runtime, and under sensor faults? | *to check* — cited by Lindemann as conformal guarantees on an online monitor's false-negative rate | | **Could narrow B1's provable half** — must read |
+| 4f | Cairoli, Bortolussi & Paoletti, *Neural Predictive Monitoring under Partial Observability*, RV 2021 | | are noisy / corrupted observations part of the guarantee? | *to check* | | Could narrow the core finding for sensor noise |
+| 4g | Lukina, Schilling & Henzinger, *Into the Unknown: Active Monitoring of Neural Networks*, RV 2021 | | does the monitor detect its own loss of detection power? | *to check* | | Could narrow B1 |
 | … | | | | | | |
 
 ---

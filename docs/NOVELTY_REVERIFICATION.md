@@ -144,6 +144,7 @@ blind**, evaluated **quantitatively in closed loop**.
 | Boursinos & Koutsoukos, 2020–2021 | Calibrated error rates, small alarm counts | `ABSTRACT` |
 | Martinez Gil et al., arXiv 2604.20122 (2026) | Adaptive conformal anomaly detection; false-alarm control only | `ABSTRACT` |
 | Zhao et al. 2024; Strawn et al. 2023 | Coverage only; no sensor faults | `FULL-TEXT` / `ABSTRACT` |
+| **Lindemann, Qin, Deshmukh & Pappas**, *Conformal Prediction for STL Runtime Verification*, arXiv 2211.01539 (Allerton per Semantic Scholar) | Conformal predictive runtime verification; i.i.d. calibration assumed, observations taken as true state, no faults, trajectory counts at one time instant (see §6) | `PDF-READ` |
 | **Volkhonskiy, Nouretdinov, Gammerman, Vovk & Burnaev**, *Inductive Conformal Martingales for Change-Point Detection*, arXiv 1706.03415 (2017) | **Conformal change-point detection** — sequential, accumulating evidence against exchangeability | `ABSTRACT` |
 
 **Correct form:** unchanged for the claim. **Note for remedies:** sequential conformal change detection
@@ -283,7 +284,10 @@ method.
 | ~~CoCo full evaluation~~ — **done 13 Sept, PDF read in full; see §5** | — | done |
 | **Henzinger & Saraç, *Monitorability Under Assumptions*, RV 2020** — cited by CoCo for monitoring other monitors' assumptions | Could close B1 | hours |
 | **Carpenter et al., *ModelGuard*, ADHS 2021** — would its model invalidation flag sensor dropout? | Decides the baseline in experiment 2.4 | hours |
-| **Papers citing CoCo** (2022–2026) | The most likely place for "gate blindness" to have been addressed since | hours |
+| **Papers citing CoCo** (2022–2026) — 16 listed by Semantic Scholar; Lindemann et al. read (§6) | The most likely place for "gate blindness" to have been addressed since | hours |
+| **Luo et al., *Sample-Efficient Safety Assurances using Conformal Prediction*, arXiv 2109.14082** — conformal bound on an online monitor's false-negative rate | Could narrow the provable half of B1 | hours |
+| **Cairoli, Bortolussi & Paoletti, *Neural Predictive Monitoring under Partial Observability*, RV 2021** | Noisy observations inside a predictive-monitor guarantee | hours |
+| **Lukina, Schilling & Henzinger, *Into the Unknown: Active Monitoring of Neural Networks*, RV 2021** | A monitor that adapts when it meets the unknown | hours |
 | **Antonante et al. full text** — do the diagnostic graphs include localization / state estimation? | Could close N5 | hours |
 | **Papers citing DeLorean** — whole-mission persistent attacks? | Could close N3 | hours |
 | Boursinos & Koutsoukos full texts — any false-negative evaluation? | N2 | hours |
@@ -321,3 +325,33 @@ and could plausibly flag a sensor dropout; this is untested in the paper.
 | Experiment 2.4 | **ModelGuard-style model invalidation added as a required baseline** |
 | New must-reads | Henzinger & Saraç, *Monitorability Under Assumptions*, RV 2020 (could close B1); Carpenter et al., *ModelGuard*, ADHS 2021; Ruchkin et al. 2021, *Confidence Monitoring and Composition for Dynamic Assurance of Learning-Enabled Autonomous Systems*; Cimatti et al., assumption-based runtime verification with partial observability; Sokolsky et al., monitoring assumptions in assume-guarantee contracts |
 | Still open | Papers citing CoCo, 2022–2026 |
+
+---
+
+## 6 · Lindemann et al. — read in full from the PDF (15 September 2026)
+
+Lindemann, Qin, Deshmukh & Pappas, *Conformal Prediction for STL Runtime Verification*, arXiv
+2211.01539v2 (venue listed by Semantic Scholar as Allerton; confirm). Cites CoCo. **All 24 pages read
+directly** (`PDF-READ`). Page numbers are PDF pages.
+
+| question | answer | where |
+|---|---|---|
+| What does it guarantee? | With probability ≥ 1−δ, the true trajectory satisfies an STL specification whenever the predicted robustness exceeds a conformal constant. Coverage is **marginal** over test and calibration data, not conditional on the calibration set | Theorems 1–2 pp. 8, 10; Remark 2 p. 8 |
+| Are observation / sensor assumptions monitored? | **No.** Calibration and test trajectories are assumed independent draws from one distribution; the observed prefix is treated as the true state (robustness for past times is computed directly from observations) | Assumption 1 p. 4; §2.3 p. 6; §3.3 p. 9 |
+| Is a sensor fault injected? | **No.** F-16: randomised initial conditions. CARLA: Gaussian noise on control inputs and random initial pose | §4.1 p. 11; §4.2 p. 13 |
+| Per-tick behaviour reported? | **No.** One evaluation instant per case study; results are counts over 100 test trajectories | §4.1 pp. 11–12; §4.2 p. 15 |
+| Is a monitor that runs but cannot detect considered? | **No.** Nothing checks whether the running trajectory still comes from the calibration distribution; outside it the guarantee lapses without any signal | Remark 2 p. 8; §5 p. 16 |
+
+**Structural note.** The trajectory predictor reads the same observations whose correctness the guarantee
+presumes, so a corrupted sensor corrupts both the prediction and the prefix it is scored against — the same
+shared-path condition as ASTRA's L6 gate (proposer and twin read the same L2 state).
+
+**Effect.**
+
+| item | change |
+|---|---|
+| Core finding | **Strengthened** — a second conformal runtime monitor from the CoCo lineage assumes exchangeable, uncorrupted observations and never tests sensor faults |
+| A6 | Evidence upgraded with a `PDF-READ` entry |
+| B1 | **Distinction holds** — no mechanism signals that the marginal guarantee has lapsed |
+| Framing for the paper | The guarantee is valid only while the monitored trajectory resembles calibration data; a persistent sensor fault is exactly the case where it silently stops applying |
+| New must-reads (from its references) | Luo et al., arXiv 2109.14082 (conformal bound on a monitor's false-negative rate — **could narrow B1's provable half**); Cairoli, Bortolussi & Paoletti, RV 2021 (predictive monitoring under partial observability); Lukina, Schilling & Henzinger, RV 2021 (active monitoring of neural networks) |
