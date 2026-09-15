@@ -524,3 +524,31 @@ All three `PDF-READ`. Page numbers are PDF pages.
 ### Not read
 
 `1.pdf`, supplied for Granig et al., contains only the FORMATS 2020 front matter; the chapter (pp. 283–300) is still needed. The contents page adds a lead: Kempa et al., *Embedding Online Runtime Verification for Fault Disambiguation on Robonaut2*, FORMATS 2020.
+
+---
+
+## 12 · Conformal under shift: Volkhonskiy et al., Gibbs & Candès, Barber et al. (15 September 2026)
+
+Read via full-text extraction of the PDFs (`PDF-READ`; Barber et al. §5 skimmed, appendices not read).
+Purpose: check whether B1 — detecting that the gate has gone blind — is already an established conformal
+technique.
+
+| paper | what it does | what it assumes / lacks | effect |
+|---|---|---|---|
+| **Volkhonskiy et al.**, COPA 2017, arXiv 1706.03415 | Inductive conformal test martingales on p-values for change-point detection | Truncated martingale valid only empirically (§3.4); synthetic 1-D mean increases only; constant betting function bets on small p-values | **B1 mechanism narrowed** — a test martingale on the gate's p-values is an application. Remaining contribution: one-sided test for too-large p-values; closed-loop temporal correlation |
+| **Gibbs & Candès**, NeurIPS 2021, arXiv 2106.00170 | Online α_t update restores long-run coverage under any shift | Needs the label Y_t every step (§7) | Not applicable to an unlabelled detection gate; applied to alarms it would force the alarm rate to α and **mask** both silence and alarm bursts (my inference). Add as a baseline in 2.5 |
+| **Barber et al.**, Ann. Stat. 2023, arXiv 2202.13415 | Coverage-gap bound via total variation; weighted / nonsymmetric conformal | Weights fixed in advance; direction of error (under/over-coverage) cannot be known in advance (p. 16) | **Gap citation for B1:** p. 18 lists as an open question determining adaptively whether coverage will hold. Over-coverage = silent gate |
+
+**Consequences for the paper.**
+
+1. **B1 is not a new statistical method.** Its pieces — conformal p-values, test martingales, coverage-gap
+   theory — are established. The claim must be: *the first runtime detector of a safety gate's loss of
+   detection capability in closed loop, with evidence that it catches the silent failure*. Cite Volkhonskiy
+   for the tool, Barber for the open question, Luo for the loud-versus-silent contrast.
+2. **Design requirement discovered.** A standard two-sided exchangeability test fires both when the gate
+   correctly alarms on a fault and when it goes blind. The blindness monitor must test **one-sidedly for
+   too-large p-values** (under-alarming), and must be calibrated on **whole clean runs** because tick
+   scores are temporally correlated.
+3. **Reviewer defence.** "Why not adaptive conformal?" — it needs labels and, used on alarms, restores the
+   alarm *rate* while destroying its *meaning*.
+4. Vovk, Nouretdinov & Gammerman (ICML 2003) no longer needs a full read; Volkhonskiy covers the technique.
