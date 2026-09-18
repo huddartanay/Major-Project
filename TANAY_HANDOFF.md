@@ -12,6 +12,7 @@ the gap each phase covers, and how we split the work.
 
 ## Contents
 
+0. Read this first — things specific to you
 1. Update your copy
 2. What changed since your version
 3. Where the research stands, in plain terms
@@ -31,56 +32,84 @@ the gap each phase covers, and how we split the work.
 
 ---
 
+## 0 · Read this first — things specific to you
+
+1. **You never had branch `3.0`.** Your 13 September gap verification ran on
+   `~/Downloads/astra`, branch **`main` at `833ce4d`**. All the E17–E21 work lives on `3.0`, which had not
+   been pushed — that is why every commit hash in that verification came back "not a valid object". It
+   was a push problem, not a data problem. **After syncing, please re-run your §2 empirical checks.**
+2. **I cannot push until you give me write access.** GitHub rejected my push
+   (`Permission to huddartanay/Major-Project.git denied`). Please go to **Settings → Collaborators → Add
+   people** on `huddartanay/Major-Project` and add my account with write access. Until then this branch
+   exists only on my laptop.
+3. **Which results are on held-out seeds and which are not.** Only **E18-R3** (clean false-alarm rate,
+   30/30 in band) is established on **held-out** seeds. **E18-R3b, E18-R3c, E21 and the de-escalation
+   probe ran on dev seeds** (`BASE_SEED = 20260731` in their runners). The core G1 number (R3c: ≈0.2 %,
+   0/30) therefore still needs **one held-out confirmation** before it goes in a paper — added to Stage A.
+4. **Some older material overclaims. Do not reuse it in the paper:**
+   - Slide builders in `docs/build_astra_*deck.py` mention an "initial external-data replication on
+     comma2k19" — **no comma2k19 code exists**; and "one no existing runtime-assurance architecture makes"
+     — too strong after the literature review.
+   - The August paper drafts (`ASTRA_Paper_v17`–`v21`) follow the old "architecture" framing and contain
+     since-withdrawn claims (E17 position absorption; E18 "P1 VALID").
+   - `docs/NOVELTY_CLAIMS.md`, `docs/OBJECTIVES.md`, `docs/LITERATURE_GAPS.md` (13 Sept) are **superseded**
+     by `docs/GAPS_CONFIRMED.md` and this file.
+   - The "0.998 separation" is **L1's**, not the gate's (L6 is 0.737).
+5. **The Streamlit app was removed.** If you deployed it on Streamlit Cloud, it will stop working; the
+   real dashboard is hosted as described in `DEPLOY.md`.
+6. **Decisions we need from you (and the guide):** author order for Paper 1; venue (IV conditional,
+   ITSC main); licence to replace the stale "confidential" text; whether you take the work split in §9.
+
+---
+
 ## 1 · Update your copy
 
-Commands for **PowerShell** on Windows. Use `;`, not `&&` — Windows PowerShell 5.1 rejects `&&`.
+Your copy is at `~/Downloads/astra` on **macOS**, so the commands below are for the macOS Terminal
+(zsh). Windows equivalents follow each block.
 
 ### 1.1 If you have no local changes you care about
 
-```powershell
-cd C:\path\to\your\ASTRA
+```bash
+cd ~/Downloads/astra
 git fetch origin
-git checkout 3.0
-git reset --hard origin/3.0
+git checkout -b 3.0 origin/3.0
 ```
 
-`reset --hard` **throws away** anything uncommitted in your folder. Only use it if you are sure.
+If `git checkout -b` says the branch already exists, use `git checkout 3.0` then
+`git reset --hard origin/3.0` — **this throws away uncommitted local changes**.
 
 ### 1.2 If you have local changes to keep
 
-```powershell
-cd C:\path\to\your\ASTRA
+```bash
+cd ~/Downloads/astra
 git status
 git stash push -m "tanay-local-before-sync"
 git fetch origin
-git checkout 3.0
-git pull --ff-only origin 3.0
+git checkout -b 3.0 origin/3.0
 git stash pop
 ```
 
 If `stash pop` reports conflicts, stop and message me — do not force anything.
 
+*Windows (PowerShell): the same commands work; use `;` instead of `&&` if you chain them.*
+
 ### 1.3 Install and check it works
 
 The project uses **uv** (see `docs/INSTALL.md`). Python 3.12 or newer.
 
-```powershell
+```bash
 uv sync --all-groups --all-extras
 uv run pytest -q
 ```
 
-Expected: about **3,067 tests passing**. If you do not use uv, the existing `.venv` works too:
-
-```powershell
-.venv\Scripts\python.exe -m pytest -q
-```
+Expected: about **3,067 tests passing** (several minutes).
 
 ### 1.4 Quick sanity run (about 20 seconds)
 
-This drives one faulted run and prints the vehicle's mode history summary:
+Drives one faulted run and prints the vehicle's mode summary:
 
-```powershell
-.venv\Scripts\python.exe experiments\phase5_od8_h7\EXPLORATORY_DEESCALATION\deesc_probe.py 3400 1 speed_bias out.json
+```bash
+uv run python experiments/phase5_od8_h7/EXPLORATORY_DEESCALATION/deesc_probe.py 3400 1 speed_bias out.json
 ```
 
 You should see `"peak": "NOMINAL"` — under `speed_bias` the car never leaves normal mode. That is one of
@@ -88,9 +117,9 @@ the findings in §5.
 
 ### 1.5 The demo
 
-```powershell
-.venv\Scripts\python.exe -m demo.dashboard --port 8000
-.venv\Scripts\python.exe -m demo.narrate --explain --every 20
+```bash
+uv run python -m demo.dashboard --port 8000
+uv run python -m demo.narrate --explain --every 20
 ```
 
 Hosting notes are in `DEPLOY.md`. The dashboard also lives at
@@ -321,6 +350,8 @@ evidence every tick (`src/astra/layers/l6_statistical_gate/gate.py:325`). No arc
 3. Run on **dev seeds** (`20260731 + i`), sustained faults from tick 200, 3,400 ticks, clean arm too.
    Reuse `benchmarks/e21_baseline.py`'s injectors.
 4. Decide per the pre-registered rule. Then confirm on **held-out seeds** with nothing changed.
+   **In the same held-out run, re-confirm the G1 core numbers** (R3c's alarm rate and 0/30, E21's L1
+   detection) — until now they exist on dev seeds only.
 5. Write `final_decision.md`, update `CLAIM_LEDGER.md`.
 
 **Decision on ~5 Oct:** H1 confirmed → Stage B (IV). Not confirmed → skip IV, investigate H2, all effort
@@ -535,9 +566,21 @@ label-free check that it still works."*
 
 ---
 
+### Working practice
+
+- Branch off `3.0` for each piece of work (`git checkout -b tanay/<topic> 3.0`), push the branch, and open a
+  pull request into `3.0`. Do not push directly to `main`.
+- Record every paper you read in `docs/MANUAL_NOVELTY_CHECK.md` §5.
+- Every experiment gets its own folder under `experiments/phase5_od8_h7/` with the files listed in §10.
+- Anything in `src/` that changes behaviour needs an ADR in `docs/adr/`.
+
+---
+
 ## 15 · Your first-day checklist
 
+- [ ] Add me as a collaborator on `huddartanay/Major-Project` (§0.2)
 - [ ] Update your copy (§1.1 or §1.2) and run the tests (§1.3)
+- [ ] Re-run your 13 Sept empirical verification on `3.0` (§0.1)
 - [ ] Run the sanity probe (§1.4) and confirm `speed_bias` stays NOMINAL
 - [ ] Read §3–§5 and §7 of this file, then `docs/GAPS_CONFIRMED.md`
 - [ ] Skim `docs/LITERATURE_SYNTHESIS.md` and `docs/LESSONS_FROM_20_PAPERS.md`
