@@ -570,3 +570,31 @@ technique.
 *false alarms* but, by construction, not *silence*. New must-read from its references: **Sun & Lampert,
 KS(conf), IJCV 2020** — a distribution test on classifier confidence scores against validation data, the
 closest mechanism to B1 yet named.
+
+---
+
+## 14 · Sun & Lampert, KS(conf) — read (18 September 2026)
+
+arXiv 1804.04171v1 (IJCV 2020). §1–4 read; per-network figures skimmed (`PDF-READ`, text extraction).
+
+| question | answer | where |
+|---|---|---|
+| What is it? | Two-sided Kolmogorov–Smirnov test of batches of a classifier's own top-1 confidences against a calibration distribution; no labels; FPR = α with universal thresholds | §2.2 pp. 4–7 |
+| Faults? | **Camera/sensor faults** on images: blur, Gaussian noise, dead/hot pixels, exposure, geometry/colour — all detected at sufficient strength and batch size; small noise (σ = 5) undetectable for some networks | §3.6 pp. 16–28 |
+| Direction | Confidences do not always fall out of spec (NASNet more confident on pure noise); one-sided mean tests fail, hence a two-sided test | Table 2 p. 12; §3.5 p. 16; §3.6.3 p. 22 |
+| Stated limit | An output-based test could miss input changes that leave the outputs unchanged | §2 p. 4 |
+| Scope | Classifier, i.i.d. batches, open loop; no safety monitor, no control | — |
+
+**Effect on B1 — the most important narrowing so far.**
+
+- **Score-only B1 ≈ KS(conf) on the gate.** A distribution test on the gate's own scores is an application
+  of a 2018 method. KS(conf) must be the **primary baseline**.
+- **What KS(conf) cannot do**, and B1 must:
+  1. **Tell blind from working.** Being two-sided, it fires both when the gate correctly alarms on a fault
+     and when it goes silent — it detects *inputs out of spec*, not *loss of detection capability*.
+  2. **Handle closed-loop correlation.** Its thresholds assume i.i.d. batches.
+  3. **See faults that leave the gate's scores unchanged.** Its own authors state this limit. Here only
+     **cross-layer evidence** can help — another layer reports a fault while the gate stays silent.
+- **Consequence:** B1's distinct form is **cross-layer**: detect gate blindness from the *disagreement*
+  between an independent fault indicator and the gate's silence, with a score-distribution test (KS(conf) /
+  conformal martingale) as the baseline it must beat. This matches the "correct form" recorded under A3.
