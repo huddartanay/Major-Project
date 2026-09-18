@@ -552,3 +552,21 @@ technique.
 3. **Reviewer defence.** "Why not adaptive conformal?" — it needs labels and, used on alarms, restores the
    alarm *rate* while destroying its *meaning*.
 4. Vovk, Nouretdinov & Gammerman (ICML 2003) no longer needs a full read; Volkhonskiy covers the technique.
+
+---
+
+## 13 · Lukina, Schilling & Henzinger — read in full (18 September 2026)
+
+*Into the Unknown: Active Monitoring of Neural Networks*, RV 2021, arXiv 2009.06429v4 (`PDF-READ`, 20 pp.).
+
+| question | answer | where |
+|---|---|---|
+| What is it? | A monitor beside an image classifier flags inputs of unknown classes; a human labels flagged inputs; the monitor and network adapt when run-time precision drops | §4 pp. 6–10 |
+| Does the monitor assess itself? | **Yes, but only its precision** — the share of its warnings that were correct. Run-time precision can only be computed on samples the monitor reported | §3 p. 5 |
+| Could it notice a monitor that stopped warning? | **No.** Unflagged inputs are never labelled, so missed detections are invisible; fewer warnings would, if anything, look like higher precision (my inference) | — |
+| Sensors, control, faults? | **None** — MNIST, FMNIST, CIFAR10, GTSRB, EMNIST | §5 |
+
+**Effect.** B1 distinction **holds and sharpens**: the nearest self-assessing monitor found can detect
+*false alarms* but, by construction, not *silence*. New must-read from its references: **Sun & Lampert,
+KS(conf), IJCV 2020** — a distribution test on classifier confidence scores against validation data, the
+closest mechanism to B1 yet named.
