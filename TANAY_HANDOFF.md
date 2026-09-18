@@ -4,9 +4,9 @@ From: Sushanth. For: Tanay S. Huddar.
 Branch: **`3.0`** on `origin` (`huddartanay/Major-Project`).
 
 Your copy is out of date. GitHub's `3.0` stopped at **2 September** (`5142cc2`). This push adds
-**75 commits** (2–18 September): new experiments, several fixes, and the full literature review that
-decided the paper's direction. Read §1 to update, then §2–§4 to catch up. §5 onwards is the plan and how
-we split it.
+**77 commits** (2–19 September): new experiments, several fixes, and the full literature review that
+decided the paper's direction. Read §1 to update, then §2–§5 to catch up (§5 lists every result so far). §6–§9 are the plan,
+the gap each phase covers, and how we split the work.
 
 ---
 
@@ -16,16 +16,18 @@ we split it.
 2. What changed since your version
 3. Where the research stands, in plain terms
 4. The numbers we rely on
-5. The plan and deadlines
-6. Stage-by-stage: what to do and how
-7. Proposed split of work
-8. Rules for running experiments
-9. Architecture notes you need before touching code
-10. Literature: what is done and what is left
-11. Collaboration and outreach
-12. Housekeeping and open decisions
-13. Your first-day checklist
-14. Where everything lives
+5. Main research results, experiment by experiment
+6. The plan and deadlines
+7. Which gap each phase covers
+8. Stage-by-stage: what to do and how
+9. Proposed split of work
+10. Rules for running experiments
+11. Architecture notes you need before touching code
+12. Literature: what is done and what is left
+13. Collaboration and outreach
+14. Housekeeping and open decisions
+15. Your first-day checklist
+16. Where everything lives
 
 ---
 
@@ -82,7 +84,7 @@ This drives one faulted run and prints the vehicle's mode history summary:
 ```
 
 You should see `"peak": "NOMINAL"` — under `speed_bias` the car never leaves normal mode. That is one of
-the findings in §3.
+the findings in §5.
 
 ### 1.5 The demo
 
@@ -122,16 +124,16 @@ Hosting notes are in `DEPLOY.md`. The dashboard also lives at
 
 ### 2.3 Documents added (all in `docs/` unless stated)
 
-The literature review and gap work — see §10 and §14 for the full map. Most important:
+The literature review and gap work — see §12 and §16 for the full map. Most important:
 `GAPS_CONFIRMED.md`, `LITERATURE_SYNTHESIS.md`, `LESSONS_FROM_20_PAPERS.md`, `NEW_PAPERS_AND_GAPS.md`,
 and `research.md` (root) — the step-by-step playbook.
 
 ### 2.4 Decisions made
 
 - **The patent application was rejected.** No disclosure limits now: preprints and open code are fine.
-  (The LICENSE / NOTICE / README still carry old "confidential" text — see §12.)
+  (The LICENSE / NOTICE / README still carry old "confidential" text — see §14.)
 - **Paper direction** changed from "ASTRA the architecture" to **one sharp problem**: safety gates that
-  fail silently. §3 explains.
+  fail silently. §3 explains; §5 lists every result.
 
 ---
 
@@ -203,7 +205,41 @@ no information.
 
 ---
 
-## 5 · The plan and deadlines
+## 5 · Main research results, experiment by experiment
+
+What each experiment asked, what it found, and what it means for the paper. Folders are under
+`experiments/phase5_od8_h7/`; the running summary is `EXPERIMENT_INDEX.md` and the claims ledger is
+`CLAIM_LEDGER.md`. "OD-8" is the L6 conformal gate's detector.
+
+| # | experiment | question | result | decision | what it means for us |
+|---|---|---|---|---|---|
+| 1 | **E17** | How observable is each fault at each layer? | Heterogeneous. Separation D_s for `imu_dropout`: L1 0.998, **L6 0.737 [0.675, 0.777]**, L8 0.988. Only 1 of 6 faults showed well-posed absorption | Baseline | L1 sees `imu_dropout` far better than the gate: first hint of G1 |
+| 2 | **E17-Position** | Does absorption survive correct injection? | Absorbed in **0 of 12** cells | **Claim withdrawn** | We do not claim estimator absorption of position faults |
+| 3 | **E18** | Can OD-8 be validly calibrated? | Failure was **calibration-set provenance**, not threshold value. Frozen v1 thresholds P1 3.7095, P2 5.9024, P3 3.4000. **D_s does not predict detection** (17/28 cells disagree; rho = -0.480). **Fault-induced alarm suppression in 11/28 cells** (all p < 0.05): `imu_dropout` makes the gate **55x less likely** to alarm than clean driving. `speed_stuck` and `imu_dropout` undetectable at any severity. P2 invalid (score drifts upward in 30/30 runs) | PARTIAL; P1 verdict later withdrawn | **Earliest evidence of G1**: the gate goes quieter under a fault |
+| 4 | **E18-R1** | Does run-local calibration help? | P3 9/30 in band; mechanism removed but estimator too noisy. **Found E18's window defect** (false alarms measured on ticks 0-399, detection on 200-399) | FAIL-P3 | E18's "P1 VALID" withdrawn |
+| 5 | **E18-R2** | Does matched-window pooled calibration work? | P1 13/30 (best of 3); the obstacle is the score process, not the threshold | PARTIAL-R2 | Calibration must be judged per run, on the matched window |
+| 6 | **E18-R3** | Precision-limited or dynamics-limited? | **P1 30/30 in band** at n = 3,200 (160 s); false-alarm median **5.84 %** (4.66-8.22 %); frozen threshold **3.7024** (v3) | **PASS-R3** | The gate *can* be calibrated, so its later silence is not a calibration failure |
+| 7 | **E18-R3b** | Does it detect faults at the long window? | 4/6 faults at 100 %, but the detection comes from the **post-fault transient** when the fault ends, not from the fault itself | PASS, mechanism refuted | "Detection while it happens" was an illusion |
+| 8 | **E18-R3c** | Is detection the aftermath, or the sustained fault? | Sustained `imu_dropout`: alarm rate **~0.2 %**, **below the clean baseline**, **0/30** runs. Ticks 400-999: 99.06 % (R3b) vs 0.18 % (R3c). Only 3/6 faults detected under sustained injection | **H-AFTERMATH SUPPORTED** | **The core G1 result** |
+| 9 | **Phase 2 monitorability** | Can we predict where the gate will be blind? | Identity-free rho = 0.654 (p = 0.011, n = 15); headline 0.895 was confounded; D_s rho = 0.077 (p = 0.72) | Weak | Blindness is not predictable from simple observability, so a runtime check (G2) is needed |
+| 10 | **E21 baseline comparison** | Do existing detectors beat the gate? | **Yes.** L1 stream health: `imu_dropout` **30/30**, **0/30** clean false alarms, latency exactly **5 ticks**. `position_bias` 13-19 ticks; `position_drift` 957-1153 ticks. `speed_bias`, `speed_stuck`: **undetected by every layer**. Trust clean false-positive 0.767; innovation monitor ~0 | **BASELINE WINS** | The blind spot is **architectural**: an independent layer sees what the gate cannot. This is the basis of G2 |
+| 11 | **Exploratory de-escalation probe** (18 Sep) | Does the failsafe step down while a fault persists? | `position_drift`: steps down in **5/5** runs (ticks 1264-1387) while the gate passes and L1 is momentarily healthy; ~36 % of the faulted period spent in NOMINAL. `speed_bias` / `speed_stuck`: **100 % in NOMINAL** | Exploratory only (dev seeds, not pre-registered) | G1's harm (the car stays in normal mode) and first evidence for G4 (Paper 2) |
+| - | **E19** (monitor placement), **E20** (lying sensor) | - | **Not run**: the folders exist but are empty | - | E20 becomes relevant for G5 later |
+
+### The story the results tell, in order
+
+1. The gate **can** be calibrated (R3), so what follows is not a tuning problem.
+2. Under a sustained sensor fault it goes **quieter than when healthy** (E18, R3c): **G1**.
+3. What looked like detection was the fault *ending* (R3b), so it truly misses faults while they last.
+4. An **independent layer (L1) sees the fault at once** (E21). The blind spot is architectural, which is
+   exactly what **G2** exploits.
+5. Because the gate is silent, the car **stays in normal mode**, and can even **step back down** while a
+   fault persists (probe): the practical harm, and G4 for later.
+6. **Why** it goes silent is still open. That is **G3**, Stage A.
+
+---
+
+## 6 · The plan and deadlines
 
 Deadlines checked on 18 September 2026 against the official calls.
 
@@ -235,7 +271,25 @@ results twice.
 
 ---
 
-## 6 · Stage-by-stage: what to do and how
+## 7 · Which gap each phase covers
+
+| phase | dates | gap(s) | question answered | evidence produced | success criterion | paper |
+|---|---|---|---|---|---|---|
+| Done (E17-E21) | Aug - Sep | **G1** | Does the gate fail silently? | R3c, E18 suppression, E21 | Met: 0/30 detected, alarms below clean | Paper 1 |
+| Done (probe) | 18 Sep | **G1's harm**, G4 hint | Does the car stay in normal mode? | Exploratory probe | Seen; needs a pre-registered replication | Paper 1 (harm), Paper 2 (G4) |
+| **Stage 0** | this week | validity | Are paper runs free of demo code? | Demo hack behind a flag | Flag off by default, tests pass | - |
+| **Stage A** | 19 Sep - 5 Oct | **G3** | Why does the gate go silent? | sigma vs departure per tick; mode and true error | Pre-registered rule picks H1/H2/H3 on dev seeds, confirmed on held-out | Paper 1 (IV) |
+| **Stage B** | 6 Oct - 15 Nov | **G1 + G3** | Can we state it generally? | Proposition plus at least 3 faults with CIs | Proposition matches the data; IV submitted | **IV 2027** |
+| **Stage C1** | Oct - Nov | **G1 breadth**; G2's "so what?" | Which faults does L1 miss while the gate still reacts? | Magnitude sweep incl. small faults | At least one such fault class, or an honest report that none exists | ITSC |
+| **Stage C2** | Nov - Jan | **G2** | Can we detect the blind gate without labels? | `GateBlindnessMonitor` plus 8 baselines | Beats Amoukou, D3M and KS(conf) on time-in-NOMINAL-while-faulted; false-flag rate within bound | ITSC |
+| **Stage C3** | Dec - Jan | **G2 outcome** | Does acting on the flag help? | With/without the monitor; Safety Gain, Residual Hazard, Availability Cost | Less time in NOMINAL under fault; bounded extra escalation on clean runs | ITSC |
+| **Stage D** | Jan - 1 Mar | **G1-G3 generality** | Does it hold beyond one setup? | Held-out confirmation plus comma2k19 replay **or** a classical controller | All pre-registered criteria hold on held-out seeds | **ITSC 2027** |
+| Paper 2 | after ITSC | **G4** | Is silence mistaken for recovery? How to re-certify a monitor before recovering? | Pre-registered de-escalation study plus re-certification probe | - | Paper 2 |
+| Paper 3 | later | **G5** (+ G6) | Can an attacker blind the gate? | Stealthy-lie experiments (E20) | - | Paper 3 |
+
+---
+
+## 8 · Stage-by-stage: what to do and how
 
 ### Stage 0 · Housekeeping (this week)
 
@@ -336,13 +390,13 @@ to ITSC. G1 stands either way.
 
 ---
 
-## 7 · Proposed split of work
+## 9 · Proposed split of work
 
 A proposal — change it as you like.
 
 | area | Tanay | Sushanth |
 |---|---|---|
-| Remaining literature (§10) — needs IEEE Xplore / Springer via college | **Lead** | review |
+| Remaining literature (§12) — needs IEEE Xplore / Springer via college | **Lead** | review |
 | G3 literature search (covariance-normalised monitors) | **Lead** | review |
 | Stage 0 housekeeping, Stage A pre-registration and logger | review | **Lead** |
 | Stage A analysis and the formal proposition | **joint** | **joint** |
@@ -358,7 +412,7 @@ run.
 
 ---
 
-## 8 · Rules for running experiments
+## 10 · Rules for running experiments
 
 These are what make the results defensible. They are not optional.
 
@@ -377,7 +431,7 @@ These are what make the results defensible. They are not optional.
 
 ---
 
-## 9 · Architecture notes you need before touching code
+## 11 · Architecture notes you need before touching code
 
 ### Layers
 
@@ -418,7 +472,7 @@ ADR-0016) instead of teaching L8 to distrust one gate.
 
 ---
 
-## 10 · Literature: what is done and what is left
+## 12 · Literature: what is done and what is left
 
 About **65–70 papers** reviewed; **~39** at full-text depth.
 
@@ -452,7 +506,7 @@ library (IEEE Xplore, Springer); email the corresponding author. ACM is fully op
 
 ---
 
-## 11 · Collaboration and outreach
+## 13 · Collaboration and outreach
 
 **Why industry cares:** ISO/PAS 8800:2024 (AI in road vehicles) and UL 4600 call for runtime monitoring
 and diagnostic coverage. G1 shows such monitors can fail silently; G2 is field evidence that they still
@@ -469,7 +523,7 @@ label-free check that it still works."*
 
 ---
 
-## 12 · Housekeeping and open decisions
+## 14 · Housekeeping and open decisions
 
 | item | status | needs |
 |---|---|---|
@@ -481,20 +535,20 @@ label-free check that it still works."*
 
 ---
 
-## 13 · Your first-day checklist
+## 15 · Your first-day checklist
 
 - [ ] Update your copy (§1.1 or §1.2) and run the tests (§1.3)
 - [ ] Run the sanity probe (§1.4) and confirm `speed_bias` stays NOMINAL
-- [ ] Read §3 and §4 of this file, then `docs/GAPS_CONFIRMED.md`
+- [ ] Read §3–§5 and §7 of this file, then `docs/GAPS_CONFIRMED.md`
 - [ ] Skim `docs/LITERATURE_SYNTHESIS.md` and `docs/LESSONS_FROM_20_PAPERS.md`
 - [ ] Download Ruchkin TCAD 2020 and Arnez DSD 2022 from IEEE Xplore on the college network
-- [ ] Start the G3 literature search (§10)
+- [ ] Start the G3 literature search (§12)
 - [ ] Read the Stage A pre-registration when it lands and comment **before** anything runs
-- [ ] Reply with any changes to the work split (§7)
+- [ ] Reply with any changes to the work split (§9)
 
 ---
 
-## 14 · Where everything lives
+## 16 · Where everything lives
 
 | file | what it is |
 |---|---|
