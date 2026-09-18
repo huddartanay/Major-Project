@@ -598,3 +598,28 @@ arXiv 1804.04171v1 (IJCV 2020). §1–4 read; per-network figures skimmed (`PDF-
 - **Consequence:** B1's distinct form is **cross-layer**: detect gate blindness from the *disagreement*
   between an independent fault indicator and the gate's silence, with a score-distribution test (KS(conf) /
   conformal martingale) as the baseline it must beat. This matches the "correct form" recorded under A3.
+
+---
+
+## 15 · Cross-layer papers: Antonante, Orf, Kempa, HALO (18 September 2026)
+
+| paper | cross-module evidence? | monitors a monitor? | effect |
+|---|---|---|---|
+| **Antonante et al.** (arXiv 2205.10906) | **Yes** — diagnostic graph of consistency tests between perception modules; κ-diagnosability; PAC bounds | **No, but closest yet:** tests are *modelled* as unreliable (Weak-/Weaker-OR: may PASS when all modules in scope fail consistently). Unreliability is assumed a priori, not detected at runtime. Localization listed as future work | **Narrows cross-layer B1** — must be cited as the framework extended |
+| **Orf et al.** (arXiv 2411.09643) | Category in a taxonomy; mostly frequency/latency checks | No — dependency graph *ignores* downstream diagnoses when upstream fails | No overlap; citable: self-diagnosis may share the component's faults |
+| **Kempa et al.** (FORMATS 2020) | Sensor voting among redundant sensors on one joint | No | No overlap; redundancy voting is classical |
+| **HALO** §10 | No | Liveness (heartbeat) only | Confirmed |
+
+**Revised B1 position after 18 full reads.**
+
+- The ingredients exist separately: score-distribution tests (KS(conf), conformal martingales),
+  cross-module consistency diagnosis with explicitly unreliable, common-mode-blind tests (Antonante),
+  liveness watchdogs (HALO), assumption-confidence composition (CoCo).
+- **Not found:** treating the **safety gate itself as a diagnosable component**, and detecting at
+  runtime — from another layer's evidence — that it has stopped detecting, for **persistent sensor /
+  state-estimation faults in closed loop**. Antonante names the phenomenon (a test that passes under
+  common-mode failure) but models it rather than detecting it, and does not cover state estimation.
+- **Positioning sentence:** *Antonante et al. model diagnostic tests that may silently pass under
+  common-mode failure; we detect, at runtime and without ground truth, when the vehicle's safety gate has
+  entered that regime, and act on it.*
+- **Novelty (judgment):** B1 cross-layer ~35–50 % → **~30–45 %**. Core finding unchanged.

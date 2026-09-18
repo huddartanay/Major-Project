@@ -85,6 +85,8 @@ still unexplained and needs experiment 2.6.
 | Core finding | ~60–70 % | **~65–75 %** | 12 full reads, no counterexample; wording now precise |
 | B1 as a problem | ~45–60 % | **~55–65 %** | Barber names it open; CoCo lists it as future work |
 | B1 as a method — score-only | — | **low (~10–15 %)** | ≈ KS(conf) (Sun & Lampert 2018) / conformal martingale on the gate's scores |
-| B1 as a method — cross-layer disagreement | — | **moderate (~35–50 %)** | Needed when the gate's scores do not change; not found in 14 full reads |
+| B1 as a method — cross-layer disagreement | — | **~30–45 %** | Antonante et al. model common-mode-blind diagnostic tests (a priori, perception only); detecting a blind *safety gate* at runtime not found in 18 full reads |
 
 **Update 18 Sept:** Lukina et al. (self-assessing monitor sees false alarms, not silence) and KS(conf) read — see `NOVELTY_REVERIFICATION.md` §13–14.
+
+**Update 18 Sept (later):** Antonante, Orf, Kempa, HALO §10 read — see `NOVELTY_REVERIFICATION.md` §15. Antonante et al. is now the closest cross-layer work and must be the framework B1 is positioned against.
