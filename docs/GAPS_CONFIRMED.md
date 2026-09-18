@@ -66,3 +66,22 @@ misses under sensor faults); **N3** persistent, out-of-model, arriving mid-run.
 
 Ruchkin et al. TCAD 2020, Arnez et al. DSD 2022, Granig et al. FORMATS 2020; Google Scholar sweep incl.
 "Cited by" for CoCo, KS(conf) and Antonante.
+
+---
+
+## Update — G2 verification against label-free monitoring literature (18 September 2026)
+
+| paper | what it does | effect on G2 |
+|---|---|---|
+| **Amoukou et al.**, *Sequential Harmful Shift Detection Without Labels*, NeurIPS 2024, arXiv 2412.12910 (J.P. Morgan AI Research) | Extends Podkopaev & Ramdas's sequential error tracking to the label-free case using a **proxy for the error** from a trained error estimator; states that **any scalar function correlated with error could serve as the proxy**. Tabular/image data, i.i.d. streams | **Narrows G2's method.** A cross-layer fault indicator used as the proxy for the gate's missed-detection error is an instance of this framework. Must be the **primary baseline** and cited as the framework G2 instantiates |
+| **Nguyen et al.**, *Reliably Detecting Model Failures in Deployment Without Labels* (D3M), NeurIPS 2025, arXiv 2506.05047 | Label-free post-deployment deterioration monitoring from **disagreement between predictive models**; FPR control and sample-complexity bounds; medical and benchmark data | **Narrows further:** disagreement as label-free deterioration evidence exists. Second baseline |
+| Solozobov, *Label-Free Detection of Governance Evidence Degradation*, arXiv 2604.17836 | Multi-proxy label-free drift monitoring (credit scoring); shows pure concept drift gives **zero change in every proxy** — an irreducible blind spot of label-free monitoring | Citable limit, parallel to KS(conf): label-free monitors cannot see failures that leave their inputs/outputs unchanged |
+
+**Search for an application of label-free harmful-shift detection to CPS / robot / driving safety monitors: none found.**
+
+**G2 after this check**
+
+- **Problem:** still open for **safety gates in closed-loop CPS** — the monitored object is a *detector* whose error is a **missed detection of a rare fault**, scores are **temporally correlated**, and the proxy must come from an **independent physical sensing path**, because a proxy computed from the gate's own inputs shares its blindness.
+- **Method:** largely **an instantiation** of label-free harmful-shift detection (Amoukou) with a cross-layer proxy, adapted to correlated closed-loop data.
+- **Novelty (judgment):** G2 as a problem ~50–60 %; G2 as a method **~20–30 %** (down from 30–45 %).
+- **Framing:** *"We adapt label-free harmful-shift detection to runtime safety gates of learned controllers, where the error to detect is the gate's own missed detection and the proxy must come from an independent sensing layer."*
