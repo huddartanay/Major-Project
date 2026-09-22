@@ -219,7 +219,12 @@ def main() -> int:
 
     manifest_rows: list[dict[str, Any]] = []
     t0 = time.time()
-    total_runs = len(severities) * args.seeds * (2 if args.arms == "both" else 1)
+    run_clean = args.arms in {"both", "clean"}
+    run_faulted = args.arms in {"both", "faulted"}
+    total_runs = (
+        (args.seeds if run_clean else 0)
+        + (len(severities) * args.seeds if run_faulted else 0)
+    )
     completed = 0
 
     with manifest_path.open("w", encoding="utf-8", newline="") as manifest_handle:
@@ -236,18 +241,57 @@ def main() -> int:
         )
         writer.writeheader()
 
-        arms = ("faulted", "clean") if args.arms == "both" else (args.arms,)
-        for fault_name, severity in severities.items():
+        # Clean arm first: one deterministic run per seed. With no fault and a
+        # fixed seed the plant behaviour is identical no matter which faulted
+        # run we would have "paired" it with, so writing one file per (fault,
+        # seed) would produce 6x the data and 6x the compute for the same
+        # numbers.
+        if run_clean:
             for seed_offset in range(args.seeds):
                 seed = args.base_seed + seed_offset
-                for arm in arms:
-                    fault_or_none = fault_name if arm == "faulted" else None
-                    filename = f"{fault_name}_{arm}_{seed}.jsonl"
+                filename = f"clean_{seed}.jsonl"
+                output_path = args.out / filename
+                run_start = time.time()
+                ticks_written = _run_one(
+                    policy=policy,
+                    fault=None,
+                    severity=None,
+                    seed=seed,
+                    ticks=args.ticks,
+                    output_path=output_path,
+                    header_common=header_common,
+                )
+                wall_secs = time.time() - run_start
+                row = {
+                    "fault": "",
+                    "arm": "clean",
+                    "seed": seed,
+                    "path": str(output_path.relative_to(args.out.parent.parent.parent)),
+                    "ticks_written": ticks_written,
+                    "wall_secs": round(wall_secs, 2),
+                }
+                writer.writerow(row)
+                manifest_handle.flush()
+                manifest_rows.append(row)
+                completed += 1
+                print(
+                    f"  [{completed:>3}/{total_runs}] {'(clean)':<16} "
+                    f"{'clean':<8} seed={seed} ticks={ticks_written} "
+                    f"({wall_secs:.1f}s)  elapsed {int(time.time() - t0)}s",
+                    flush=True,
+                )
+
+        # Faulted arm: 6 faults x N seeds.
+        if run_faulted:
+            for fault_name, severity in severities.items():
+                for seed_offset in range(args.seeds):
+                    seed = args.base_seed + seed_offset
+                    filename = f"{fault_name}_faulted_{seed}.jsonl"
                     output_path = args.out / filename
                     run_start = time.time()
                     ticks_written = _run_one(
                         policy=policy,
-                        fault=fault_or_none,
+                        fault=fault_name,
                         severity=severity,
                         seed=seed,
                         ticks=args.ticks,
@@ -257,7 +301,7 @@ def main() -> int:
                     wall_secs = time.time() - run_start
                     row = {
                         "fault": fault_name,
-                        "arm": arm,
+                        "arm": "faulted",
                         "seed": seed,
                         "path": str(output_path.relative_to(args.out.parent.parent.parent)),
                         "ticks_written": ticks_written,
@@ -269,7 +313,7 @@ def main() -> int:
                     completed += 1
                     print(
                         f"  [{completed:>3}/{total_runs}] {fault_name:<16} "
-                        f"{arm:<8} seed={seed} ticks={ticks_written} "
+                        f"{'faulted':<8} seed={seed} ticks={ticks_written} "
                         f"({wall_secs:.1f}s)  elapsed {int(time.time() - t0)}s",
                         flush=True,
                     )
@@ -286,7 +330,7 @@ def main() -> int:
                 "n_runs": len(manifest_rows),
                 "wall_secs_total": round(time.time() - t0, 2),
                 "faults": list(severities.keys()),
-                "arms": list(arms),
+                "arms": [a for a, on in (("clean", run_clean), ("faulted", run_faulted)) if on],
             },
             indent=2,
         ),
