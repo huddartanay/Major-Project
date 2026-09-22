@@ -10,6 +10,8 @@
 | **E18-R3** | Precision-limited or dynamics-limited? | **Complete** | P1 30/30 at n=3200 (160 s). Precision-limited | **PASS-R3** |
 | **E18-R3b** | Does it detect faults at the long window? | **Complete** | 4/6 at 100 %. Detection comes from the post-fault transient, not statistical power | **PASS, mechanism refuted** |
 | **E18-R3c** | Duration-matched control: is detection aftermath or sustained? | **Complete** | Sustained `imu_dropout` alarms at 0.2 %, below clean baseline. Only 3 of 6 faults detected under sustained injection | **H-AFTERMATH SUPPORTED** |
+| **STEP1-MECHANISM** | Why does the gate go silent under sustained faults? | **Complete, dev + held-out confirmed** | σ, departure, quantile all pinned at 1.00x clean on both dev and held-out; alarm suppression is a 38x tail effect on a distribution held constant while true tracking error grows 1.5-7x. E21 L1 held-out: 30/30 detection, 5-tick latency, 0/30 clean FP (identical to dev). | **H-none per pre-committed rule → target ITSC; §0.3 held-out reconfirm passed (see observations.md for a candidate C2-side hypothesis)** |
+| **STEP2-MAGNITUDE-SWEEP** | Does the L1-vs-gate quadrant have a non-empty cell A across magnitudes? | **Pre-registered; runner ready** | - | Pending run (~70 min) |
 | E19 | Does the observability profile predict monitor placement? | **Unblocked for P1** | - | - |
 | E20 | How does single-channel manipulation propagate? | **Future** | - | - |
 

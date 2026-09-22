@@ -475,6 +475,7 @@ def narrate(
         fault=injector,
         redundant=sensing,
         cold_path=cold_path(where),
+        demo_speed_assist=True,
     )
     print(f"\n{palette.dim}{narrator.printed} lines over {ticks} ticks.{palette.off}")
     return 0
