@@ -409,6 +409,31 @@ def main() -> int:
         encoding="utf-8",
     )
 
+    # Per-run summary: every seed's per-phase medians, so a reviewer can
+    # rebuild the verdict without re-running the ~25 min sweep. This is the
+    # only committed record of what each seed did; the raw JSONL files stay
+    # local (and are regeneratable from stage_a_run.py under the seeds
+    # recorded in the header).
+    per_run_path = args.out / f"per_run_summary_{args.suffix}.json"
+    per_run_path.write_text(
+        json.dumps(
+            {
+                "header": header_common,
+                "runs": [
+                    {
+                        "fault": s.fault,
+                        "arm": s.arm,
+                        "seed": s.seed,
+                        "phase_medians": s.values,
+                    }
+                    for s in summaries
+                ],
+            },
+            indent=1,
+        ),
+        encoding="utf-8",
+    )
+
     md_path = args.out / f"final_decision_{args.suffix}.md"
     md_path.write_text(_format_final_decision(fault_stats, decision, header_common, args.suffix),
                        encoding="utf-8")
