@@ -707,6 +707,7 @@ def drive_closed_loop(
     on_assembled: Callable[[AssembledPipeline[Any]], None] | None = None,
     redundant: RedundantSensing | None = None,
     single_channel: bool = False,
+    demo_speed_assist: bool = False,
 ) -> ClosedLoopResult:
     """Run the pipeline against the plant, feeding issued commands back in.
 
@@ -759,6 +760,16 @@ def drive_closed_loop(
             profile and bounded safe exploration can never engage. That is a
             materially different system from the one the architecture
             describes, so a run that leaves it ``None`` must say so.
+        demo_speed_assist: **For the interactive demonstration only.** When the
+            failsafe is NOMINAL and the plant's true speed has decayed below
+            1 m/s, snap the plant back to its reference speed on the next tick
+            so an audience can keep watching the loop react. Off by default,
+            which is what every benchmark and pre-registered experiment must
+            leave it. Paper runs cannot contain this code path (Stage 0 of the
+            19 Sep 2026 handoff): a run that silently re-injects momentum into
+            the plant is not the system whose failure mode is under study.
+            Only ``demo/dashboard.py`` and ``demo/narrate.py`` pass ``True``;
+            a unit test (``tests/unit/test_stage0_demo_flag.py``) enforces that.
 
     Returns:
         The run's outcome.
@@ -861,7 +872,12 @@ def drive_closed_loop(
 
         action = _action_for(record, lower=lower, upper=upper)
         plant.step(action.astype(np.float32))
-        if record.failsafe is not None and record.failsafe.state.value == "NOMINAL" and float(plant._state[2]) < 1.0:
+        if (
+            demo_speed_assist
+            and record.failsafe is not None
+            and record.failsafe.state.value == "NOMINAL"
+            and float(plant._state[2]) < 1.0
+        ):
             plant._state[2] = plant.spec_.reference_speed_mps
         previous_lateral = float(plant._state[4])  # noqa: SLF001
         deviation_total += abs(float(plant._state[1]))  # noqa: SLF001

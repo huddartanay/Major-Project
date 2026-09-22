@@ -1242,6 +1242,7 @@ def serve(
                 setattr(stream, "pipeline", built.pipeline),
                 setattr(stream, "plant", plant),
             ),
+            demo_speed_assist=True,
         )
         if handle is not None:
             handle.flush()
