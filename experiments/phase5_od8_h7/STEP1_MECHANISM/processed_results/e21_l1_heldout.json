@@ -1,0 +1,14 @@
+{
+  "base_seed": 20261201,
+  "n_seeds": 30,
+  "detector": "health",
+  "detection_rate": 1.0,
+  "median_latency_ticks": 5.0,
+  "clean_fp_rate": 0.0,
+  "dev_detection_rate": 1.0,
+  "dev_median_latency_ticks": 5,
+  "dev_clean_fp_rate": 0.0,
+  "verdict": "CONFIRMED",
+  "git_sha": "b17be5af92ef63e9b80373a4fdacef23dd5e0b5a",
+  "wall_secs": 435.65
+}
