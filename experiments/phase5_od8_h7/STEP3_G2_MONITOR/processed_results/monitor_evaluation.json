@@ -1,0 +1,445 @@
+{
+  "header": {
+    "sources": "experiments/phase5_od8_h7/STEP1_MECHANISM/raw_results, experiments/phase5_od8_h7/STEP2_MAGNITUDE_SWEEP/raw_results",
+    "n_runs_faulted": 257,
+    "n_runs_clean": 30
+  },
+  "decision": {
+    "primary_result": "PASS",
+    "gate_blindness": {
+      "monitor": "gate_blindness",
+      "fault": "imu_dropout",
+      "magnitude_label": "medium",
+      "n_runs": 30,
+      "detection_rate": 1.0,
+      "median_latency_ticks": 5.0,
+      "clean_fp_rate": 0.0
+    },
+    "l1_only": {
+      "monitor": "l1_only",
+      "fault": "imu_dropout",
+      "magnitude_label": "medium",
+      "n_runs": 30,
+      "detection_rate": 1.0,
+      "median_latency_ticks": 5.0,
+      "clean_fp_rate": 0.0
+    },
+    "detail": "gate_blindness detection=1.000 vs l1_only 1.000; gate_blindness latency=5.0 vs l1_only 5.0; gate_blindness clean_fp=0.000 (bar 0.1)"
+  },
+  "aggregate": {
+    "clean_fp_by_monitor": {
+      "gate_blindness": 0.0,
+      "l1_only": 0.0,
+      "oracle": 0.0,
+      "ks_conf": 0.7333333333333333,
+      "conformal_martingale": 0.0
+    },
+    "per_cell": [
+      {
+        "monitor": "gate_blindness",
+        "fault": "imu_dropout",
+        "magnitude_label": "medium",
+        "n_runs": 30,
+        "detection_rate": 1.0,
+        "median_latency_ticks": 5.0,
+        "clean_fp_rate": 0.0
+      },
+      {
+        "monitor": "l1_only",
+        "fault": "imu_dropout",
+        "magnitude_label": "medium",
+        "n_runs": 30,
+        "detection_rate": 1.0,
+        "median_latency_ticks": 5.0,
+        "clean_fp_rate": 0.0
+      },
+      {
+        "monitor": "oracle",
+        "fault": "imu_dropout",
+        "magnitude_label": "medium",
+        "n_runs": 30,
+        "detection_rate": 1.0,
+        "median_latency_ticks": 0.0,
+        "clean_fp_rate": 0.0
+      },
+      {
+        "monitor": "ks_conf",
+        "fault": "imu_dropout",
+        "magnitude_label": "medium",
+        "n_runs": 30,
+        "detection_rate": 1.0,
+        "median_latency_ticks": 203.0,
+        "clean_fp_rate": 0.7333333333333333
+      },
+      {
+        "monitor": "conformal_martingale",
+        "fault": "imu_dropout",
+        "magnitude_label": "medium",
+        "n_runs": 30,
+        "detection_rate": 0.03333333333333333,
+        "median_latency_ticks": 8,
+        "clean_fp_rate": 0.0
+      },
+      {
+        "monitor": "gate_blindness",
+        "fault": "lateral_noise",
+        "magnitude_label": "medium",
+        "n_runs": 30,
+        "detection_rate": 0.0,
+        "median_latency_ticks": null,
+        "clean_fp_rate": 0.0
+      },
+      {
+        "monitor": "l1_only",
+        "fault": "lateral_noise",
+        "magnitude_label": "medium",
+        "n_runs": 30,
+        "detection_rate": 0.0,
+        "median_latency_ticks": null,
+        "clean_fp_rate": 0.0
+      },
+      {
+        "monitor": "oracle",
+        "fault": "lateral_noise",
+        "magnitude_label": "medium",
+        "n_runs": 30,
+        "detection_rate": 1.0,
+        "median_latency_ticks": 0.0,
+        "clean_fp_rate": 0.0
+      },
+      {
+        "monitor": "ks_conf",
+        "fault": "lateral_noise",
+        "magnitude_label": "medium",
+        "n_runs": 30,
+        "detection_rate": 1.0,
+        "median_latency_ticks": 203.0,
+        "clean_fp_rate": 0.7333333333333333
+      },
+      {
+        "monitor": "conformal_martingale",
+        "fault": "lateral_noise",
+        "magnitude_label": "medium",
+        "n_runs": 30,
+        "detection_rate": 1.0,
+        "median_latency_ticks": 80.0,
+        "clean_fp_rate": 0.0
+      },
+      {
+        "monitor": "gate_blindness",
+        "fault": "position_bias",
+        "magnitude_label": "low",
+        "n_runs": 30,
+        "detection_rate": 0.0,
+        "median_latency_ticks": null,
+        "clean_fp_rate": 0.0
+      },
+      {
+        "monitor": "l1_only",
+        "fault": "position_bias",
+        "magnitude_label": "low",
+        "n_runs": 30,
+        "detection_rate": 0.0,
+        "median_latency_ticks": null,
+        "clean_fp_rate": 0.0
+      },
+      {
+        "monitor": "oracle",
+        "fault": "position_bias",
+        "magnitude_label": "low",
+        "n_runs": 30,
+        "detection_rate": 1.0,
+        "median_latency_ticks": 0.0,
+        "clean_fp_rate": 0.0
+      },
+      {
+        "monitor": "ks_conf",
+        "fault": "position_bias",
+        "magnitude_label": "low",
+        "n_runs": 30,
+        "detection_rate": 1.0,
+        "median_latency_ticks": 520.0,
+        "clean_fp_rate": 0.7333333333333333
+      },
+      {
+        "monitor": "conformal_martingale",
+        "fault": "position_bias",
+        "magnitude_label": "low",
+        "n_runs": 30,
+        "detection_rate": 0.6333333333333333,
+        "median_latency_ticks": 1574,
+        "clean_fp_rate": 0.0
+      },
+      {
+        "monitor": "gate_blindness",
+        "fault": "position_bias",
+        "magnitude_label": "medium",
+        "n_runs": 30,
+        "detection_rate": 0.9666666666666667,
+        "median_latency_ticks": 13,
+        "clean_fp_rate": 0.0
+      },
+      {
+        "monitor": "l1_only",
+        "fault": "position_bias",
+        "magnitude_label": "medium",
+        "n_runs": 30,
+        "detection_rate": 1.0,
+        "median_latency_ticks": 13.0,
+        "clean_fp_rate": 0.0
+      },
+      {
+        "monitor": "oracle",
+        "fault": "position_bias",
+        "magnitude_label": "medium",
+        "n_runs": 30,
+        "detection_rate": 1.0,
+        "median_latency_ticks": 0.0,
+        "clean_fp_rate": 0.0
+      },
+      {
+        "monitor": "ks_conf",
+        "fault": "position_bias",
+        "magnitude_label": "medium",
+        "n_runs": 30,
+        "detection_rate": 1.0,
+        "median_latency_ticks": 203.0,
+        "clean_fp_rate": 0.7333333333333333
+      },
+      {
+        "monitor": "conformal_martingale",
+        "fault": "position_bias",
+        "magnitude_label": "medium",
+        "n_runs": 30,
+        "detection_rate": 1.0,
+        "median_latency_ticks": 30.0,
+        "clean_fp_rate": 0.0
+      },
+      {
+        "monitor": "gate_blindness",
+        "fault": "position_bias",
+        "magnitude_label": "mid_low",
+        "n_runs": 17,
+        "detection_rate": 0.0,
+        "median_latency_ticks": null,
+        "clean_fp_rate": 0.0
+      },
+      {
+        "monitor": "l1_only",
+        "fault": "position_bias",
+        "magnitude_label": "mid_low",
+        "n_runs": 17,
+        "detection_rate": 0.058823529411764705,
+        "median_latency_ticks": 2490,
+        "clean_fp_rate": 0.0
+      },
+      {
+        "monitor": "oracle",
+        "fault": "position_bias",
+        "magnitude_label": "mid_low",
+        "n_runs": 17,
+        "detection_rate": 1.0,
+        "median_latency_ticks": 0,
+        "clean_fp_rate": 0.0
+      },
+      {
+        "monitor": "ks_conf",
+        "fault": "position_bias",
+        "magnitude_label": "mid_low",
+        "n_runs": 17,
+        "detection_rate": 1.0,
+        "median_latency_ticks": 203,
+        "clean_fp_rate": 0.7333333333333333
+      },
+      {
+        "monitor": "conformal_martingale",
+        "fault": "position_bias",
+        "magnitude_label": "mid_low",
+        "n_runs": 17,
+        "detection_rate": 0.9411764705882353,
+        "median_latency_ticks": 649.0,
+        "clean_fp_rate": 0.0
+      },
+      {
+        "monitor": "gate_blindness",
+        "fault": "position_bias",
+        "magnitude_label": "subthreshold",
+        "n_runs": 30,
+        "detection_rate": 0.0,
+        "median_latency_ticks": null,
+        "clean_fp_rate": 0.0
+      },
+      {
+        "monitor": "l1_only",
+        "fault": "position_bias",
+        "magnitude_label": "subthreshold",
+        "n_runs": 30,
+        "detection_rate": 0.0,
+        "median_latency_ticks": null,
+        "clean_fp_rate": 0.0
+      },
+      {
+        "monitor": "oracle",
+        "fault": "position_bias",
+        "magnitude_label": "subthreshold",
+        "n_runs": 30,
+        "detection_rate": 1.0,
+        "median_latency_ticks": 0.0,
+        "clean_fp_rate": 0.0
+      },
+      {
+        "monitor": "ks_conf",
+        "fault": "position_bias",
+        "magnitude_label": "subthreshold",
+        "n_runs": 30,
+        "detection_rate": 0.7,
+        "median_latency_ticks": 203,
+        "clean_fp_rate": 0.7333333333333333
+      },
+      {
+        "monitor": "conformal_martingale",
+        "fault": "position_bias",
+        "magnitude_label": "subthreshold",
+        "n_runs": 30,
+        "detection_rate": 0.0,
+        "median_latency_ticks": null,
+        "clean_fp_rate": 0.0
+      },
+      {
+        "monitor": "gate_blindness",
+        "fault": "position_drift",
+        "magnitude_label": "medium",
+        "n_runs": 30,
+        "detection_rate": 0.7666666666666667,
+        "median_latency_ticks": 1101,
+        "clean_fp_rate": 0.0
+      },
+      {
+        "monitor": "l1_only",
+        "fault": "position_drift",
+        "magnitude_label": "medium",
+        "n_runs": 30,
+        "detection_rate": 1.0,
+        "median_latency_ticks": 1037.0,
+        "clean_fp_rate": 0.0
+      },
+      {
+        "monitor": "oracle",
+        "fault": "position_drift",
+        "magnitude_label": "medium",
+        "n_runs": 30,
+        "detection_rate": 1.0,
+        "median_latency_ticks": 0.0,
+        "clean_fp_rate": 0.0
+      },
+      {
+        "monitor": "ks_conf",
+        "fault": "position_drift",
+        "magnitude_label": "medium",
+        "n_runs": 30,
+        "detection_rate": 1.0,
+        "median_latency_ticks": 590.5,
+        "clean_fp_rate": 0.7333333333333333
+      },
+      {
+        "monitor": "conformal_martingale",
+        "fault": "position_drift",
+        "magnitude_label": "medium",
+        "n_runs": 30,
+        "detection_rate": 1.0,
+        "median_latency_ticks": 1278.5,
+        "clean_fp_rate": 0.0
+      },
+      {
+        "monitor": "gate_blindness",
+        "fault": "speed_bias",
+        "magnitude_label": "medium",
+        "n_runs": 30,
+        "detection_rate": 0.0,
+        "median_latency_ticks": null,
+        "clean_fp_rate": 0.0
+      },
+      {
+        "monitor": "l1_only",
+        "fault": "speed_bias",
+        "magnitude_label": "medium",
+        "n_runs": 30,
+        "detection_rate": 0.0,
+        "median_latency_ticks": null,
+        "clean_fp_rate": 0.0
+      },
+      {
+        "monitor": "oracle",
+        "fault": "speed_bias",
+        "magnitude_label": "medium",
+        "n_runs": 30,
+        "detection_rate": 1.0,
+        "median_latency_ticks": 0.0,
+        "clean_fp_rate": 0.0
+      },
+      {
+        "monitor": "ks_conf",
+        "fault": "speed_bias",
+        "magnitude_label": "medium",
+        "n_runs": 30,
+        "detection_rate": 1.0,
+        "median_latency_ticks": 203.0,
+        "clean_fp_rate": 0.7333333333333333
+      },
+      {
+        "monitor": "conformal_martingale",
+        "fault": "speed_bias",
+        "magnitude_label": "medium",
+        "n_runs": 30,
+        "detection_rate": 0.03333333333333333,
+        "median_latency_ticks": 6,
+        "clean_fp_rate": 0.0
+      },
+      {
+        "monitor": "gate_blindness",
+        "fault": "speed_stuck",
+        "magnitude_label": "medium",
+        "n_runs": 30,
+        "detection_rate": 0.0,
+        "median_latency_ticks": null,
+        "clean_fp_rate": 0.0
+      },
+      {
+        "monitor": "l1_only",
+        "fault": "speed_stuck",
+        "magnitude_label": "medium",
+        "n_runs": 30,
+        "detection_rate": 0.0,
+        "median_latency_ticks": null,
+        "clean_fp_rate": 0.0
+      },
+      {
+        "monitor": "oracle",
+        "fault": "speed_stuck",
+        "magnitude_label": "medium",
+        "n_runs": 30,
+        "detection_rate": 1.0,
+        "median_latency_ticks": 0.0,
+        "clean_fp_rate": 0.0
+      },
+      {
+        "monitor": "ks_conf",
+        "fault": "speed_stuck",
+        "magnitude_label": "medium",
+        "n_runs": 30,
+        "detection_rate": 0.5333333333333333,
+        "median_latency_ticks": 203.0,
+        "clean_fp_rate": 0.7333333333333333
+      },
+      {
+        "monitor": "conformal_martingale",
+        "fault": "speed_stuck",
+        "magnitude_label": "medium",
+        "n_runs": 30,
+        "detection_rate": 0.0,
+        "median_latency_ticks": null,
+        "clean_fp_rate": 0.0
+      }
+    ]
+  }
+}
