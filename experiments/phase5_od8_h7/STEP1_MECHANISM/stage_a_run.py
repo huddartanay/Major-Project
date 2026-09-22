@@ -61,15 +61,18 @@ LEVEL = "medium"
 POLICY_NAME = "P1"
 CKPT = "synthetic"
 
-# The six faults R3c ran. If §10 of the pre-reg agrees to trim the set, the
-# amendment.md records the decision and this constant changes there.
+# The six faults R3c ran (see benchmarks/e18r3c_sustained.py's iteration over
+# SEVERITIES). The pre-registration defines the fault set as "R3c's set"; this
+# constant is that definition made explicit. If §10 of the pre-reg agrees to
+# trim it, the amendment.md records the decision and this constant changes
+# there.
 FAULTS: tuple[str, ...] = (
     "imu_dropout",
-    "imu_bias",
     "lateral_noise",
     "position_bias",
     "position_drift",
     "speed_bias",
+    "speed_stuck",
 )
 
 
