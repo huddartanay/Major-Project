@@ -66,16 +66,22 @@ def _magnitudes(fault: str) -> list[tuple[str, float]]:
     """Return the five (label, magnitude) points for a fault.
 
     ``low``, ``medium``, ``high`` are the committed points from ``SEVERITIES``.
-    ``subthreshold`` = 0.1x low is a deliberately small point to expose L1's
-    detection boundary; ``mid_low`` = 0.5x medium fills the gap between low
-    and medium.
+    ``mid_low`` = 0.5x medium fills the gap between low and medium.
+    ``subthreshold`` is deliberately small to expose L1's detection boundary;
+    for NOISE_BURST the injected sigma must be > 1.0 to have any effect at
+    all, so its subthreshold is the smallest defensible value above that
+    floor (1.5) rather than 0.1 x low. Every other fault takes 0.1 x low.
     """
     levels = SEVERITIES[fault]["levels"]
     low = float(levels["low"])
     medium = float(levels["medium"])
     high = float(levels["high"])
+    if fault == "lateral_noise":
+        subthreshold = 1.5
+    else:
+        subthreshold = 0.1 * low
     return [
-        ("subthreshold", 0.1 * low),
+        ("subthreshold", subthreshold),
         ("low", low),
         ("mid_low", 0.5 * medium),
         ("medium", medium),

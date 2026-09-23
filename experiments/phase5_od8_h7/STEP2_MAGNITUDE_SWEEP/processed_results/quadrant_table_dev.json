@@ -1,0 +1,161 @@
+{
+  "cell_counts": {
+    "B": 5,
+    "D": 10
+  },
+  "cell_a_by_fault": {},
+  "overall": "WALK_AWAY_OR_SHIFT",
+  "message": "Cell A empty or single-fault; ITSC contribution has to shift, or Paper 1 walks away. See preregistration.md \u00a75.",
+  "rows": [
+    {
+      "fault": "position_bias",
+      "magnitude_label": "high",
+      "magnitude_value": 2.0,
+      "n_seeds": 30,
+      "l1_detected_count": 30,
+      "faulted_alarm_median": 1.0,
+      "clean_alarm_median": 0.057999999999999996,
+      "cell": "B"
+    },
+    {
+      "fault": "position_bias",
+      "magnitude_label": "low",
+      "magnitude_value": 0.25,
+      "n_seeds": 30,
+      "l1_detected_count": 0,
+      "faulted_alarm_median": 0.39349999999999996,
+      "clean_alarm_median": 0.057999999999999996,
+      "cell": "D"
+    },
+    {
+      "fault": "position_bias",
+      "magnitude_label": "medium",
+      "magnitude_value": 1.0,
+      "n_seeds": 30,
+      "l1_detected_count": 30,
+      "faulted_alarm_median": 1.0,
+      "clean_alarm_median": 0.057999999999999996,
+      "cell": "B"
+    },
+    {
+      "fault": "position_bias",
+      "magnitude_label": "mid_low",
+      "magnitude_value": 0.5,
+      "n_seeds": 30,
+      "l1_detected_count": 6,
+      "faulted_alarm_median": 0.5813333333333334,
+      "clean_alarm_median": 0.057999999999999996,
+      "cell": "D"
+    },
+    {
+      "fault": "position_bias",
+      "magnitude_label": "subthreshold",
+      "magnitude_value": 0.025,
+      "n_seeds": 30,
+      "l1_detected_count": 0,
+      "faulted_alarm_median": 0.0615,
+      "clean_alarm_median": 0.057999999999999996,
+      "cell": "D"
+    },
+    {
+      "fault": "position_drift",
+      "magnitude_label": "high",
+      "magnitude_value": 4.0,
+      "n_seeds": 30,
+      "l1_detected_count": 30,
+      "faulted_alarm_median": 0.8866666666666667,
+      "clean_alarm_median": 0.057999999999999996,
+      "cell": "B"
+    },
+    {
+      "fault": "position_drift",
+      "magnitude_label": "low",
+      "magnitude_value": 0.5,
+      "n_seeds": 30,
+      "l1_detected_count": 0,
+      "faulted_alarm_median": 0.31866666666666665,
+      "clean_alarm_median": 0.057999999999999996,
+      "cell": "D"
+    },
+    {
+      "fault": "position_drift",
+      "magnitude_label": "medium",
+      "magnitude_value": 2.0,
+      "n_seeds": 30,
+      "l1_detected_count": 30,
+      "faulted_alarm_median": 0.7626666666666666,
+      "clean_alarm_median": 0.057999999999999996,
+      "cell": "B"
+    },
+    {
+      "fault": "position_drift",
+      "magnitude_label": "mid_low",
+      "magnitude_value": 1.0,
+      "n_seeds": 30,
+      "l1_detected_count": 30,
+      "faulted_alarm_median": 0.5491666666666667,
+      "clean_alarm_median": 0.057999999999999996,
+      "cell": "B"
+    },
+    {
+      "fault": "position_drift",
+      "magnitude_label": "subthreshold",
+      "magnitude_value": 0.05,
+      "n_seeds": 30,
+      "l1_detected_count": 0,
+      "faulted_alarm_median": 0.06216666666666666,
+      "clean_alarm_median": 0.057999999999999996,
+      "cell": "D"
+    },
+    {
+      "fault": "speed_bias",
+      "magnitude_label": "high",
+      "magnitude_value": 6.0,
+      "n_seeds": 30,
+      "l1_detected_count": 0,
+      "faulted_alarm_median": 0.04766666666666667,
+      "clean_alarm_median": 0.057999999999999996,
+      "cell": "D"
+    },
+    {
+      "fault": "speed_bias",
+      "magnitude_label": "low",
+      "magnitude_value": 0.75,
+      "n_seeds": 30,
+      "l1_detected_count": 0,
+      "faulted_alarm_median": 0.05533333333333333,
+      "clean_alarm_median": 0.057999999999999996,
+      "cell": "D"
+    },
+    {
+      "fault": "speed_bias",
+      "magnitude_label": "medium",
+      "magnitude_value": 3.0,
+      "n_seeds": 30,
+      "l1_detected_count": 0,
+      "faulted_alarm_median": 0.050333333333333334,
+      "clean_alarm_median": 0.057999999999999996,
+      "cell": "D"
+    },
+    {
+      "fault": "speed_bias",
+      "magnitude_label": "mid_low",
+      "magnitude_value": 1.5,
+      "n_seeds": 30,
+      "l1_detected_count": 0,
+      "faulted_alarm_median": 0.05316666666666667,
+      "clean_alarm_median": 0.057999999999999996,
+      "cell": "D"
+    },
+    {
+      "fault": "speed_bias",
+      "magnitude_label": "subthreshold",
+      "magnitude_value": 0.07500000000000001,
+      "n_seeds": 30,
+      "l1_detected_count": 0,
+      "faulted_alarm_median": 0.05733333333333333,
+      "clean_alarm_median": 0.057999999999999996,
+      "cell": "D"
+    }
+  ]
+}

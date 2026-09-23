@@ -33,6 +33,58 @@ L1_DETECT_MAJORITY = 15
 N_SEEDS_EXPECTED = 30
 
 
+def _reconstruct_detector_summary(raw_dir: Path) -> list[dict[str, Any]]:
+    """Rebuild the runner's detector_summary.json from JSONL when it is missing.
+
+    Proxy for L1 detection: the earliest tick at or after the fault onset
+    where ``integrity_counter`` first exceeds 0. This is what the C2 evaluator
+    also uses; the runner's live detector call is more precise (E21's
+    `health` uses stream-freshness metadata not in the JSONL) but the proxy
+    matches on the sustained-fault runs where L1 stays engaged.
+    """
+    out: list[dict[str, Any]] = []
+    for path in sorted(raw_dir.glob("*.jsonl")):
+        try:
+            with path.open("r", encoding="utf-8") as fh:
+                lines = [line.strip() for line in fh if line.strip()]
+            if len(lines) < 2:
+                continue
+            header = json.loads(lines[0])
+            first_fire: int | None = None
+            for line in lines[1:]:
+                row = json.loads(line)
+                integrity = row.get("integrity_counter")
+                if integrity is not None and int(integrity) > 0:
+                    first_fire = int(row.get("tick", 0))
+                    break
+            fault = header.get("fault", "")
+            arm = header.get("arm", "faulted")
+            onset = header.get("fault_onset_tick", FAULT_ONSET)
+            l1_detected = (
+                arm == "faulted"
+                and first_fire is not None
+                and first_fire >= onset
+            )
+            out.append({
+                "fault": fault,
+                "magnitude_label": header.get("magnitude_label", "medium"),
+                "magnitude_value": header.get("magnitude_value"),
+                "seed": header.get("seed"),
+                "l1_detected": bool(l1_detected),
+                "l1_first_fire_tick": first_fire,
+                "l1_latency_ticks": (
+                    first_fire - onset if l1_detected and first_fire is not None else None
+                ),
+                "l1_false_alarm": bool(
+                    first_fire is not None and (arm == "clean" or first_fire < onset)
+                ),
+                "n_ticks": len(lines) - 1,
+            })
+        except (OSError, json.JSONDecodeError):
+            continue
+    return out
+
+
 def _tick_score_alarm_rate(jsonl_path: Path, thr: float, lo: int, hi: int) -> float:
     """Alarm rate `score > thr` over ticks [lo, hi] for a run JSONL file."""
     if not jsonl_path.exists():
@@ -100,10 +152,24 @@ def main() -> int:
     args.out.mkdir(parents=True, exist_ok=True)
 
     detector_summary_path = args.raw / "detector_summary.json"
-    if not detector_summary_path.exists():
-        print(f"missing detector summary: {detector_summary_path}", file=sys.stderr)
-        return 1
-    runs: list[dict[str, Any]] = json.loads(detector_summary_path.read_text(encoding="utf-8"))
+    if detector_summary_path.exists():
+        runs: list[dict[str, Any]] = json.loads(detector_summary_path.read_text(encoding="utf-8"))
+    else:
+        # Salvage path: if the runner crashed before writing the summary,
+        # reconstruct L1's per-run answer from the JSONL directly. The proxy
+        # is the failsafe integrity_counter: >0 means L1 has been flagging
+        # something. First tick with integrity_counter > 0 is L1's first-fire
+        # tick. Same approximation the C2 evaluator uses; documented in
+        # experiments/phase5_od8_h7/STEP3_G2_MONITOR/stage_c2_evaluate.py.
+        print(
+            f"note: {detector_summary_path} missing; reconstructing L1 "
+            f"detection from integrity_counter in raw JSONL",
+            file=sys.stderr,
+        )
+        runs = _reconstruct_detector_summary(args.raw)
+        if not runs:
+            print(f"no raw JSONL files under {args.raw}", file=sys.stderr)
+            return 1
 
     # Group by (fault, magnitude_label) -> list of runs.
     cells: dict[tuple[str, str], list[dict[str, Any]]] = {}
