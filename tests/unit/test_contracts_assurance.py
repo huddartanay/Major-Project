@@ -343,8 +343,11 @@ def test_safety_verdict_cannot_be_given_a_trust_index_after_construction_under_s
     )
 
     # A frozen, slotted record has nowhere to put a Trust Index: the assignment
-    # is refused rather than silently creating an attribute.
-    with pytest.raises(TypeError):
+    # is refused rather than silently creating an attribute. Python 3.12 hits
+    # __slots__ first and raises TypeError; Python 3.13 changed the order of
+    # dataclass checks and raises FrozenInstanceError first. Both refuse the
+    # assignment, which is what the test exists to enforce.
+    with pytest.raises((TypeError, dataclasses.FrozenInstanceError)):
         verdict.trust_index = 0.99  # type: ignore[attr-defined]
 
     assert not hasattr(verdict, "trust_index")
