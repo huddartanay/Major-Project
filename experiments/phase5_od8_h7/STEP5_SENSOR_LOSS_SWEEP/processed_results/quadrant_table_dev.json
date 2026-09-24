@@ -1,0 +1,47 @@
+{
+  "cell_counts": {
+    "D": 1,
+    "B": 2,
+    "A": 1
+  },
+  "overall": "NARROW",
+  "message": "Cell A populated only at p100. Paper narrows the G2 story to that probability; the framing states 'total IMU loss is the compelling case, partial loss is out of scope for this paper'. Stage D still proceeds.",
+  "rows": [
+    {
+      "magnitude_label": "p025",
+      "magnitude_value": 0.25,
+      "n_seeds": 30,
+      "l1_detected_count": 12,
+      "faulted_alarm_median": 0.133,
+      "clean_alarm_median": 0.057999999999999996,
+      "cell": "D"
+    },
+    {
+      "magnitude_label": "p050",
+      "magnitude_value": 0.5,
+      "n_seeds": 30,
+      "l1_detected_count": 30,
+      "faulted_alarm_median": 0.49416666666666664,
+      "clean_alarm_median": 0.057999999999999996,
+      "cell": "B"
+    },
+    {
+      "magnitude_label": "p075",
+      "magnitude_value": 0.75,
+      "n_seeds": 30,
+      "l1_detected_count": 30,
+      "faulted_alarm_median": 1.0,
+      "clean_alarm_median": 0.057999999999999996,
+      "cell": "B"
+    },
+    {
+      "magnitude_label": "p100",
+      "magnitude_value": 1.0,
+      "n_seeds": 30,
+      "l1_detected_count": 30,
+      "faulted_alarm_median": 0.00016666666666666666,
+      "clean_alarm_median": 0.057999999999999996,
+      "cell": "A"
+    }
+  ]
+}

@@ -1,7 +1,7 @@
 # Stage C2 -- Final Decision (dev)
 
-**Runs evaluated:** 257 faulted, 30 clean
-**Sources:** experiments/phase5_od8_h7/STEP1_MECHANISM/raw_results, experiments/phase5_od8_h7/STEP2_MAGNITUDE_SWEEP/raw_results
+**Runs evaluated:** 300 faulted, 30 clean
+**Sources:** experiments/phase5_od8_h7/STEP1_MECHANISM/raw_results, experiments/phase5_od8_h7/STEP5_SENSOR_LOSS_SWEEP/raw_results
 
 ## Primary result: **PASS**
 
@@ -26,31 +26,36 @@ gate_blindness detection=1.000 vs l1_only 1.000; gate_blindness latency=5.0 vs l
 | `oracle` | `imu_dropout` | medium | 30 | 1.000 | 0.0 | 0.000 |
 | `ks_conf` | `imu_dropout` | medium | 30 | 1.000 | 203.0 | 0.733 |
 | `conformal_martingale` | `imu_dropout` | medium | 30 | 0.033 | 8 | 0.000 |
+| `gate_blindness` | `imu_dropout` | p025 | 30 | 1.000 | 212.5 | 0.000 |
+| `l1_only` | `imu_dropout` | p025 | 30 | 1.000 | 191.0 | 0.000 |
+| `oracle` | `imu_dropout` | p025 | 30 | 1.000 | 0.0 | 0.000 |
+| `ks_conf` | `imu_dropout` | p025 | 30 | 0.867 | 471.5 | 0.733 |
+| `conformal_martingale` | `imu_dropout` | p025 | 30 | 0.033 | 9 | 0.000 |
+| `gate_blindness` | `imu_dropout` | p050 | 30 | 1.000 | 27.0 | 0.000 |
+| `l1_only` | `imu_dropout` | p050 | 30 | 1.000 | 23.5 | 0.000 |
+| `oracle` | `imu_dropout` | p050 | 30 | 1.000 | 0.0 | 0.000 |
+| `ks_conf` | `imu_dropout` | p050 | 30 | 1.000 | 260.5 | 0.733 |
+| `conformal_martingale` | `imu_dropout` | p050 | 30 | 0.833 | 1095 | 0.000 |
+| `gate_blindness` | `imu_dropout` | p075 | 30 | 1.000 | 10.5 | 0.000 |
+| `l1_only` | `imu_dropout` | p075 | 30 | 1.000 | 8.5 | 0.000 |
+| `oracle` | `imu_dropout` | p075 | 30 | 1.000 | 0.0 | 0.000 |
+| `ks_conf` | `imu_dropout` | p075 | 30 | 1.000 | 203.0 | 0.733 |
+| `conformal_martingale` | `imu_dropout` | p075 | 30 | 1.000 | 139.0 | 0.000 |
+| `gate_blindness` | `imu_dropout` | p100 | 30 | 1.000 | 5.0 | 0.000 |
+| `l1_only` | `imu_dropout` | p100 | 30 | 1.000 | 5.0 | 0.000 |
+| `oracle` | `imu_dropout` | p100 | 30 | 1.000 | 0.0 | 0.000 |
+| `ks_conf` | `imu_dropout` | p100 | 30 | 1.000 | 203.0 | 0.733 |
+| `conformal_martingale` | `imu_dropout` | p100 | 30 | 0.033 | 8 | 0.000 |
 | `gate_blindness` | `lateral_noise` | medium | 30 | 0.000 | -- | 0.000 |
 | `l1_only` | `lateral_noise` | medium | 30 | 0.000 | -- | 0.000 |
 | `oracle` | `lateral_noise` | medium | 30 | 1.000 | 0.0 | 0.000 |
 | `ks_conf` | `lateral_noise` | medium | 30 | 1.000 | 203.0 | 0.733 |
 | `conformal_martingale` | `lateral_noise` | medium | 30 | 1.000 | 80.0 | 0.000 |
-| `gate_blindness` | `position_bias` | low | 30 | 0.000 | -- | 0.000 |
-| `l1_only` | `position_bias` | low | 30 | 0.000 | -- | 0.000 |
-| `oracle` | `position_bias` | low | 30 | 1.000 | 0.0 | 0.000 |
-| `ks_conf` | `position_bias` | low | 30 | 1.000 | 520.0 | 0.733 |
-| `conformal_martingale` | `position_bias` | low | 30 | 0.633 | 1574 | 0.000 |
 | `gate_blindness` | `position_bias` | medium | 30 | 0.967 | 13 | 0.000 |
 | `l1_only` | `position_bias` | medium | 30 | 1.000 | 13.0 | 0.000 |
 | `oracle` | `position_bias` | medium | 30 | 1.000 | 0.0 | 0.000 |
 | `ks_conf` | `position_bias` | medium | 30 | 1.000 | 203.0 | 0.733 |
 | `conformal_martingale` | `position_bias` | medium | 30 | 1.000 | 30.0 | 0.000 |
-| `gate_blindness` | `position_bias` | mid_low | 17 | 0.000 | -- | 0.000 |
-| `l1_only` | `position_bias` | mid_low | 17 | 0.059 | 2490 | 0.000 |
-| `oracle` | `position_bias` | mid_low | 17 | 1.000 | 0 | 0.000 |
-| `ks_conf` | `position_bias` | mid_low | 17 | 1.000 | 203 | 0.733 |
-| `conformal_martingale` | `position_bias` | mid_low | 17 | 0.941 | 649.0 | 0.000 |
-| `gate_blindness` | `position_bias` | subthreshold | 30 | 0.000 | -- | 0.000 |
-| `l1_only` | `position_bias` | subthreshold | 30 | 0.000 | -- | 0.000 |
-| `oracle` | `position_bias` | subthreshold | 30 | 1.000 | 0.0 | 0.000 |
-| `ks_conf` | `position_bias` | subthreshold | 30 | 0.700 | 203 | 0.733 |
-| `conformal_martingale` | `position_bias` | subthreshold | 30 | 0.000 | -- | 0.000 |
 | `gate_blindness` | `position_drift` | medium | 30 | 0.767 | 1101 | 0.000 |
 | `l1_only` | `position_drift` | medium | 30 | 1.000 | 1037.0 | 0.000 |
 | `oracle` | `position_drift` | medium | 30 | 1.000 | 0.0 | 0.000 |
