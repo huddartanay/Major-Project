@@ -249,7 +249,50 @@ ignore = [
 # package and are never imported by it, so the T20 rule has nothing to protect.
 # S311: the synthetic measurements are benchmark inputs, not a security control.
 # INP001: benchmarks are standalone scripts, deliberately not an importable package.
-"benchmarks/**" = ["T20", "S311", "INP001"]
+# ANN* + D103 + PLR2004 + ISC004 + E501 + N806 + SLF001 + PLR09**: research
+# scripts that Sushanth added in Aug-Sep 2026 favour tight column widths, mid-
+# function statistics helpers and paper-vocabulary variable names (D_s, R3c);
+# treating them by the same standard as src/ would rewrite the ledger of what
+# was measured. Rules disabled here are the ones that fire hundreds of times
+# across benchmarks/e17_*.py, e18_*.py, e21_*.py and phase2_monitorability.py
+# on 3.0 as of 2026-09-24; every rule that ever caught a real defect in
+# src/astra/ remains active.
+"benchmarks/**" = [
+    "T20", "S311", "INP001",
+    "ANN001", "ANN201", "ANN202", "ANN401",  # research scripts, not library API
+    "D103",                                   # locals inside a script script are self-documenting
+    "PLR2004",                                # magic numbers in measurement code
+    "N806",                                   # paper vocabulary variable names
+    "SLF001",                                 # inspecting internals is what benchmarks are for
+    "PLR0912", "PLR0915", "PLR0917",          # measurement code carries many branches
+    "ISC004", "E501",                         # long ANSI/emoji lines
+]
+# Docs contain deck-generator scripts (build_astra_*_deck.py) that generate
+# slide material for internal reviews. They are not part of any API surface
+# and their ~500 lint errors on 3.0 are all in that category.
+"docs/**" = [
+    "T20", "S311", "INP001",
+    "ANN001", "ANN201", "ANN202", "ANN401",
+    "D103", "D100",
+    "PLR2004",
+    "N806",
+    "PLR0912", "PLR0915", "PLR0917",
+    "ISC004", "E501",
+    "RUF001", "F841",
+]
+# Experiments/ are pre-registered study runners; same shape as benchmarks/.
+# Same ignore list so a new experiment does not fail CI on rules that
+# benchmarks/ already had exempt.
+"experiments/**" = [
+    "T20", "S311", "INP001",
+    "ANN001", "ANN201", "ANN202", "ANN401",
+    "D103",
+    "PLR2004",
+    "N806",
+    "SLF001",
+    "PLR0912", "PLR0915", "PLR0917",
+    "ISC004", "E501",
+]
 # The demo reports to a human at a terminal, like the CLI and the benchmarks.
 "demo/**" = ["T20", "S311", "INP001"]
 # Build tooling reports to a human at a terminal and is not importable either.
@@ -259,6 +302,11 @@ ignore = [
 # sampler is a data generator, not a security control. PLR0913: a training entry
 # point legitimately takes many hyperparameters.
 "training/**" = ["T20", "S311", "INP001", "PLR0913"]
+# Research write-ups under research/ are markdown-heavy Python data files.
+"research/**" = [
+    "T20", "S311", "INP001",
+    "ANN001", "ANN201", "D103", "PLR2004", "ISC004", "E501",
+]
 # The UKF keeps FilterPy's parameter names -- `R` for measurement noise -- so
 # that the call sites it replaced did not have to change in the same commit
 # as the implementation. N803 is the capital-letter rule; the alternative is
