@@ -96,6 +96,19 @@ def main() -> int:
     args = parser.parse_args()
     args.out.mkdir(parents=True, exist_ok=True)
 
+    # If the caller asked for the held-out suffix but left the default
+    # stage-a-raw path (dev), redirect to the held-out clean baseline. The
+    # dev clean baseline has different seeds (20260731+i vs 20261201+i) so
+    # the pairing would silently produce NaN and mis-classify every cell.
+    stage_a_default = Path("experiments/phase5_od8_h7/STEP1_MECHANISM/raw_results")
+    if args.suffix == "heldout" and args.stage_a_raw == stage_a_default:
+        args.stage_a_raw = Path("experiments/phase5_od8_h7/STEP1_MECHANISM/raw_results_heldout")
+        print(
+            f"note: --suffix heldout with default --stage-a-raw; using "
+            f"{args.stage_a_raw} for clean baseline instead.",
+            file=sys.stderr,
+        )
+
     detector_summary_path = args.raw / "detector_summary.json"
     if not detector_summary_path.exists():
         print(f"missing detector summary: {detector_summary_path}", file=sys.stderr)
