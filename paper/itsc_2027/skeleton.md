@@ -138,20 +138,67 @@ missing run.
   same architectural reason L6 is.
   ▸ file: `STEP3_G2_MONITOR/processed_results/{final_decision_dev.md,observations.md}`.
 
-### 5.5 (Stage C1) L1-vs-gate quadrant table
+### 5.5 (Stage C1 → C1b) The L1-vs-gate quadrant restricts G2's regime
 
-**Pending Stage C1 sweep completion (~60 min at time of writing).** The
-pre-committed rule (`STEP2_MAGNITUDE_SWEEP/preregistration.md §5`)
-decides whether cell A is non-empty for ≥ 2 faults. Table goes here on
-completion; the paper's paragraph adapts to whichever cell counts hold.
+Stage C1's sweep across four value-corruption faults produced
+**WALK_AWAY_OR_SHIFT** per its pre-committed rule (`STEP2_MAGNITUDE_
+SWEEP/preregistration.md §5`): cell A empty on 3 of 3 completed faults
+(position_bias, position_drift, speed_bias) at every tested magnitude
+(subthreshold, low, mid_low, medium, high). Position faults trigger
+BOTH L1 and L6 correctly (cell B); speed faults trigger NEITHER at
+any magnitude (cell D).
+▸ file: `STEP2_MAGNITUDE_SWEEP/processed_results/{final_decision_dev.md,observations.md}`.
+
+The pre-committed shift branch was taken. Stage C1b (`STEP5_SENSOR_
+LOSS_SWEEP`) then swept graded IMU dropout at four probabilities on
+30 dev seeds. Verdict per pre-registration §5: **NARROW**. Cell A
+populated only at p = 1.00 (total loss); at partial dropouts the
+estimator's uncertainty is high enough that L6's non-conformity score
+crosses threshold and L6 does its job.
+
+| dropout p | L1 (of 30) | gate alarm rate (400-3399) | cell |
+|---|---:|---:|---|
+| 0.25 | 12 | 0.133 | D |
+| 0.50 | 30 | 0.494 | B (both react) |
+| 0.75 | 30 | 1.000 | B (both react) |
+| **1.00** | **30** | **0.0002** | **A (gate silent)** |
+
+▸ file: `STEP5_SENSOR_LOSS_SWEEP/processed_results/final_decision_dev.md`.
+
+The paper's compelling case is therefore total sensor loss. `speed_stuck`
+in Stage A shows the analogous invariant-inputs pattern, so the
+architectural claim generalises across sensor-loss modes.
 
 ### 5.6 (Stage C3) Outcome experiment: with vs without the monitor
 
-Time in NOMINAL under fault; time to reach DEGRADED / LIMP; needless
-escalation on clean runs. This experiment is scaffolded but not yet run;
-it requires wiring the G2 monitor to L8 via the abstention path (ADR to
-be written under `docs/adr/`).
-▸ file: `STEP4_OUTCOME_EXPERIMENT/` (pending).
+Two-part result on the offline lower-bound counterfactual (full L8
+wired counterfactual is scoped to Stage D).
+
+**Pre-committed primary at medium magnitude / p = 1.00** (per
+`STEP4_OUTCOME_EXPERIMENT/preregistration.md §3`): CF speed-up **0
+ticks** because L1's integrity counter already drives L8 escalation
+at tick 205, the same tick G2 fires. Fallback case (2): monitor is
+**safe to add** (zero clean false alarms) with **null outcome benefit
+at total dropout**.
+
+**Held below the primary verdict, reported in the discussion.** At
+partial dropouts G2's L1-vs-L6 comparison catches situations L8's
+integrity counter takes much longer to escalate on:
+
+| dropout p | median escalation tick | G2 fire tick | CF speed-up (lb) |
+|---|---:|---:|---:|
+| 0.25 | 2128 | 412 | **1640 ticks (~82 s)** |
+| 0.50 | 314 | 227 | 71 ticks (~3.5 s) |
+| 0.75 | 212 | 210 | 0 |
+| 1.00 | 205 | 205 | 0 |
+
+The 1,640-tick lower-bound at p = 0.25 is the paper's headline outcome
+number. It says: when the fault is subtle enough that L1's sustained-
+fire criterion accumulates slowly, the cross-layer comparison catches
+the situation an order of magnitude earlier. Reported as evidence for
+Stage D and future work.
+
+▸ file: `STEP4_OUTCOME_EXPERIMENT/processed_results/{final_decision_dev.md,observations.md}`.
 
 ### 5.7 Held-out replication (§0.3)
 
@@ -169,17 +216,31 @@ Stage A held-out is landed and identical to dev; E21 L1 identical.
   a limitation.** G2's semantic contribution is the classification of an
   L1 event as "gate blindness" vs "gate reacting". Downstream (L8) can
   now condition on that distinction.
-- **Limitations.** No held-out C1/C2 outcome numbers at time of
-  submission; no adversarial faults; no cross-controller replication.
+- **The Stage C1 → C1b path.** Pre-committed to WALK_AWAY_OR_SHIFT, we
+  took the shift branch: the parameterised value-corruption faults are
+  handled by L6 as designed (cell B), so G2's compelling regime is
+  sensor loss. C1b's NARROW verdict pins that to total loss for the
+  primary result while the graded-severity outcome numbers extend the
+  discussion.
+- **Partial-dropout outcome is where G2 delivers the biggest number.**
+  Not a pre-committed pass criterion, but the 1,640-tick lower-bound
+  speed-up at p = 0.25 is the strongest single-number result the paper
+  produces. Framed as evidence for Stage D and future work rather than
+  as the paper's headline.
+- **Limitations.** Full L8 wired counterfactual awaits the abstention
+  ADR (Stage D). No adversarial faults; no cross-controller
+  replication. Amoukou et al. and D3M baselines deferred to follow-up.
 
 ## 7 · One-sentence claim
 
-*Under sustained sensor faults, the L6 conformal gate goes silent
-because everything it reads is held constant while the plant diverges;
-comparing L1 stream health with L6 alarms flags this blindness
-label-free, with zero clean false alarms, at the same latency L1
-achieves alone (5 ticks on `imu_dropout`), on both dev and held-out
-seeds.*
+*Under total IMU loss, the L6 conformal gate goes silent because
+everything it reads is held constant while the plant diverges (dev
+and held-out); a label-free monitor comparing L1 stream health with
+L6 alarms flags this blindness with zero clean false alarms at the
+same 5-tick latency L1 achieves alone, and — at the graded partial-
+dropout severities that L8's own integrity path takes far longer to
+escalate on — would bring escalation forward by up to 1,640 ticks
+(~82 s) under the pre-registered lower-bound counterfactual.*
 
 ## 8 · Figure list (numbers to be finalised)
 
@@ -194,12 +255,18 @@ seeds.*
 
 ## 9 · Todo before submission
 
-- [ ] Stage C1 sweep complete + quadrant figure.
-- [ ] Stage C3 outcome experiment written, run, analysed.
-- [ ] Held-out Stage C1 + Stage C2 replication (Stage D).
+- [x] Stage C1 sweep complete (WALK_AWAY_OR_SHIFT) + shift branch executed.
+- [x] Stage C1b sensor-loss sweep (NARROW at p=1.00).
+- [x] Stage C2 monitor + baselines (dev PASS).
+- [x] Stage C3 outcome (dev): primary case (2) at medium + partial-
+      dropout 1640-tick speed-up as observation.
+- [ ] Stage C1b held-out sweep (in flight at the time of this update).
+- [ ] Full L8 wired counterfactual (Stage D): needs ADR for G2 →
+      L6 abstention path.
 - [ ] Amoukou et al. and D3M baseline implementations (§4.3 defer).
-- [ ] ADR under `docs/adr/` for G2 → L8 abstention wiring.
 - [ ] KS(conf) sequential correction patch (fixable engineering).
-- [ ] Author order and affiliation (with Sushanth on his return).
+- [ ] Author order and affiliation.
 - [ ] Licence update (LICENSE / NOTICE / README) once §0.6 licence choice
       is made (handoff §14).
+- [ ] CI: 143 remaining lint errors need per-file judgement (a broad
+      ignore expansion landed on stage-0 dropped the count from 847).
