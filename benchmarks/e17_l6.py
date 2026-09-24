@@ -26,7 +26,7 @@ from typing import Any
 import numpy as np
 
 from astra.layers.l4_proposer.learned import LearnedPolicy
-from benchmarks.discriminability import CHANNEL_SIGMAS, _FAULT_FIRST
+from benchmarks.discriminability import _FAULT_FIRST, CHANNEL_SIGMAS
 from benchmarks.e17_position import _l6
 from benchmarks.fault_study import SCENARIOS
 from training.closed_loop import drive_closed_loop
@@ -52,8 +52,10 @@ def _capture(policy: Any, fault: Any, seed: int) -> tuple[float, float]:
     a = np.array(scores, float)
     b = np.array(quants, float)
     a, b = a[np.isfinite(a)], b[np.isfinite(b)]
-    return (float(a.mean()) if a.size else float("nan"),
-            float(b.mean()) if b.size else float("nan"))
+    return (
+        float(a.mean()) if a.size else float("nan"),
+        float(b.mean()) if b.size else float("nan"),
+    )
 
 
 def main() -> None:
@@ -80,10 +82,17 @@ def main() -> None:
                 shift = abs(sc_f - sc_c)
                 rows.append(
                     {
-                        "policy": pname, "fault": fname, "seed": seed,
-                        "l6_score_clean": sc_c, "l6_score_faulted": sc_f,
-                        "l6_shift": shift, "l6_threshold": q, "l6_headroom": head,
-                        "l6_shift_over_headroom": shift / head if np.isfinite(head) and head > 0 else float("nan"),
+                        "policy": pname,
+                        "fault": fname,
+                        "seed": seed,
+                        "l6_score_clean": sc_c,
+                        "l6_score_faulted": sc_f,
+                        "l6_shift": shift,
+                        "l6_threshold": q,
+                        "l6_headroom": head,
+                        "l6_shift_over_headroom": shift / head
+                        if np.isfinite(head) and head > 0
+                        else float("nan"),
                         "could_fire": bool(np.isfinite(head) and shift >= head),
                     }
                 )
@@ -99,7 +108,9 @@ def main() -> None:
         w.writeheader()
         w.writerows(rows)
 
-    print(f"\n{'policy':<8}{'fault':<16}{'score_clean':>12}{'shift':>10}{'threshold':>11}{'headroom':>10}{'ratio':>9}{'fires?':>8}")
+    print(
+        f"\n{'policy':<8}{'fault':<16}{'score_clean':>12}{'shift':>10}{'threshold':>11}{'headroom':>10}{'ratio':>9}{'fires?':>8}"
+    )
     for p in POLICIES:
         for f in VALID:
             g = [r for r in rows if r["policy"] == p and r["fault"] == f]
@@ -111,7 +122,7 @@ def main() -> None:
                 f"{np.mean([x['l6_threshold'] for x in g]):>11.4f}"
                 f"{np.mean([x['l6_headroom'] for x in g]):>10.4f}"
                 f"{np.nanmean([x['l6_shift_over_headroom'] for x in g]):>9.4f}"
-                f"{str(any(x['could_fire'] for x in g)):>8}"
+                f"{any(x['could_fire'] for x in g)!s:>8}"
             )
 
 

@@ -26,12 +26,12 @@ from benchmarks.discriminability import _FAULT_FIRST
 from benchmarks.e18_evaluate import SEVERITIES, _build_injector, _sensing
 from training.closed_loop import drive_closed_loop
 
-FROZEN_V3_P1 = 3.7024          # E18_R2/processed_results/verdict.json. Not recomputed.
+FROZEN_V3_P1 = 3.7024  # E18_R2/processed_results/verdict.json. Not recomputed.
 POLICY, CKPT = "P1", "synthetic"
 BASE_SEED, N_SEEDS, TICKS = 20260731, 30, 3400
 WINDOWS = (200, 400, 800, 1600, 3200)
 HZ = 20.0
-LEVEL = "medium"               # E17-comparable severity
+LEVEL = "medium"  # E17-comparable severity
 
 # Run-level decision boundary: the 95th percentile of the CLEAN per-run alarm
 # rate at each window, from E18-R3's 30 clean P1 runs. Derived from clean data
@@ -41,8 +41,7 @@ LEVEL = "medium"               # E17-comparable severity
 # alarm rate - P(at least one alarm | 200 ticks) is about 1.0, so every run
 # detects, clean ones included. This fixes the run-level false-positive rate
 # at 5 % by construction.
-RUN_LEVEL_BOUND = {200: 0.185, 400: 0.1405, 800: 0.110812,
-                   1600: 0.088594, 3200: 0.072484}
+RUN_LEVEL_BOUND = {200: 0.185, 400: 0.1405, 800: 0.110812, 1600: 0.088594, 3200: 0.072484}
 
 
 def _run_faulted(policy: Any, fault: str, mag: float | None, seed: int, ticks: int) -> dict:
@@ -64,7 +63,10 @@ def _run_faulted(policy: Any, fault: str, mag: float | None, seed: int, ticks: i
         est_y.append(float(m[1]) if m is not None and len(m) > 1 else float("nan"))
 
     drive_closed_loop(
-        policy=policy, ticks=ticks, seed=seed, observer=obs,
+        policy=policy,
+        ticks=ticks,
+        seed=seed,
+        observer=obs,
         fault=_build_injector(fault, mag, seed),
         # The true run length, not the 400-tick module default: this caller is
         # the one the scaling bug was found in.
@@ -77,15 +79,19 @@ def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--seeds", type=int, default=N_SEEDS)
     ap.add_argument("--ticks", type=int, default=TICKS)
-    ap.add_argument("--out", type=Path,
-                    default=Path("experiments/phase5_od8_h7/E18_R3b/raw_results"))
+    ap.add_argument(
+        "--out", type=Path, default=Path("experiments/phase5_od8_h7/E18_R3b/raw_results")
+    )
     a = ap.parse_args()
     a.out.mkdir(parents=True, exist_ok=True)
     commit = subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip()
     policy = LearnedPolicy.load(Path(f"var/policy/{CKPT}.pt"))
     q = FROZEN_V3_P1
-    faults = [(f, SEVERITIES[f]["levels"].get(LEVEL)) for f in SEVERITIES
-              if LEVEL in SEVERITIES[f]["levels"]]
+    faults = [
+        (f, SEVERITIES[f]["levels"].get(LEVEL))
+        for f in SEVERITIES
+        if LEVEL in SEVERITIES[f]["levels"]
+    ]
 
     print(f"frozen threshold (v3, not recomputed): {POLICY} = {q}")
     print(f"{len(faults)} faults x {a.seeds} seeds x {a.ticks} ticks, faulted arm only\n")
@@ -104,9 +110,15 @@ def main() -> None:
             ticks_store[key] = [round(float(x), 6) for x in sc]
 
             rec: dict[str, Any] = {
-                "experiment_id": "E18-R3b", "git_commit": commit, "policy": POLICY,
-                "fault": fault, "severity_level": LEVEL, "severity_value": mag,
-                "seed": seed, "ticks": a.ticks, "threshold": q,
+                "experiment_id": "E18-R3b",
+                "git_commit": commit,
+                "policy": POLICY,
+                "fault": fault,
+                "severity_level": LEVEL,
+                "severity_value": mag,
+                "seed": seed,
+                "ticks": a.ticks,
+                "threshold": q,
                 "calibration_version": "v3-frozen-from-R2",
                 "tick_series_key": key,
                 "nonfinite": int((~np.isfinite(sc)).sum()),
@@ -118,7 +130,7 @@ def main() -> None:
                     first = next((k for k, v in enumerate(al) if v), None)
                     rate = float(al.mean())
                     rec[f"detected_{n}"] = bool(rate > RUN_LEVEL_BOUND[n])
-                    rec[f"any_alarm_{n}"] = bool(al.any())   # kept for the record
+                    rec[f"any_alarm_{n}"] = bool(al.any())  # kept for the record
                     rec[f"alarm_rate_{n}"] = rate
                     rec[f"bound_{n}"] = RUN_LEVEL_BOUND[n]
                     rec[f"latency_{n}"] = None if first is None else int(first)
@@ -129,9 +141,11 @@ def main() -> None:
                     rec[f"latency_{n}"] = None
                     rec[f"margin_{n}"] = float("nan")
             h = ev_all.size // 2
-            rec["drift_over_sd"] = float(
-                abs(ev_all[h:].mean() - ev_all[:h].mean()) / ev_all.std(ddof=1)
-            ) if ev_all.std(ddof=1) > 0 else float("nan")
+            rec["drift_over_sd"] = (
+                float(abs(ev_all[h:].mean() - ev_all[:h].mean()) / ev_all.std(ddof=1))
+                if ev_all.std(ddof=1) > 0
+                else float("nan")
+            )
             ey = np.asarray(r["est_y"], float)[_FAULT_FIRST:]
             rec["est_y_mean"] = float(np.nanmean(ey))
             records.append(rec)
@@ -142,14 +156,19 @@ def main() -> None:
             vals = [x[f"detected_{n}"] for x in g if x[f"detected_{n}"] is not None]
             return f"{np.mean(vals):>6.0%}" if vals else "     -"
 
-        print(f"  {fault:<16} n=200 {rate(200)}  ->  n={WINDOWS[-1]} {rate(WINDOWS[-1])}   "
-              f"[{time.time() - t0:.0f}s]", flush=True)
+        print(
+            f"  {fault:<16} n=200 {rate(200)}  ->  n={WINDOWS[-1]} {rate(WINDOWS[-1])}   "
+            f"[{time.time() - t0:.0f}s]",
+            flush=True,
+        )
 
     (a.out / "faulted_long.json").write_text(json.dumps(records, indent=2), encoding="utf-8")
     (a.out / "tick_series.json").write_text(json.dumps(ticks_store), encoding="utf-8")
     print(f"\n  {len(records)} runs -> {a.out / 'faulted_long.json'}")
-    print(f"  per-tick series -> {a.out / 'tick_series.json'} "
-          f"({(a.out / 'tick_series.json').stat().st_size / 1e6:.1f} MB)")
+    print(
+        f"  per-tick series -> {a.out / 'tick_series.json'} "
+        f"({(a.out / 'tick_series.json').stat().st_size / 1e6:.1f} MB)"
+    )
 
 
 if __name__ == "__main__":

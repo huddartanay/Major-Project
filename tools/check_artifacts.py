@@ -101,8 +101,8 @@ def stationary() -> list[Finding]:
     Returns:
         One finding if the loop is open, otherwise empty.
     """
-    from astra.layers.l4_proposer.learned import LearnedPolicy  # noqa: PLC0415
-    from training.closed_loop import drive_closed_loop  # noqa: PLC0415
+    from astra.layers.l4_proposer.learned import LearnedPolicy
+    from training.closed_loop import drive_closed_loop
 
     _, policy_path, _ = ARTEFACTS[2]
     result = drive_closed_loop(

@@ -80,7 +80,8 @@ def main() -> None:
     args = ap.parse_args()
     rows = load(args.dir / "raw")
     if not rows:
-        raise SystemExit("no raw runs found")
+        msg = "no raw runs found"
+        raise SystemExit(msg)
 
     policies = sorted({r["policy"] for r in rows})
     out: dict[str, object] = {
@@ -209,8 +210,7 @@ def main() -> None:
                     "policy": p,
                     "fault": f,
                     "value": [eff["lo"], eff["hi"]],
-                    "falsified": bool(eff["lo"] <= 0.0 <= eff["hi"])
-                    and not eff.get("degenerate"),
+                    "falsified": bool(eff["lo"] <= 0.0 <= eff["hi"]) and not eff.get("degenerate"),
                 }
             )
             stab = tableC[f"{p}|{f}"]
@@ -228,9 +228,7 @@ def main() -> None:
 
     dest = args.dir / "statistics"
     dest.mkdir(parents=True, exist_ok=True)
-    (dest / "analysis.json").write_text(
-        json.dumps(out, indent=2, default=str), encoding="utf-8"
-    )
+    (dest / "analysis.json").write_text(json.dumps(out, indent=2, default=str), encoding="utf-8")
     print(f"  runs analysed : {out['n_runs']}")
     print(f"  records       : {out['n_records']}")
     print(f"  any falsified : {out['any_falsified']}")

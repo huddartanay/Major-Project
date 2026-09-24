@@ -352,9 +352,7 @@ def test_the_frame_is_json_serialisable() -> None:
 # --------------------------------------------------------------------------- #
 
 
-@pytest.mark.parametrize(
-    "kind", ["dropout", "speed_stuck", "speed_bias", "lateral_noise"]
-)
+@pytest.mark.parametrize("kind", ["dropout", "speed_stuck", "speed_bias", "lateral_noise"])
 def test_every_offered_fault_builds_a_valid_specification(kind: str) -> None:
     spec = build_injector(kind, tick=500, seed=0)
 

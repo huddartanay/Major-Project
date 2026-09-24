@@ -107,13 +107,22 @@ def _injector_sustained(fault: str, magnitude: float | None, seed: int) -> Fault
     """
     last = TICKS - 1
     if fault == "speed_bias":
-        specs = (bias(FaultChannel.SPEED, first_tick=FAULT_FIRST, last_tick=last,
-                      offset=float(magnitude)),)
+        specs = (
+            bias(
+                FaultChannel.SPEED, first_tick=FAULT_FIRST, last_tick=last, offset=float(magnitude)
+            ),
+        )
     elif fault == "speed_stuck":
         specs = (stuck_at(FaultChannel.SPEED, first_tick=FAULT_FIRST, last_tick=last),)
     elif fault == "lateral_noise":
-        specs = (noise_burst(FaultChannel.LATERAL_ACCELERATION, first_tick=FAULT_FIRST,
-                             last_tick=last, sigma_multiplier=float(magnitude)),)
+        specs = (
+            noise_burst(
+                FaultChannel.LATERAL_ACCELERATION,
+                first_tick=FAULT_FIRST,
+                last_tick=last,
+                sigma_multiplier=float(magnitude),
+            ),
+        )
     elif fault == "imu_dropout":
         specs = (dropout(first_tick=FAULT_FIRST, last_tick=last),)
     else:

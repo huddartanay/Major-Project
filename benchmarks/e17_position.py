@@ -146,7 +146,11 @@ def main() -> None:
                         a = a[np.isfinite(a)]
                         return float(a.mean()) if a.size else float("nan")
 
-                    sc_c, sc_f, q = m(clean, "scores"), m(faulted, "scores"), m(faulted, "quantiles")
+                    sc_c, sc_f, q = (
+                        m(clean, "scores"),
+                        m(faulted, "scores"),
+                        m(faulted, "quantiles"),
+                    )
                     ey_c, ey_f = m(clean, "est_y"), m(faulted, "est_y")
                     records.append(
                         {
@@ -162,7 +166,9 @@ def main() -> None:
                             "l6_threshold": q,
                             "l6_headroom": q - sc_c,
                             "l6_shift_over_headroom": (
-                                abs(sc_f - sc_c) / (q - sc_c) if np.isfinite(q) and q > sc_c else float("nan")
+                                abs(sc_f - sc_c) / (q - sc_c)
+                                if np.isfinite(q) and q > sc_c
+                                else float("nan")
                             ),
                             "veto_rate": faulted["veto_rate"],
                             "fault_reached_estimator": bool(abs(ey_f - ey_c) > 1e-6),

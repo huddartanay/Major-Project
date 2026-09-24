@@ -66,27 +66,36 @@ def main() -> None:
     res: dict = {"epsilon": eps, "schemes": {}, "diagnostics": {}}
 
     print(f"epsilon = {eps}   nominal clean false-alarm rate = {eps:.1%}")
-    print(f"acceptance band [eps/2, 2*eps] = [{eps/2:.1%}, {2*eps:.1%}]\n")
+    print(f"acceptance band [eps/2, 2*eps] = [{eps / 2:.1%}, {2 * eps:.1%}]\n")
 
     # ---- clean distributions + drift + exchangeability ---------------------
     print("CLEAN BEHAVIOUR (calibration set) and EXCHANGEABILITY vs held-out clean test")
-    print(f"{'pol':<5}{'mean':>9}{'sd':>9}{'min':>9}{'max':>9}{'exch AUC':>11}"
-          f"{'1st half':>10}{'2nd half':>10}{'drift/sd':>10}")
+    print(
+        f"{'pol':<5}{'mean':>9}{'sd':>9}{'min':>9}{'max':>9}{'exch AUC':>11}"
+        f"{'1st half':>10}{'2nd half':>10}{'drift/sd':>10}"
+    )
     for p in POLICIES:
         c, t = flat(cal, p), flat(tst, p)
-        halves = [np.mean([r[: len(r) // 2].mean() for r in per_run(cal, p)]),
-                  np.mean([r[len(r) // 2:].mean() for r in per_run(cal, p)])]
+        halves = [
+            np.mean([r[: len(r) // 2].mean() for r in per_run(cal, p)]),
+            np.mean([r[len(r) // 2 :].mean() for r in per_run(cal, p)]),
+        ]
         drift = abs(halves[1] - halves[0]) / c.std(ddof=1)
         a = auc(c, t)
         res["diagnostics"][p] = {
-            "mean": float(c.mean()), "sd": float(c.std(ddof=1)),
-            "min": float(c.min()), "max": float(c.max()),
+            "mean": float(c.mean()),
+            "sd": float(c.std(ddof=1)),
+            "min": float(c.min()),
+            "max": float(c.max()),
             "exchangeability_auc": a,
-            "first_half_mean": float(halves[0]), "second_half_mean": float(halves[1]),
+            "first_half_mean": float(halves[0]),
+            "second_half_mean": float(halves[1]),
             "drift_over_sd": float(drift),
         }
-        print(f"{p:<5}{c.mean():>9.4f}{c.std(ddof=1):>9.4f}{c.min():>9.4f}{c.max():>9.4f}"
-              f"{a:>11.4f}{halves[0]:>10.4f}{halves[1]:>10.4f}{drift:>10.2f}")
+        print(
+            f"{p:<5}{c.mean():>9.4f}{c.std(ddof=1):>9.4f}{c.min():>9.4f}{c.max():>9.4f}"
+            f"{a:>11.4f}{halves[0]:>10.4f}{halves[1]:>10.4f}{drift:>10.2f}"
+        )
 
     # ---- scheme 1: global --------------------------------------------------
     pooled = np.concatenate([flat(cal, p) for p in POLICIES])
@@ -98,17 +107,21 @@ def main() -> None:
         t = flat(tst, p)
         far = float((t > q_global).mean())
         ok = eps / 2 <= far <= 2 * eps
-        g["per_policy"][p] = {"far": far, "in_band": bool(ok),
-                              "headroom": float(q_global - flat(cal, p).mean())}
-        print(f"{p:<5}{far:>12.4%}{eps:>10.1%}{str(ok):>10}"
-              f"{q_global - flat(cal, p).mean():>11.4f}")
+        g["per_policy"][p] = {
+            "far": far,
+            "in_band": bool(ok),
+            "headroom": float(q_global - flat(cal, p).mean()),
+        }
+        print(f"{p:<5}{far:>12.4%}{eps:>10.1%}{ok!s:>10}{q_global - flat(cal, p).mean():>11.4f}")
     g["all_in_band"] = all(v["in_band"] for v in g["per_policy"].values())
     res["schemes"]["global"] = g
 
     # ---- scheme 2: policy-conditional --------------------------------------
     pc = {"per_policy": {}}
-    print(f"\nSCHEME 2 - POLICY-CONDITIONAL")
-    print(f"{'pol':<5}{'quantile':>11}{'clean FAR':>12}{'nominal':>10}{'in band?':>10}{'headroom':>11}")
+    print("\nSCHEME 2 - POLICY-CONDITIONAL")
+    print(
+        f"{'pol':<5}{'quantile':>11}{'clean FAR':>12}{'nominal':>10}{'in band?':>10}{'headroom':>11}"
+    )
     for p in POLICIES:
         c, t = flat(cal, p), flat(tst, p)
         q = conformal_q(c, eps)
@@ -116,11 +129,14 @@ def main() -> None:
         ok = eps / 2 <= far <= 2 * eps
         ci = bca_median_ci(np.array([conformal_q(r, eps) for r in per_run(cal, p) if r.size > 20]))
         pc["per_policy"][p] = {
-            "quantile": q, "far": far, "in_band": bool(ok),
+            "quantile": q,
+            "far": far,
+            "in_band": bool(ok),
             "headroom": float(q - c.mean()),
-            "quantile_ci": [ci["lo"], ci["hi"]], "n_calibration": int(c.size),
+            "quantile_ci": [ci["lo"], ci["hi"]],
+            "n_calibration": int(c.size),
         }
-        print(f"{p:<5}{q:>11.4f}{far:>12.4%}{eps:>10.1%}{str(ok):>10}{q - c.mean():>11.4f}")
+        print(f"{p:<5}{q:>11.4f}{far:>12.4%}{eps:>10.1%}{ok!s:>10}{q - c.mean():>11.4f}")
     pc["all_in_band"] = all(v["in_band"] for v in pc["per_policy"].values())
     res["schemes"]["policy_conditional"] = pc
 
@@ -131,13 +147,18 @@ def main() -> None:
         "protocol.md section F: prefer global unless its clean false-alarm rate falls outside "
         "[eps/2, 2*eps] for at least one policy."
     )
-    print(f"\nSELECTION (pre-registered): global all-in-band = {g['all_in_band']}  "
-          f"-> scheme = {chosen.upper()}")
+    print(
+        f"\nSELECTION (pre-registered): global all-in-band = {g['all_in_band']}  "
+        f"-> scheme = {chosen.upper()}"
+    )
 
     # ---- fail criteria from protocol.md section C --------------------------
     sel = res["schemes"][chosen]
-    far_ok = (sel["all_in_band"] if chosen == "global"
-              else all(v["in_band"] for v in sel["per_policy"].values()))
+    far_ok = (
+        sel["all_in_band"]
+        if chosen == "global"
+        else all(v["in_band"] for v in sel["per_policy"].values())
+    )
     exch_ok = all(v["exchangeability_auc"] <= 0.70 for v in res["diagnostics"].values())
     drift_ok = all(v["drift_over_sd"] <= 1.0 for v in res["diagnostics"].values())
     res["fail_criteria"] = {
@@ -145,8 +166,11 @@ def main() -> None:
         "C2_exchangeable_auc_le_0.70": bool(exch_ok),
         "C3_drift_within_between_run_spread": bool(drift_ok),
     }
-    verdict = "PASS" if (far_ok and exch_ok and drift_ok) else (
-        "PARTIAL" if far_ok or exch_ok else "FAIL")
+    verdict = (
+        "PASS"
+        if (far_ok and exch_ok and drift_ok)
+        else ("PARTIAL" if far_ok or exch_ok else "FAIL")
+    )
     res["verdict"] = verdict
     print("\nPRE-REGISTERED FAIL CRITERIA")
     for k, v in res["fail_criteria"].items():
@@ -155,7 +179,8 @@ def main() -> None:
 
     (BASE / "processed_results").mkdir(parents=True, exist_ok=True)
     (BASE / "processed_results" / "calibration_analysis.json").write_text(
-        json.dumps(res, indent=2, default=str), encoding="utf-8")
+        json.dumps(res, indent=2, default=str), encoding="utf-8"
+    )
     print(f"  -> {BASE / 'processed_results' / 'calibration_analysis.json'}")
 
 

@@ -48,7 +48,11 @@ def main() -> None:
         print(f"{'policy':<7}{'fault':<17}" + "".join(f"{s:>16}" for s in STAGES))
         for p in pols:
             for f in faults:
-                g = [r for r in rows if r["condition"] == cond and r["policy"] == p and r["fault"] == f]
+                g = [
+                    r
+                    for r in rows
+                    if r["condition"] == cond and r["policy"] == p and r["fault"] == f
+                ]
                 if not g:
                     continue
                 cells = []
@@ -68,7 +72,11 @@ def main() -> None:
     for cond in conds:
         for p in pols:
             for f in faults:
-                g = [r for r in rows if r["condition"] == cond and r["policy"] == p and r["fault"] == f]
+                g = [
+                    r
+                    for r in rows
+                    if r["condition"] == cond and r["policy"] == p and r["fault"] == f
+                ]
                 if not g:
                     continue
                 l1 = np.array([x["D"]["L1"] for x in g], float)
@@ -78,10 +86,13 @@ def main() -> None:
                 absorbed = ci["median"] < ABSORPTION
                 verdicts.append(
                     {
-                        "condition": cond, "policy": p, "fault": f,
+                        "condition": cond,
+                        "policy": p,
+                        "fault": f,
                         "D_L1_median": float(np.median(l1)),
                         "D_L2a_median": ci["median"],
-                        "D_L2a_lo": ci["lo"], "D_L2a_hi": ci["hi"],
+                        "D_L2a_lo": ci["lo"],
+                        "D_L2a_hi": ci["hi"],
                         "absorbed_at_L2a": bool(absorbed),
                         "wilcoxon_p": w["p"],
                     }
@@ -98,27 +109,46 @@ def main() -> None:
     out["survives"] = n_abs > 0
 
     print("\n=== L6 threshold headroom (can the gate fire?) ===")
-    print(f"{'cond':<14}{'pol':<5}{'fault':<17}{'shift':>9}{'headroom':>10}{'ratio':>9}{'fires?':>8}")
+    print(
+        f"{'cond':<14}{'pol':<5}{'fault':<17}{'shift':>9}{'headroom':>10}{'ratio':>9}{'fires?':>8}"
+    )
     l6 = []
     for cond in conds:
         for p in pols:
             for f in faults:
-                g = [r for r in rows if r["condition"] == cond and r["policy"] == p and r["fault"] == f]
+                g = [
+                    r
+                    for r in rows
+                    if r["condition"] == cond and r["policy"] == p and r["fault"] == f
+                ]
                 if not g:
                     continue
                 sh = float(np.nanmean([x["l6_shift"] for x in g]))
                 hd = float(np.nanmean([x["l6_headroom"] for x in g]))
                 ra = float(np.nanmean([x["l6_shift_over_headroom"] for x in g]))
                 fires = any(
-                    np.isfinite(x["l6_shift"]) and np.isfinite(x["l6_headroom"]) and x["l6_shift"] >= x["l6_headroom"]
+                    np.isfinite(x["l6_shift"])
+                    and np.isfinite(x["l6_headroom"])
+                    and x["l6_shift"] >= x["l6_headroom"]
                     for x in g
                 )
-                l6.append({"condition": cond, "policy": p, "fault": f, "shift": sh,
-                           "headroom": hd, "ratio": ra, "could_fire": fires})
-                print(f"  {cond:<14}{p:<5}{f:<17}{sh:>9.4f}{hd:>10.4f}{ra:>9.4f}{str(fires):>8}")
+                l6.append(
+                    {
+                        "condition": cond,
+                        "policy": p,
+                        "fault": f,
+                        "shift": sh,
+                        "headroom": hd,
+                        "ratio": ra,
+                        "could_fire": fires,
+                    }
+                )
+                print(f"  {cond:<14}{p:<5}{f:<17}{sh:>9.4f}{hd:>10.4f}{ra:>9.4f}{fires!s:>8}")
     out["l6_headroom"] = l6
 
-    (args.dir / "analysis.json").write_text(json.dumps(out, indent=2, default=str), encoding="utf-8")
+    (args.dir / "analysis.json").write_text(
+        json.dumps(out, indent=2, default=str), encoding="utf-8"
+    )
     print(f"\n  -> {args.dir / 'analysis.json'}")
 
 

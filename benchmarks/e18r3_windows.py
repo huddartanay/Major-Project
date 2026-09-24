@@ -57,8 +57,9 @@ def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--seeds", type=int, default=N_SEEDS)
     ap.add_argument("--ticks", type=int, default=TICKS)
-    ap.add_argument("--out", type=Path,
-                    default=Path("experiments/phase5_od8_h7/E18_R3/raw_results"))
+    ap.add_argument(
+        "--out", type=Path, default=Path("experiments/phase5_od8_h7/E18_R3/raw_results")
+    )
     a = ap.parse_args()
     a.out.mkdir(parents=True, exist_ok=True)
     commit = subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip()
@@ -78,10 +79,15 @@ def main() -> None:
             ev_all = ev_all[np.isfinite(ev_all)]
             q = FROZEN_V3[pname]
             rec: dict[str, Any] = {
-                "experiment_id": "E18-R3", "git_commit": commit, "policy": pname,
-                "seed": seed, "ticks": a.ticks, "threshold": q,
+                "experiment_id": "E18-R3",
+                "git_commit": commit,
+                "policy": pname,
+                "seed": seed,
+                "ticks": a.ticks,
+                "threshold": q,
                 "calibration_version": "v3-frozen-from-R2",
-                "nonfinite": nonfinite, "available_eval_ticks": int(ev_all.size),
+                "nonfinite": nonfinite,
+                "available_eval_ticks": int(ev_all.size),
             }
             for n in WINDOWS:
                 w = ev_all[:n]
@@ -95,8 +101,11 @@ def main() -> None:
             records.append(rec)
         fars = [r[f"far_{WINDOWS[-1]}"] for r in records if r["policy"] == pname]
         inb = sum(1 for v in fars if EPS / 2 <= v <= 2 * EPS)
-        print(f"  {pname}: at n={WINDOWS[-1]}  runs in band {inb}/{len(fars)}   "
-              f"median FAR {np.median(fars):.2%}   [{time.time() - t0:.0f}s]", flush=True)
+        print(
+            f"  {pname}: at n={WINDOWS[-1]}  runs in band {inb}/{len(fars)}   "
+            f"median FAR {np.median(fars):.2%}   [{time.time() - t0:.0f}s]",
+            flush=True,
+        )
 
     (a.out / "long_runs.json").write_text(json.dumps(records, indent=2), encoding="utf-8")
     print(f"\n  {len(records)} runs -> {a.out / 'long_runs.json'}")

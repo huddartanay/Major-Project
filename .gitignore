@@ -25,3 +25,20 @@ var/
 .idea/
 .vscode/
 *.swp
+# Personal files that must not enter the repo (added after a git add -A
+# incident that briefly pushed sensitive documents on 2026-09-24; see the
+# SESSION_STATUS doc). Extend this list with any new personal file the
+# owner drops into the working tree.
+OLD_PROJECT_COMPLETE_DOCUMENTATION.md
+TruEstates_Internship_Offer_Letter_Tanay.pdf
+*_Internship_Offer_Letter_*.pdf
+*_Personal_*.pdf
+*_Private_*.pdf
+# Per-experiment raw JSONL is regeneratable from seeded runners and is
+# already gitignored per-directory; a top-level pattern catches the same
+# thing if a new experiment folder is added without its own .gitignore.
+experiments/**/raw_results/*.jsonl
+experiments/**/raw_results_heldout/*.jsonl
+experiments/**/raw_results/manifest.csv
+experiments/**/raw_results/detector_summary.json
+experiments/**/raw_results/run_summary.json

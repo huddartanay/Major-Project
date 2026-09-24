@@ -28,8 +28,8 @@ import numpy as np
 
 from astra.layers.l4_proposer.learned import LearnedPolicy
 from benchmarks.discriminability import (
-    CHANNEL_SIGMAS,
     _FAULT_FIRST,
+    CHANNEL_SIGMAS,
     _collect,
     _stages_for,
     auc,
@@ -57,16 +57,16 @@ def _profile(policy: Any, name: str, seed: int, ticks: int, **kw: Any) -> dict[s
     return out
 
 
-def _collect_kw(policy, fault, seed, ticks, stages, kw):  # noqa: ANN001, ANN201
+def _collect_kw(policy, fault, seed, ticks, stages, kw):
     """`_collect`, but able to pass `single_channel` through to the closed loop."""
     if not kw:
         return _collect(policy, fault, seed, ticks, stages)
-    from training.closed_loop import TickSample, drive_closed_loop  # noqa: F401
     from benchmarks.discriminability import Trace
+    from training.closed_loop import TickSample, drive_closed_loop  # noqa: F401
 
     trace = Trace(values={c: [] for c, _, _ in stages}, ticks=[], speeds=[])
 
-    def observe(s):  # noqa: ANN001
+    def observe(s):
         trace.ticks.append(s.tick)
         trace.speeds.append(float(s.speed_mps))
         for code, _, fn in stages:
@@ -101,7 +101,11 @@ def main() -> None:
     # is regenerated, so this is a fault on a signal nothing consumes.
     a = _profile(policy, "position_bias", args.seed, args.ticks)
     res["A_unconsumed_channel"] = a
-    show("CONTROL A - position_bias, redundancy ON (channel not consumed)", a, "no downstream effect: D ~ 0.5 from L2a on")
+    show(
+        "CONTROL A - position_bias, redundancy ON (channel not consumed)",
+        a,
+        "no downstream effect: D ~ 0.5 from L2a on",
+    )
 
     # --- B: fault on the actual estimator input ------------------------------
     b = _profile(policy, "speed_bias", args.seed, args.ticks)
@@ -119,14 +123,19 @@ def main() -> None:
 
     on = integrity_audit(policy, args.seed, args.ticks, only=["position_bias", "position_drift"])
     off = integrity_audit(
-        policy, args.seed, args.ticks, only=["position_bias", "position_drift"],
+        policy,
+        args.seed,
+        args.ticks,
+        only=["position_bias", "position_drift"],
         single_channel=True,
     )
     res["C_bypass_on"] = on
     res["C_bypass_off"] = off
     print("\nCONTROL C - ground-truth bypass, measured at the delivered signal")
     print("  expect: redundancy OFF restores propagation if the diagnosis is right")
-    print(f"  {'fault':<16}{'redundancy':<12}{'injector':>10}{'L1':>10}{'estimator':>11}{'innov':>10}")
+    print(
+        f"  {'fault':<16}{'redundancy':<12}{'injector':>10}{'L1':>10}{'estimator':>11}{'innov':>10}"
+    )
     for label, rows in (("ON", on), ("OFF", off)):
         for r in rows:
             print(
@@ -159,15 +168,21 @@ def main() -> None:
         for code, _, _ in stages
     }
     res["D_clean_vs_clean"] = d
-    show("CONTROL D - clean vs clean, different seeds", d, "no systematic fault evidence; D near 0.5")
+    show(
+        "CONTROL D - clean vs clean, different seeds", d, "no systematic fault evidence; D near 0.5"
+    )
     hi = [k for k, v in d.items() if np.isfinite(v) and v > 0.75]
     res["D_verdict"] = (
-        f"CAUTION - stages above 0.75 on clean data: {hi}" if hi else "OK - no stage manufactures strong evidence"
+        f"CAUTION - stages above 0.75 on clean data: {hi}"
+        if hi
+        else "OK - no stage manufactures strong evidence"
     )
     print(f"  -> {res['D_verdict']}")
 
     args.out.mkdir(parents=True, exist_ok=True)
-    (args.out / "controls.json").write_text(json.dumps(res, indent=2, default=str), encoding="utf-8")
+    (args.out / "controls.json").write_text(
+        json.dumps(res, indent=2, default=str), encoding="utf-8"
+    )
     print(f"\n  -> {args.out / 'controls.json'}")
 
 

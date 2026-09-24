@@ -54,7 +54,7 @@ def wilcoxon_signed_rank(x: np.ndarray, y: np.ndarray) -> dict[str, float]:
     w = min(w_plus, w_minus)
     mean_w = n * (n + 1) / 4.0
     _, counts = np.unique(np.abs(d), return_counts=True)
-    tie_term = float(((counts**3 - counts).sum())) / 48.0
+    tie_term = float((counts**3 - counts).sum()) / 48.0
     var_w = n * (n + 1) * (2 * n + 1) / 24.0 - tie_term
     if var_w <= 0:
         return {"n": n, "n_dropped": n_all - n, "W": w, "z": float("nan"), "p": 1.0}
@@ -109,8 +109,12 @@ def bca_median_ci(
         # z0 undefined; fall back to the percentile interval and say so.
         lo, hi = np.percentile(boot, [100 * alpha / 2, 100 * (1 - alpha / 2)])
         return {
-            "median": theta, "lo": float(lo), "hi": float(hi),
-            "degenerate": False, "method": "percentile_fallback", "n": n,
+            "median": theta,
+            "lo": float(lo),
+            "hi": float(hi),
+            "degenerate": False,
+            "method": "percentile_fallback",
+            "n": n,
         }
     z0 = _N.inv_cdf(prop)
 
@@ -127,12 +131,20 @@ def bca_median_ci(
         out.append(100.0 * _N.cdf(adj))
     lo, hi = np.percentile(boot, [min(out), max(out)])
     return {
-        "median": theta, "lo": float(lo), "hi": float(hi),
-        "degenerate": False, "method": "BCa", "z0": z0, "a": a, "n": n,
+        "median": theta,
+        "lo": float(lo),
+        "hi": float(hi),
+        "degenerate": False,
+        "method": "BCa",
+        "z0": z0,
+        "a": a,
+        "n": n,
     }
 
 
-def spearman(x: np.ndarray, y: np.ndarray, b: int = BOOTSTRAP_B, seed: int = BOOTSTRAP_SEED) -> dict[str, float]:
+def spearman(
+    x: np.ndarray, y: np.ndarray, b: int = BOOTSTRAP_B, seed: int = BOOTSTRAP_SEED
+) -> dict[str, float]:
     """Spearman rho with a permutation p-value.
 
     Permutation rather than the t approximation because the regime covariate is

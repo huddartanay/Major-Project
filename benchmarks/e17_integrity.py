@@ -36,7 +36,7 @@ import numpy as np
 
 from astra.kernel.enums import SensorModality
 from astra.layers.l4_proposer.learned import LearnedPolicy
-from benchmarks.discriminability import CHANNEL_SIGMAS, _FAULT_FIRST
+from benchmarks.discriminability import _FAULT_FIRST, CHANNEL_SIGMAS
 from benchmarks.fault_study import SCENARIOS
 from training import closed_loop as cl
 from training import redundant as rd
@@ -93,12 +93,12 @@ def _instrumented(cap: Capture):
     orig_red = rd.RedundantExtractor.extract_fast
     orig_single = cl._Extractor.extract_fast
 
-    def corrupt(self, payload, *, tick):  # noqa: ANN001
+    def corrupt(self, payload, *, tick):
         out = orig_corrupt(self, payload, tick=tick)
         cap.injector_out.append(None if out is None else dict(out))
         return out
 
-    def extract(self, frame):  # noqa: ANN001
+    def extract(self, frame):
         sample = frame.sample_for(SensorModality.IMU)
         cap.bus_imu.append(None if sample is None else dict(sample.payload))
         try:
@@ -109,7 +109,7 @@ def _instrumented(cap: Capture):
         cap.estimator_in.append(None if m is None else tuple(float(v) for v in m.values))
         return m
 
-    def extract_single(self, frame):  # noqa: ANN001
+    def extract_single(self, frame):
         sample = frame.sample_for(SensorModality.IMU)
         cap.bus_imu.append(None if sample is None else dict(sample.payload))
         cap.bus_positions.append({} if sample is None else {"IMU": float(sample.payload["y"])})
@@ -169,7 +169,7 @@ def _differs(a: list, b: list, key: str | None, lo: int) -> tuple[bool, float]:
                 best = max(best, abs(float(x[k]) - float(y[k])))
             continue
         if isinstance(x, tuple):
-            best = max(best, max(abs(p - q) for p, q in zip(x, y)))
+            best = max(best, *(abs(p - q) for p, q in zip(x, y, strict=False)))
         else:
             best = max(best, abs(float(x) - float(y)))
     return best > _EPS, best
@@ -275,7 +275,7 @@ def main() -> None:
             f"innov={r['innovation_magnitude']:<10.5g} est_y={r['est_state_magnitude']:<10.5g}"
         )
     bad = [r["fault"] for r in rows if r["verdict"] == "INVALID"]
-    print(f"\n  INVALID: {bad if bad else 'none'}")
+    print(f"\n  INVALID: {bad or 'none'}")
 
 
 if __name__ == "__main__":

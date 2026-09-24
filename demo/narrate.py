@@ -88,7 +88,14 @@ _DEFAULT_SEED = 20260810
 
 #: Faults this trace can inject, matching the dashboard's buttons exactly so a
 #: number seen here is the number the demonstration would have shown.
-FAULTS = ("dropout", "position_bias", "position_drift", "speed_bias", "speed_stuck", "lateral_noise")
+FAULTS = (
+    "dropout",
+    "position_bias",
+    "position_drift",
+    "speed_bias",
+    "speed_stuck",
+    "lateral_noise",
+)
 
 
 class Palette:
@@ -108,9 +115,14 @@ class Palette:
             enabled: Whether to emit escape sequences at all.
         """
         codes = {
-            "dim": "\033[2m", "bold": "\033[1m", "off": "\033[0m",
-            "green": "\033[32m", "red": "\033[31m", "yellow": "\033[33m",
-            "cyan": "\033[36m", "violet": "\033[35m",
+            "dim": "\033[2m",
+            "bold": "\033[1m",
+            "off": "\033[0m",
+            "green": "\033[32m",
+            "red": "\033[31m",
+            "yellow": "\033[33m",
+            "cyan": "\033[36m",
+            "violet": "\033[35m",
         }
         for name, code in codes.items():
             setattr(self, name, code if enabled else "")
@@ -208,9 +220,7 @@ def _block(frame: Frame, palette: Palette) -> str:
         else abs(frame.truth_y - frame.estimate_y)
     )
     issued = (
-        "nothing issued"
-        if frame.issued is None
-        else "  ".join(f"{v:+.4f}" for v in frame.issued)
+        "nothing issued" if frame.issued is None else "  ".join(f"{v:+.4f}" for v in frame.issued)
     )
 
     def gate(name: str) -> str:
@@ -226,26 +236,34 @@ def _block(frame: Frame, palette: Palette) -> str:
         rule,
         head,
         f"  L1 sensing      {_health(frame)}",
-        f"  L2 estimate     lateral {_fmt(frame.estimate_y)} m"
-        f"     innovation {_fmt(frame.innovation, 2)}",
-        f"  L3 trust        Trust Index {_fmt(frame.trust_index, 2)}"
-        f"     context {frame.context or '--'}",
-        f"  L4 proposer     learned policy -- proposes only, never commands",
-        f"  L5 twin         physics reference L6 measures the proposal against",
+        (
+            f"  L2 estimate     lateral {_fmt(frame.estimate_y)} m"
+            f"     innovation {_fmt(frame.innovation, 2)}"
+        ),
+        (
+            f"  L3 trust        Trust Index {_fmt(frame.trust_index, 2)}"
+            f"     context {frame.context or '--'}"
+        ),
+        "  L4 proposer     learned policy -- proposes only, never commands",
+        "  L5 twin         physics reference L6 measures the proposal against",
         f"  L6 conformal    {gate('STATISTICAL')}",
         f"                  {palette.dim}quantile {_fmt(frame.quantile, 4)}{palette.off}",
         f"  L7b physical    {gate('PHYSICAL')}",
         f"  L7a hard bound  {gate('DETERMINISTIC')}",
-        f"  L8 fail-safe    {frame.failsafe_state or '--':<12}"
-        f" OOD {frame.ood_counter if frame.ood_counter is not None else '--'}"
-        f"   cap {'none' if frame.speed_cap is None else f'{frame.speed_cap:.1f} m/s'}",
+        (
+            f"  L8 fail-safe    {frame.failsafe_state or '--':<12}"
+            f" OOD {frame.ood_counter if frame.ood_counter is not None else '--'}"
+            f"   cap {'none' if frame.speed_cap is None else f'{frame.speed_cap:.1f} m/s'}"
+        ),
         f"  L9 arbitration  {frame.arbitration or '--':<17}"
         f" profile {frame.active_profile or '--'}"
         + (f"  {palette.violet}EXPLORING{palette.off}" if frame.exploring else ""),
         f"  -> issued       {frame.origin or 'none'}   {issued}",
-        f"  {palette.dim}ground truth    y {_fmt(frame.truth_y)} m"
-        f"   speed {_fmt(frame.truth_speed, 2)} m/s"
-        f"   belief off by {_fmt(error)} m   (simulator only){palette.off}",
+        (
+            f"  {palette.dim}ground truth    y {_fmt(frame.truth_y)} m"
+            f"   speed {_fmt(frame.truth_speed, 2)} m/s"
+            f"   belief off by {_fmt(error)} m   (simulator only){palette.off}"
+        ),
     ]
     return "\n".join(rows)
 
@@ -253,7 +271,7 @@ def _block(frame: Frame, palette: Palette) -> str:
 class Narrator:
     """Formats ticks, and remembers enough to report what changed."""
 
-    __slots__ = ("_every", "_last", "_mode", "_pause", "_palette", "_stream", "printed")
+    __slots__ = ("_every", "_last", "_mode", "_palette", "_pause", "_stream", "printed")
 
     def __init__(
         self,
@@ -337,9 +355,7 @@ class Narrator:
             }.get(frame.failsafe_state or "", "")
             if self._last.get("failsafe") is not None:
                 colour = p.green if frame.failsafe_state == "NOMINAL" else p.red
-                out.append(
-                    f"{colour}L8 -> {frame.failsafe_state}{p.off}  {p.dim}{why}{p.off}"
-                )
+                out.append(f"{colour}L8 -> {frame.failsafe_state}{p.off}  {p.dim}{why}{p.off}")
             self._last["failsafe"] = frame.failsafe_state
 
         if frame.blocking:
@@ -379,7 +395,11 @@ class Narrator:
 
         due = frame.tick % self._every == 0
         if due:
-            self._say(_block(frame, self._palette) if self._mode == "explain" else _line(frame, self._palette))
+            self._say(
+                _block(frame, self._palette)
+                if self._mode == "explain"
+                else _line(frame, self._palette)
+            )
         for line in events:
             self._say(f"{'':>6}  {line}")
         if (due or events) and self._pause > 0.0:
@@ -475,6 +495,7 @@ def narrate(
         fault=injector,
         redundant=sensing,
         cold_path=cold_path(where),
+        demo_speed_assist=True,
     )
     print(f"\n{palette.dim}{narrator.printed} lines over {ticks} ticks.{palette.off}")
     return 0
