@@ -55,6 +55,8 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Protocol, runtime_checkable
 
 if TYPE_CHECKING:
+    from collections.abc import Sequence
+
     from astra.contracts.actuation import (
         ControlCommand,
         IssuedCommand,
@@ -74,10 +76,12 @@ if TYPE_CHECKING:
         RuntimeContextSignature,
     )
     from astra.contracts.sensing import FusedSensorFrame
+    from astra.kernel.enums import ContextClass
     from astra.kernel.identifiers import TickId
 
 __all__ = [
     "CalibrationArbiter",
+    "CommandProjector",
     "CommandProposer",
     "DeterministicShield",
     "DynamicsPredictor",
@@ -197,15 +201,21 @@ class TrustEstimator(Protocol):
         """
         ...
 
-    def recalibrate(self, *, non_conformity_score: float, was_correct: bool) -> None:
-        """Update the class-conditional quantiles from an executed outcome.
+    def recalibrate(self, *, innovation_magnitude: float, was_correct: bool) -> None:
+        """Update L3's class-conditional quantiles from an observed innovation.
 
-        This is feedback loop FB3. Kept on the protocol rather than hidden inside
-        the implementation because the roadmap requires each loop to be brought
-        up, measured and removable one at a time.
+        Feedback loop FB3, L3's half. Kept on the protocol rather than hidden
+        inside the implementation because the roadmap requires each loop to be
+        brought up, measured and removable one at a time.
+
+        **The statistic is named explicitly and must stay that way.** L3 and L6
+        hold different distributions and this method writes to L3's; a parameter
+        that named L6's statistic is how the two came to be confused once
+        already.
 
         Args:
-            non_conformity_score: The realised score for the executed command.
+            innovation_magnitude: The Mahalanobis innovation magnitude observed
+                this tick.
             was_correct: Whether the executed outcome matched the prediction
                 within the certified tolerance.
         """
@@ -249,14 +259,32 @@ class DynamicsPredictor(Protocol):
     Predicts the command the modelled physics expects next. The departure of the
     untrusted proposal from this prediction, normalised by state uncertainty, is
     the statistical gate's non-conformity score.
+
+    Both methods take the operational context, and for the same reason in each
+    case. The score above is compared against a **per-context** conformal
+    quantile, so a context-blind prediction would leave its two operands
+    conditioned on different partitions; and adaptation that could not tell one
+    context from another would have to protect an old one with a penalty rather
+    than with structure, which was measured on 6 August 2026 and does not work
+    (ADR-0019).
     """
 
-    def predict(self, *, tick: TickId, state: FastStateEstimate) -> PredictedCommand:
+    def predict(
+        self,
+        *,
+        tick: TickId,
+        state: FastStateEstimate,
+        context: ContextClass | None = None,
+    ) -> PredictedCommand:
         """Predict the next command from the current state.
 
         Args:
             tick: The control tick.
             state: The current fast state estimate.
+            context: The operational context L3 classified this tick into.
+                ``None`` means no classification was produced and the
+                implementation should answer from an unadapted reference rather
+                than from a stale context's.
 
         Returns:
             The predicted command ``pi_hat_{t+1}``.
@@ -266,16 +294,24 @@ class DynamicsPredictor(Protocol):
         """
         ...
 
-    def adapt(self, *, applied: ControlCommand, measured: FastStateEstimate) -> None:
-        """Adapt the twin from a measured outcome under elastic weight consolidation.
+    def adapt(
+        self,
+        *,
+        applied: ControlCommand,
+        measured: FastStateEstimate,
+        context: ContextClass | None = None,
+    ) -> None:
+        """Adapt the twin from a measured outcome.
 
-        Feedback loop FB2. The implementation updates the output layer only,
-        Fisher-anchored on historical samples, so that adapting to a new context
-        does not catastrophically forget an old one.
+        Feedback loop FB2.
 
         Args:
             applied: The command that was actually applied.
             measured: The state measured after applying it.
+            context: The operational context the outcome was observed in.
+                ``None`` or ``UNCLASSIFIED`` must not adapt anything: a twin that
+                rewrote itself while it could not tell where it was would be the
+                failure mode the architecture exists to prevent.
         """
         ...
 
@@ -354,6 +390,80 @@ class PhysicalAdmissibilityChecker(Protocol):
 
         Raises:
             SafetyPathError: If admissibility could not be determined.
+        """
+        ...
+
+
+@runtime_checkable
+class CommandProjector(Protocol):
+    """Turns a target lateral acceleration back into a command vector.
+
+    The one piece of platform knowledge L9 needs and cannot derive: which
+    channel steers, and how much lateral acceleration a unit of it produces.
+    Supplied by the adapter, exactly as the actuation space is, so that NFR5's
+    domain independence survives -- a warehouse AGV supplies a different
+    projector and no layer changes.
+
+    Why only the inverse direction
+    -------------------------------
+    The forward projection already exists and is already published. L7b computes
+    the proposal's implied lateral acceleration to evaluate its jerk bound, and
+    records it, the current value and the limit in the verdict's evidence. L9
+    reads those three numbers rather than recomputing them, which keeps one
+    projection in the system instead of two that could disagree -- and two that
+    disagreed would mean the arbitrator was rate-limiting toward a target the
+    gate would not recognise.
+
+    See ADR-0017 for why L9 needs this at all.
+    """
+
+    def with_lateral_acceleration(
+        self, values: Sequence[float], target: float
+    ) -> tuple[float, ...]:
+        """Return the command vector that produces a target lateral acceleration.
+
+        Every other channel is carried through unchanged: the projector adjusts
+        the vehicle's *path*, never its speed. A rate-limited command is a
+        bounded step toward what the proposer asked for laterally, and it must
+        not quietly become a longitudinal intervention as well.
+
+        Args:
+            values: The command vector to adjust, in actuation-space order.
+            target: The lateral acceleration the result should imply, in m/s^2.
+
+        Returns:
+            A vector in the same space. Not clamped to it: the caller owns
+            admissibility, as it does everywhere else on this path.
+        """
+        ...
+
+    def with_speed_cap(
+        self, values: Sequence[float], *, current_speed: float, cap: float
+    ) -> tuple[float, ...]:
+        """Return the command with propulsion withdrawn if the cap is exceeded.
+
+        The other half of the platform knowledge L9 lacks. A fail-safe speed cap
+        arrives in m/s and the actuation space is throttle, brake and steer;
+        turning one into the other needs to know which channel drives, which
+        brakes, and that steering is none of its business.
+
+        **Braking, not just coasting.** Withdrawing propulsion is not enough:
+        HALT's cap is 0.0 m/s -- a commanded stop -- and a vehicle that merely
+        stops accelerating is still travelling. On a platform with drag the
+        distinction is a matter of time; on one without it, the vehicle never
+        stops at all.
+
+        Below the cap the command passes through untouched. A cap is a ceiling,
+        not a target, and a projector that also *accelerated* toward it would
+        make the fail-safe posture into a controller.
+
+        Args:
+            values: The command vector to adjust, in actuation-space order.
+            current_speed: The vehicle's speed, in m/s.
+            cap: The ceiling the fail-safe posture imposes, in m/s.
+
+        Returns:
+            A vector in the same space, unchanged when within the cap.
         """
         ...
 
@@ -447,6 +557,7 @@ class CalibrationArbiter(Protocol):
         verdict: SafetyVerdict,
         failsafe: FailSafeSnapshot,
         trust: TrustAssessment,
+        state: FastStateEstimate,
     ) -> IssuedCommand:
         """Decide and issue the final actuator command for this tick.
 
@@ -462,6 +573,8 @@ class CalibrationArbiter(Protocol):
             verdict: Core-B's combined verdict.
             failsafe: The FSM's posture, supplying speed caps and permissions.
             trust: The Trust Index, used for routing only.
+            state: The fast state estimate. Read for the speed the fail-safe cap
+                is compared against, and nothing else.
 
         Returns:
             The command actually sent to the actuators.

@@ -36,7 +36,6 @@ highway_speed_boundary_kmh = 70.0
 # PROVISIONAL, as in development.toml. Highway motion is smoother, so the
 # physics residual can be weighted a little harder without fighting the data.
 physics_weight = 1.5
-ewc_lambda = 150.0
 # (throttle, brake, steer) for the simulated platform. Placeholder pending a
 # trained twin and a measured steering-to-lateral-acceleration response.
 control_effectiveness = [0.0, 0.0, 140.0]
@@ -61,13 +60,141 @@ friction_margin = 0.80
 minimum_stopping_distance_m = 5.0
 # d_avail: the clear distance ahead the ODD assures. PROVISIONAL.
 assured_clear_distance_m = 150.0
+# How far off the centreline the vehicle may be. Matches the training plant's
+# lane half-width. Not called a lane: NFR5 keeps road concepts out of the core,
+# and a warehouse AGV has a permitted corridor just as a car has a lane.
+lateral_corridor_half_width_m = 1.75
 
 [failsafe]
-ood_threshold_degraded = 5
-ood_threshold_limp = 12
-ood_threshold_halt = 20
+# The out-of-distribution counter increments on a VETO and decrements on a PASS,
+# so a threshold is a duration of *sustained* refusal divided by the tick period.
+# At fast_rate_hz = 20 these are 0.5 s, 1.5 s and 5.0 s.
+#
+# They were 5 / 12 / 20 until 2 August 2026 -- 0.25 s, 0.6 s and 1.0 s. Nobody
+# had converted them, and one second turned out to be shorter than a legitimate
+# recovery: a vehicle starting 1 m off the lane centre needs about 21 ticks to
+# correct, because L7b's jerk bound permits 0.4 m/s^2 of lateral acceleration per
+# tick and L9 rate-limits the approach (ADR-0017). Every one of those ticks is a
+# VETO. So a 100,000-tick run in which the vehicle held the lane to 0.0003 m
+# spent 99,000 ticks in HALT, entered during the first second and terminal
+# thereafter.
+#
+# Chosen as durations rather than counts, and the question they answer is: how
+# long should a system whose thesis is that stopping is the hazard tolerate
+# sustained refusal before giving up? One second is not it.
+ood_threshold_degraded = 10
+ood_threshold_limp = 30
+ood_threshold_halt = 100
 degraded_speed_cap_kmh = 60.0
 limp_speed_cap_kmh = 20.0
+
+# The sensor-integrity counter (ADR-0024) rises on any modality worse than
+# HEALTHY and falls on a clean frame. It answers a different question from the
+# OOD counter and gets its own, much tighter, thresholds: 0.25 s, 0.75 s and
+# 2.0 s at 20 Hz.
+#
+# The looser triple above has a floor set by a *legitimate* recovery -- a
+# vehicle 1 m off centre needs ~21 vetoed ticks to correct. There is no
+# legitimate reason for a modality to stop publishing, so this triple has no
+# such floor and is bounded from the other side instead: by the hazard.
+#
+# Measured (E-46): under a 200-tick IMU dropout, L1 reports the IMU DEGRADED
+# from the second tick and the vehicle first crosses its +/-1.75 m corridor at
+# tick +73. So every threshold here must land inside 73, and phi3 = 40 leaves a
+# 33-tick margin -- 1.65 s at 20 Hz -- between a commanded stop and the hazard.
+#
+# Do not tune these to catch the six faults in benchmarks/fault_study.py. They
+# are six faults chosen by hand to defeat six named defences, not a population;
+# a threshold fitted to them is fitted to its own test set, which is the defect
+# E-41 records for the conformal corpus.
+integrity_threshold_degraded = 5
+integrity_threshold_limp = 15
+integrity_threshold_halt = 40
+
+# How many modalities may be unhealthy at once before the integrity counter
+# rises. ZERO, because this profile has one publisher per modality and no
+# cross-check -- there is nothing to fall back on, so one lying channel is one
+# too many. Raising it is a claim that something excludes the liar from the
+# fusion, and this deployment has nothing that does (ADR-0027).
+integrity_tolerated_faults = 0
+
+# Which modalities' health may change the vehicle's posture. ALL FIVE, which is
+# exactly the behaviour before this field existed.
+#
+# The escape hatch is deliberately not used here. This prototype's extractor
+# happens to read only the IMU, so declaring the other four non-critical would
+# be true *of this build* -- and true only because of OD-15, five modalities
+# carrying one measurement. That is a defect to fix, not a property to write
+# into a safety file (ADR-0028).
+#
+# A modality left out of this list is still RECORDED in every frame-health map
+# and every audit record. It simply stops being a reason to slow down or stop.
+critical_modalities = ["CAMERA", "LIDAR", "IMU", "GPS", "RADAR"]
+
+# Sensor decay (ADR-0031). The integrity counter moves +1 unhealthy, -1 healthy,
+# so ANY duty cycle at or below 50% nets to zero and never escalates, however
+# long it runs. Measured over 60 s at 20 Hz: a camera dark on alternate frames
+# spent 600 of 1200 ticks absent and held NOMINAL with the counter peaking at 1
+# (E-135). A sensor dropping a quarter of its frames is failing, and the machine
+# reported perfect health.
+#
+# This window smooths the per-modality unhealth fraction. 200 ticks is 10 s at
+# 20 Hz -- long enough that one dropped frame is ~0.5%, short enough to move
+# within a trip. It is a FILTER CONSTANT, not a safety threshold, which is why
+# it carries a default where the A-4 values above do not.
+decay_window_ticks = 200
+
+# decay_service_threshold is deliberately NOT set. What fraction of dropped
+# frames means "service this" is a property of a particular sensor on a
+# particular vehicle, and this project has measured no such number; inventing
+# one would be the unfalsifiable weight ADR-0028 and ADR-0029 both refused.
+# Unset means decay is measured and reported and flags nothing -- the standing
+# rule that no mechanism gets authority until it has run with none.
+# decay_service_threshold =
+
+# What each autonomy function needs, and therefore what is withdrawn when a
+# sensor goes unhealthy. THE SECOND AXIS (ADR-0029): critical_modalities above
+# decides whether a sensor may change the POSTURE; this decides which FUNCTIONS
+# it carries. They are orthogonal on purpose -- a camera can be no reason at all
+# to slow down and still be the only thing a lane change depends on.
+#
+# Composition is an INTERSECTION and can only ever subtract: a function is
+# offered where the posture allows it AND its sensors support it. Nothing here
+# can grant what the posture forbids, which is SI-3 held by construction.
+#
+# Declaring a requirement is the SAFE direction of error, and that is why these
+# are filled in while critical_modalities deliberately is not narrowed. Naming a
+# modality non-critical RELAXES -- it removes a protection, so it needs proof
+# (ADR-0028, which is why every modality above is still listed). Naming a
+# modality REQUIRED restricts: get it wrong and the vehicle declines a function
+# it could have kept. Design intent is enough to restrict; only relaxing needs
+# evidence.
+[failsafe.capabilities]
+lane_change = ["CAMERA", "RADAR"]
+lane_keeping = ["CAMERA"]
+adaptive_cruise = ["RADAR", "IMU"]
+obstacle_avoidance = ["LIDAR", "RADAR"]
+route_following = ["GPS"]
+
+# How far the posture may escalate for each KIND of sensor fault (ADR-0030).
+# L1 tells four health values apart; until 15 August this machine read one bit
+# of them, so a camera arriving LATE stopped the vehicle exactly as a camera
+# that was GONE (E-134).
+#
+# A ceiling is the right instrument here and was the WRONG one for modalities:
+# a ceiling says "how far", and *which sensor* is not a question about how far
+# (ADR-0029 rejected it for that). StreamHealth IS a severity -- literally how
+# far past the staleness budget a stream has fallen -- so mapping it onto how
+# far the posture may go invents no weight. It need only defend "a late reading
+# is less bad than no reading".
+#
+# A level left out is UNCAPPED, not lenient: silence in a safety file is not
+# permission. Validated to rise with severity -- a worse health cannot warrant a
+# milder posture, which is also the shape a typo on adjacent lines makes.
+[failsafe.integrity_ceiling]
+DEGRADED = "LIMP"
+FAULTED = "HALT"
+ABSENT = "HALT"
 
 [arbitration]
 trust_threshold_tau = 0.70

@@ -61,6 +61,7 @@ def _shield_settings() -> ShieldSettings:
         friction_margin=0.8,
         minimum_stopping_distance_m=5.0,
         assured_clear_distance_m=150.0,
+        lateral_corridor_half_width_m=1000.0,
     )
 
 
@@ -71,6 +72,17 @@ def _failsafe_settings() -> FailSafeSettings:
         ood_threshold_halt=THETA_HALT,
         degraded_speed_cap_kmh=60.0,
         limp_speed_cap_kmh=20.0,
+        integrity_threshold_degraded=5,
+        integrity_threshold_limp=15,
+        integrity_threshold_halt=40,
+        integrity_tolerated_faults=0,
+        critical_modalities=(
+            SensorModality.CAMERA,
+            SensorModality.LIDAR,
+            SensorModality.IMU,
+            SensorModality.GPS,
+            SensorModality.RADAR,
+        ),
     )
 
 

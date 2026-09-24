@@ -131,9 +131,35 @@ def _render_failsafe(snapshot: FailSafeSnapshot) -> dict[str, JsonValue]:
     return {
         "state": snapshot.state.value,
         "ood_counter": snapshot.ood_counter,
+        # Added at schema 8. ADR-0024 gave the machine two counters and argued
+        # that they must be reported separately, because "the gates refused
+        # forty commands" and "a sensor was dark for forty ticks" need different
+        # responses and one integer cannot say which happened. The field was put
+        # on the snapshot and **not on the record**, so the archive carried the
+        # argument's conclusion and none of its evidence (OD-16).
+        "integrity_counter": snapshot.integrity_counter,
         "speed_cap_mps": None if snapshot.speed_cap is None else float(snapshot.speed_cap),
         "lane_change_permitted": snapshot.lane_change_permitted,
         "human_intervention_requested": snapshot.human_intervention_requested,
+        # Added at schema 9, ADR-0029. The second axis: `state` records how bad
+        # things were getting, this records what was broken. A row carrying only
+        # the first cannot answer the question a technician actually opens the
+        # log with -- "which function did the vehicle stop offering, and when?"
+        #
+        # An empty list is ambiguous by construction and the snapshot's docstring
+        # says so: it means either nothing was withdrawn or the profile declared
+        # no capabilities. The active profile disambiguates, and the run manifest
+        # already records which profile was loaded.
+        "withdrawn_capabilities": list(snapshot.withdrawn_capabilities),
+        # Added at schema 10, ADR-0031. Every other number in this record resets
+        # when the trouble passes, which is correct for a posture and useless for
+        # a sensor: measured, a camera dark on alternate frames held the
+        # integrity counter at 1 for a full minute (E-135). This is the duty
+        # cycle that counter cancels out, per modality, and it is the only field
+        # here that answers "is this sensor dying?" rather than "am I in trouble
+        # now?". It drives nothing -- it is evidence for a maintenance decision.
+        "sensor_decay": dict(snapshot.sensor_decay),
+        "sensors_needing_service": list(snapshot.sensors_needing_service),
     }
 
 
@@ -150,6 +176,15 @@ def _render_arbitration(decision: ArbitrationDecision) -> dict[str, JsonValue]:
             None
             if decision.calibration_divergence_index is None
             else float(decision.calibration_divergence_index)
+        ),
+        # The context the decision was taken about. Rendered as a bare vector
+        # ordered per RCS_FIELDS rather than as named keys, because the ordering
+        # is already fixed by contract -- a profile's stored centroid is a bare
+        # vector too, and a reader that pairs them must use the same order.
+        "signature": (
+            None
+            if decision.signature is None
+            else [float(component) for component in decision.signature.components]
         ),
     }
 
@@ -262,6 +297,22 @@ class DecisionRecord:
         frame_health: Per-modality health of the fused sensor frame, as ordered
             pairs for deterministic rendering.
         fast_state: The UKF fast state estimate.
+        fast_innovation: ``||nu_t||`` under the innovation covariance for this
+            tick's fast update, or ``None`` if no update ran.
+
+            **The one quantity in the record that can disagree with the
+            estimate.** Everything else here is derived from the state the
+            filter settled on; this is how far the measurement was from what
+            the filter expected before it settled. The pipeline has always
+            computed it -- L6's rolling covariate-shift window is fed from it
+            and L3's Trust Index is computed from it -- and until 9 August 2026
+            it reached the evidence log through neither. An auditor could read
+            every record of a run and not recover the signal both gates were
+            reasoning about.
+
+            Added while measuring OD-9, where the question *"could anything in
+            Core-B have seen this fault?"* could not be answered from the
+            archive.
         trust: The Trust Module assessment.
         proposal: The untrusted proposed command.
         prediction: The digital twin's one-step prediction. Two gates score
@@ -281,6 +332,18 @@ class DecisionRecord:
         failsafe: The fail-safe FSM snapshot.
         arbitration: RCM's arbitration decision.
         issued: The command actually issued, if one was.
+        ablation: Which layers were disarmed for this run, as
+            :meth:`~astra.runtime.ablation.AblationProfile.render` produces
+            them, or ``"NONE"`` for a governed run.
+
+            **Stamped on every tick, and that is the point.** An ablation study
+            produces evidence that looks exactly like a governed run's --
+            verdicts, reason codes, a fail-safe trace -- and the difference is
+            invisible unless the record carries it. A configuration file
+            elsewhere is not enough: evidence outlives the configuration that
+            produced it, and a certification artefact describing a system that
+            was not running is the failure this field exists to prevent
+            (ADR-0021).
     """
 
     run: RunId
@@ -288,6 +351,7 @@ class DecisionRecord:
     config_hash: str
     frame_health: tuple[tuple[SensorModality, StreamHealth], ...] = ()
     fast_state: FastStateEstimate | None = None
+    fast_innovation: float | None = None
     trust: TrustAssessment | None = None
     proposal: ProposedCommand | None = None
     prediction: PredictedCommand | None = None
@@ -297,6 +361,7 @@ class DecisionRecord:
     failsafe: FailSafeSnapshot | None = None
     arbitration: ArbitrationDecision | None = None
     issued: IssuedCommand | None = None
+    ablation: str = "NONE"
 
     def __post_init__(self) -> None:
         """Validate the configuration hash and the frame-health keys.
@@ -334,6 +399,7 @@ class DecisionRecord:
                 modality.value: health.value for modality, health in self.frame_health
             },
             "fast_state": None if self.fast_state is None else _render_fast_state(self.fast_state),
+            "fast_innovation": self.fast_innovation,
             "trust": None if self.trust is None else _render_trust(self.trust),
             "proposal": None if self.proposal is None else _render_proposal(self.proposal),
             "prediction": (
@@ -349,6 +415,7 @@ class DecisionRecord:
                 None if self.arbitration is None else _render_arbitration(self.arbitration)
             ),
             "issued": None if self.issued is None else _render_issued(self.issued),
+            "ablation": self.ablation,
         }
 
     def to_json(self) -> str:

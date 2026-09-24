@@ -159,7 +159,7 @@ SEPARATION_INVARIANTS: tuple[SeparationInvariant, ...] = (
         title="Unconditional veto",
         statement=(
             "No PASS from any component can suppress a VETO. Aggregation is fail-closed, "
-            "and an empty verdict set is a VETO."
+            "and a verdict set that is empty -- or in which every gate abstained -- is a VETO."
         ),
         rationale=(
             "The Hard Safety Shield's authority is only meaningful if it is unconditional. "
@@ -180,7 +180,7 @@ SEPARATION_INVARIANTS: tuple[SeparationInvariant, ...] = (
         identifier="SI-4",
         title="Trust isolation",
         statement=(
-            "The Trust Index must not participate in Core-B's binary verdict. It flows to "
+            "The Trust Index must not participate in Core-B's verdict. It flows to "
             "L4 for monitoring and L9 for routing only."
         ),
         rationale=(
@@ -258,7 +258,7 @@ SEPARATION_INVARIANTS: tuple[SeparationInvariant, ...] = (
     SeparationInvariant(
         identifier="SI-8",
         title="Timing-domain separation",
-        statement="Cold-path work must never block a hot-path tick.",
+        statement="Cold-path event handling is decoupled from hot-path execution.",
         rationale=(
             "The knowledge-base search and evidence writing are unbounded in time. A tick "
             "that waits for either is late, and a late verdict about a vehicle that has "
@@ -288,7 +288,7 @@ SEPARATION_INVARIANTS: tuple[SeparationInvariant, ...] = (
             "The statistical gate can be silently disabled by a corrupt or hostile "
             "calibration table."
         ),
-        enforcement=EnforcementKind.STATIC,
+        enforcement=EnforcementKind.RUNTIME,
         mechanism="require_non_decreasing in CalibrationProfile; Phase 6 checksum verification",
     ),
     SeparationInvariant(

@@ -58,10 +58,11 @@ environment = "certification"
 # Weight on the physics residual during training. Derive from the trained twin's
 # validation error against held-out dynamics; record the corpus and the split.
 # physics_weight =
-# Fisher-anchored EWC penalty for FB2. Must be justified against an explicit
-# catastrophic-forgetting test: accuracy in the original context must not
-# degrade after adapting to a new one (RK-5).
-# ewc_lambda =
+# There is deliberately no EWC penalty to set. ADR-0019 replaced it with one
+# output head per ContextClass, so forgetting is prevented by the shape of the
+# network rather than by a term whose strength has to be certified. RK-5's
+# catastrophic-forgetting requirement is still what must be demonstrated; the
+# test is tests/unit/test_l5_forgetting.py.
 # Row mapping a command vector to the lateral acceleration it produces, in the
 # actuation space's channel order. A certified platform characterisation, not a
 # tuning parameter -- derive from the vehicle's steering response measurement.
@@ -103,6 +104,7 @@ environment = "certification"
 # d_avail: the clear distance ahead the ODD guarantees. A certified ODD
 # parameter, not a perception output -- see the schema docstring.
 # assured_clear_distance_m =
+# lateral_corridor_half_width_m =
 
 [failsafe]
 # θ1 < θ2 < θ3. Must be strictly increasing — the schema enforces the ordering,
@@ -113,6 +115,46 @@ environment = "certification"
 # ood_threshold_halt =
 # degraded_speed_cap_kmh =
 # limp_speed_cap_kmh =
+#
+# The sensor-integrity thresholds (ADR-0024) are safety thresholds by the same
+# argument and are equally absent. phi1 < phi2 < phi3, and the deployment must
+# choose them against its own hazard: the question is how long a modality may
+# say nothing before the vehicle stops, and the answer depends on how fast the
+# vehicle departs when it does. The prototype's simulation profile derives them
+# from a measured 73-tick departure; a real vehicle has a different number and
+# it is the integrator's to measure, not this repository's to assume.
+# integrity_threshold_degraded =
+# integrity_threshold_limp =
+# integrity_threshold_halt =
+#
+# And how many modalities may be unhealthy at once before the counter rises.
+# Zero unless the sensor set carries enough independent measurements of each
+# quantity to keep working with one of them lying, AND something excludes the
+# liar from the fusion. Both halves are required; either alone is not
+# redundancy (ADR-0027).
+# integrity_tolerated_faults =
+#
+# And which modalities' health may change the posture at all. Naming a modality
+# non-critical asserts that nothing the safety argument depends on reads it --
+# get it wrong and the vehicle drives on a dead sensor it needed. A modality
+# left out is still recorded; it stops being a reason to act (ADR-0028).
+# critical_modalities =
+
+# The second axis (ADR-0029). critical_modalities above decides whether a sensor
+# may change the POSTURE; this decides which FUNCTIONS it carries, and the two
+# are orthogonal -- a camera can be no reason to slow down and still be the only
+# thing a lane change depends on. Composition is an intersection that can only
+# subtract, so nothing declared here can grant what the posture forbids.
+#
+# Unlike every other value in this file, an EMPTY declaration is admissible: it
+# withdraws nothing, which is exactly the behaviour shipped before the field
+# existed. It is left blank here anyway, because a certification profile that
+# models no per-function dependency should have to say so deliberately rather
+# than inherit silence. Run `benchmarks/commissioning.py` against the completed
+# profile: it prints, per modality, what its loss withdraws and where the
+# posture lands, and flags any modality whose loss does nothing at all.
+# [failsafe.capabilities]
+# lane_change =
 
 [arbitration]
 # τ, the calibration admissibility threshold, and δ_CDI, the divergence limit

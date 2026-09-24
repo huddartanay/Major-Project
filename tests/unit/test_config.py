@@ -29,6 +29,7 @@ from astra.config.schema import (
     ShieldSettings,
 )
 from astra.kernel.constants import CONFIG_SCHEMA_VERSION
+from astra.kernel.enums import SensorModality
 from astra.kernel.errors import ConfigurationError, SchemaVersionError
 
 if TYPE_CHECKING:
@@ -46,7 +47,6 @@ CERTIFICATION_MISSING_FIELDS = frozenset(
         "trust.coverage_level",
         "trust.highway_speed_boundary_kmh",
         "twin.physics_weight",
-        "twin.ewc_lambda",
         "twin.control_effectiveness",
         "gate.significance_epsilon",
         "gate.mmd_threshold",
@@ -57,11 +57,17 @@ CERTIFICATION_MISSING_FIELDS = frozenset(
         "shield.friction_margin",
         "shield.minimum_stopping_distance_m",
         "shield.assured_clear_distance_m",
+        "shield.lateral_corridor_half_width_m",
         "failsafe.ood_threshold_degraded",
         "failsafe.ood_threshold_limp",
         "failsafe.ood_threshold_halt",
         "failsafe.degraded_speed_cap_kmh",
         "failsafe.limp_speed_cap_kmh",
+        "failsafe.integrity_threshold_degraded",
+        "failsafe.integrity_threshold_limp",
+        "failsafe.integrity_threshold_halt",
+        "failsafe.integrity_tolerated_faults",
+        "failsafe.critical_modalities",
         "arbitration.trust_threshold_tau",
         "arbitration.divergence_limit_delta",
     }
@@ -82,7 +88,6 @@ fast_rate_hz = 20.0
 slow_rate_hz = 1.0
 
 [trust]
-ensemble_size = 10
 minimum_calibration_samples = 500
 
 [gate]
@@ -109,7 +114,6 @@ highway_speed_boundary_kmh = 70.0
 
 [twin]
 physics_weight = 1.0
-ewc_lambda = 100.0
 control_effectiveness = [0.0, 0.0, 120.0]
 
 [gate]
@@ -126,6 +130,7 @@ legal_speed_limit_kmh = 50.0
 friction_margin = 0.85
 minimum_stopping_distance_m = 2.0
 assured_clear_distance_m = 60.0
+lateral_corridor_half_width_m = 1.75
 
 [failsafe]
 ood_threshold_degraded = 3
@@ -133,6 +138,11 @@ ood_threshold_limp = 6
 ood_threshold_halt = 10
 degraded_speed_cap_kmh = 40.0
 limp_speed_cap_kmh = 20.0
+integrity_threshold_degraded = 2
+integrity_threshold_limp = 4
+integrity_threshold_halt = 8
+integrity_tolerated_faults = 0
+critical_modalities = ["CAMERA", "LIDAR", "IMU", "GPS", "RADAR"]
 
 [arbitration]
 trust_threshold_tau = 0.60
@@ -245,6 +255,7 @@ def test_constructing_astra_settings_without_the_gate_section_fails() -> None:
                     "friction_margin": 0.85,
                     "minimum_stopping_distance_m": 2.0,
                     "assured_clear_distance_m": 60.0,
+                    "lateral_corridor_half_width_m": 1.75,
                 },
                 "failsafe": {
                     "ood_threshold_degraded": 3,
@@ -252,6 +263,11 @@ def test_constructing_astra_settings_without_the_gate_section_fails() -> None:
                     "ood_threshold_halt": 10,
                     "degraded_speed_cap_kmh": 40.0,
                     "limp_speed_cap_kmh": 20.0,
+                    "integrity_threshold_degraded": 2,
+                    "integrity_threshold_limp": 4,
+                    "integrity_threshold_halt": 8,
+                    "integrity_tolerated_faults": 0,
+                    "critical_modalities": ["CAMERA", "LIDAR", "IMU", "GPS", "RADAR"],
                 },
                 "arbitration": {"trust_threshold_tau": 0.6, "divergence_limit_delta": 0.25},
             }
@@ -600,6 +616,17 @@ def test_strictly_increasing_fail_safe_thresholds_are_accepted() -> None:
         ood_threshold_halt=10,
         degraded_speed_cap_kmh=40.0,
         limp_speed_cap_kmh=20.0,
+        integrity_threshold_degraded=2,
+        integrity_threshold_limp=4,
+        integrity_threshold_halt=8,
+        integrity_tolerated_faults=0,
+        critical_modalities=(
+            SensorModality.CAMERA,
+            SensorModality.LIDAR,
+            SensorModality.IMU,
+            SensorModality.GPS,
+            SensorModality.RADAR,
+        ),
     )
 
     assert failsafe.ood_threshold_degraded < failsafe.ood_threshold_limp
@@ -624,6 +651,17 @@ def test_out_of_order_fail_safe_thresholds_are_refused(degraded: int, limp: int,
             ood_threshold_halt=halt,
             degraded_speed_cap_kmh=40.0,
             limp_speed_cap_kmh=20.0,
+            integrity_threshold_degraded=2,
+            integrity_threshold_limp=4,
+            integrity_threshold_halt=8,
+            integrity_tolerated_faults=0,
+            critical_modalities=(
+                SensorModality.CAMERA,
+                SensorModality.LIDAR,
+                SensorModality.IMU,
+                SensorModality.GPS,
+                SensorModality.RADAR,
+            ),
         )
 
 

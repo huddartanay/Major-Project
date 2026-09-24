@@ -251,9 +251,66 @@ class FailSafeSnapshot:
         ood_counter: The out-of-distribution counter that drives transitions.
             Increments on a VETO, decrements on a PASS; its value is what makes
             recovery from DEGRADED and LIMP automatic.
-        speed_cap: The hard speed limit this state imposes, or ``None``.
+        speed_cap: The speed limit this state calls for, or ``None``. L9 projects
+            it onto the issued command, so this is both the record and the thing
+            that binds; see :class:`~astra.kernel.enums.FailSafeState`.
         lane_change_permitted: Whether lane changes are allowed in this state.
         human_intervention_requested: Whether the FSM has asked for a handover.
+        integrity_counter: The sensor-integrity counter, which rises on any
+            modality worse than ``HEALTHY`` and falls on a clean frame. **A
+            separate integer from ``ood_counter`` deliberately**: the two answer
+            different questions -- "is the command being refused?" and "can I
+            still believe what I am being told?" -- and a reader of this record
+            needs to know which one escalated the posture, because the remedies
+            differ. See ADR-0024 and OD-9.
+
+            It defaults to zero so that a snapshot constructed by a caller with
+            no sensor bus is not asserting a fault it never looked for.
+        withdrawn_capabilities: The autonomy functions unavailable this tick
+            because a modality they require is not ``HEALTHY``, sorted by name.
+
+            **A second axis, not a second severity.** ``state`` says how bad
+            things are getting; this says *what is broken*, and the two are
+            independent -- a vehicle can be NOMINAL with lane changes withdrawn
+            (a non-critical camera is dark) or DEGRADED with every capability
+            intact (the gates are refusing commands and every sensor is fine).
+            Collapsing them into one field would lose exactly the distinction a
+            driver and a technician each need. See ADR-0029.
+
+            Withdrawal is **subtractive only**: this list can remove a function
+            the posture would have allowed and can never restore one the posture
+            forbids. Consumers must therefore intersect, never override.
+
+            Empty means either that nothing is withdrawn or that the deployment
+            declared no capabilities at all. Those are different situations and
+            this field cannot distinguish them -- ``failsafe.capabilities`` in
+            the active profile is what says which, and
+            ``benchmarks/commissioning.py`` prints it.
+        sensor_decay: Per-modality **fraction of recent frames that were not
+            healthy**, smoothed over ``failsafe.decay_window_ticks``, sorted by
+            modality.
+
+            **The one field here that is about the sensor rather than about the
+            vehicle.** Every counter above answers *"am I in trouble now?"* and
+            resets when the trouble passes. This does not: it accumulates the
+            duty cycle of a fault, which is the quantity the integrity counter
+            cancels to zero. A camera dark on alternate frames holds that
+            counter at 1 forever and shows **0.5** here (E-135).
+
+            It has units and a meaning -- *this stream missed a fifth of its
+            frames* -- rather than being a weight someone chose, which is what
+            makes it defensible where a weighted counter was not.
+
+            **It drives nothing.** No posture, no veto, no command. A decaying
+            sensor is a maintenance condition, and a vehicle that stopped for
+            maintenance would re-introduce the nuisance stop OD-18 removed.
+        sensors_needing_service: The modalities whose decay has crossed
+            ``failsafe.decay_service_threshold``, sorted.
+
+            Empty when no threshold is declared, which is the shipped default:
+            what fraction of dropped frames means *service this* is a property
+            of a particular sensor on a particular vehicle, and this project
+            has measured no such number. The mechanism ships reporting only.
     """
 
     tick: TickId
@@ -262,17 +319,26 @@ class FailSafeSnapshot:
     speed_cap: MetresPerSecond | None = None
     lane_change_permitted: bool = True
     human_intervention_requested: bool = False
+    integrity_counter: int = 0
+    withdrawn_capabilities: tuple[str, ...] = ()
+    sensor_decay: tuple[tuple[str, float], ...] = ()
+    sensors_needing_service: tuple[str, ...] = ()
 
     def __post_init__(self) -> None:
         """Validate the counter and the speed cap.
 
         Raises:
-            ContractViolationError: If the OOD counter is negative.
+            ContractViolationError: If either counter is negative.
             RangeViolationError: If a speed cap is present and negative.
             NonFiniteValueError: If a present speed cap is not finite.
         """
         if self.ood_counter < 0:
             message = f"OOD counter must be non-negative, got {self.ood_counter}"
             raise ContractViolationError(message, context={"ood_counter": self.ood_counter})
+        if self.integrity_counter < 0:
+            message = f"integrity counter must be non-negative, got {self.integrity_counter}"
+            raise ContractViolationError(
+                message, context={"integrity_counter": self.integrity_counter}
+            )
         if self.speed_cap is not None:
             require_non_negative(self.speed_cap, name="speed_cap")

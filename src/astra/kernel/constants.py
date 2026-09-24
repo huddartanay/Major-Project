@@ -136,8 +136,104 @@ RCS_DIMENSION: Final = len(RCS_FIELDS)
 # after the schema has moved on. A version field is the cheapest possible
 # insurance against an unreadable evidence archive.
 
-AUDIT_SCHEMA_VERSION: Final = 1
-"""Schema version stamped on every audit record. Increment on any field change."""
+AUDIT_SCHEMA_VERSION: Final = 10
+"""Schema version stamped on every audit record. Increment on any field change.
+
+Version 2 (ADR-0016) widened the verdict vocabulary: a gate verdict may now read
+``ABSTAIN`` as well as ``PASS`` or ``VETO``. No field was added or removed, so a
+version-1 reader will parse a version-2 record structurally -- and will
+mis-classify an abstention, most likely as an unrecognised veto. That is exactly
+the failure the version field exists to make loud rather than silent.
+
+Version 3 (9 August 2026) adds ``fast_innovation`` to the decision record: the
+Mahalanobis distance of the tick's fast innovation. The quantity was always
+computed -- L6's covariate-shift window is fed from it and L3's Trust Index is
+derived from it -- and reached the archive through neither, so a run's evidence
+did not contain the one number in the pipeline that can *disagree* with the
+state estimate. Added while measuring OD-9, where the question "could anything
+in Core-B have seen this fault?" turned out to be unanswerable from the archive.
+
+A version-2 reader parses a version-3 record structurally and will not see the
+new key. That is the benign direction: it loses a signal rather than
+misinterpreting one, unlike the version-1/2 boundary above.
+
+Version 4 (9 August 2026) adds ``ablation``, naming which layers were disarmed
+for the run. Unlike version 3 this boundary is **not** benign in the reading
+direction: a version-3 reader sees an ablated run's records as a governed
+run's, because every other field is identical by construction -- that is what
+an ablation *is*. The version field is the only thing standing between an
+ablation study and a certification artefact describing a system that was not
+running, which is why ADR-0021 stamps the profile per tick rather than once
+per run.
+
+Version 5 (10 August 2026) adds ``previous_digest`` to every record, making
+the evidence log a hash chain and therefore **tamper-evident** rather than
+merely integrity-checked -- N-10, and the cheapest item in the threat model
+written the same day. A version-4 reader ignores the field and loses only the
+ability to detect tampering it could not detect before.
+
+Version 6 (11 August 2026) adds ``integrity_counter`` to the fail-safe snapshot
+(ADR-0024). The machine now escalates on two independent counters -- one for
+sustained refusal, one for sustained sensor unhealth -- and the state alone no
+longer says which. **This boundary is asymmetric in an interesting way.** A
+version-5 reader loses only the new field, so it reads a DEGRADED posture and
+cannot tell whether the gates refused or a sensor went dark; that is a loss of
+attribution, not a misreading. But the *converse* matters more for a safety
+case: every record written before version 6 was produced by a machine that
+could not escalate on sensor health at all, so a version-5 archive showing
+NOMINAL throughout a sensor fault is **correct about what that machine did** and
+must not be compared against a version-6 archive as though the two were the same
+system. That is precisely the OD-9 evidence (E-46), and the version field is
+what keeps it from being quietly re-interpreted.
+
+Version 7 (11 August 2026) adds ``signature`` to the arbitration decision: the
+five-component runtime context signature RCM actually decided on. **It was
+computed every cold-path evaluation, searched the knowledge base with, decided
+on, and archived nowhere** -- so a record could say ``SAFE_EXPLORATION, trust
+0.62`` and could not say what context produced it. The one question a reader of
+an arbitration record most wants to ask was unanswerable from the archive
+(OD-14).
+
+Third time this shape has appeared: ``fast_innovation`` at version 3, and
+``previous_digest`` at version 5 were both quantities the pipeline had and the
+evidence did not. A version-6 reader loses the field and is back to not being
+able to answer the question, which is the benign direction.
+
+Version 8 (11 August 2026) adds ``integrity_counter`` to the fail-safe snapshot,
+and it is the **fourth** instance of that shape in five versions. ADR-0024 gave
+the machine two counters four days earlier and argued they must be reported
+separately -- *"one integer cannot say which happened"* -- and the field went
+onto the snapshot and not onto the record. So every archive between schema 6 and
+8 carries that argument's conclusion and none of its evidence: a DEGRADED
+posture with no way to tell whether the gates refused or a sensor went dark
+(OD-16).
+
+Found by the tool built to *read* the evidence, which is the same way OD-14 was
+found one version earlier. A pipeline that computes a number is not a pipeline
+whose evidence has it, and the only reliable way to notice is to try to use the
+archive for something.
+
+Version 9 (15 August 2026) adds ``withdrawn_capabilities`` to the fail-safe
+snapshot (ADR-0029). The machine gained a second **axis**: ``state`` records how
+bad things were getting, this records *what was broken*, and the two are
+independent -- a version-9 row can read ``NOMINAL`` with lane changes withdrawn,
+which no earlier schema could express. A version-8 reader loses the field, and
+must not read its absence as *nothing was withdrawn*: it means nobody was asked.
+
+Version 10 (15 August 2026) adds ``sensor_decay`` and
+``sensors_needing_service`` (ADR-0031). **Every other number in this record
+resets when the trouble passes**, which is right for a posture and useless for a
+sensor. Measured: a camera dark on alternate frames for a full minute held the
+integrity counter at **1** and the posture at ``NOMINAL``, because that counter
+moves +1 and -1 and any duty cycle at or below 50% nets to zero however long it
+runs (E-135, OD-21). ``sensor_decay`` is the duty cycle that counter cancels
+out, per modality.
+
+The reading direction is benign -- a version-9 reader loses two fields -- but the
+*archive* direction is the point: a fleet's version-9 logs cannot be mined for
+sensor wear at all, because the quantity was never written down. That is the
+fifth instance of the shape at version 3, 5, 7 and 8, and the first where the
+missing quantity was not merely uncomputed but unrepresentable."""
 
 CONFIG_SCHEMA_VERSION: Final = 1
 """Schema version required in every configuration file. Rejected if mismatched."""

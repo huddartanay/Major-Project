@@ -132,13 +132,54 @@ _LAYER_DOMAIN: dict[LayerId, ExecutionDomain] = {
 
 @unique
 class Verdict(StrEnum):
-    """The binary judgement a Core-B gate returns for a proposed command."""
+    """The judgement a Core-B gate returns for a proposed command.
+
+    Two of the three values are judgements. The third records that the gate had
+    no basis to make one, which is a different statement from either and was
+    previously inexpressible -- see :attr:`ABSTAIN` and ADR-0016.
+    """
 
     PASS = "PASS"  # noqa: S105 - a safety verdict, not a credential
     """The gate found no reason to block the command."""
 
     VETO = "VETO"
     """The gate blocks the command. Never overridable by another gate's PASS."""
+
+    ABSTAIN = "ABSTAIN"
+    """The gate had no basis on which to judge, and says so rather than guessing.
+
+    Introduced by ADR-0016 for one specific, checkable condition: the statistical
+    gate holds no finite conformal threshold for the context class it was handed,
+    because no calibration data covers it. Before this value existed the gate had
+    to choose between two lies -- a PASS asserting the proposal satisfied a
+    threshold that does not exist, or a VETO asserting it violated one. It chose
+    VETO, correctly, and the comment above that branch in
+    :mod:`astra.layers.l6_statistical_gate.gate` says exactly why: *"a gate that
+    cannot make a statistical claim must not report that the proposal satisfied
+    one."* That reasoning wanted this third value.
+
+    **An abstention is not a PASS.** It does not clear anything; it removes the
+    gate from the aggregation for that tick. Two consequences follow and both are
+    load-bearing:
+
+    - A verdict set that is empty **or entirely abstentions** aggregates to
+      ``VETO``. Nothing judged the command, so the command was not cleared. This
+      is the same fail-closed rule that has always covered the empty set, and
+      extending it is what stops abstention becoming a fail-open mode.
+    - It must never be returned on a condition a reviewer cannot check after the
+      fact. "I was uncertain" is not a licence to abstain; "I hold no threshold
+      for this class, and the evidence record shows the sample count was zero"
+      is.
+    """
+
+    @property
+    def participates(self) -> bool:
+        """Return whether this verdict counts toward the aggregate.
+
+        Returns:
+            ``True`` for ``PASS`` and ``VETO``, ``False`` for ``ABSTAIN``.
+        """
+        return self is not Verdict.ABSTAIN
 
     @classmethod
     def merge(cls, verdicts: Iterable[Verdict]) -> Verdict:
@@ -156,17 +197,24 @@ class Verdict(StrEnum):
         FMEA mitigation for a silent Core-B crash, where the hardware crossbar
         defaults to VETO on a missed heartbeat.
 
+        **Abstentions are removed before that rule is applied, never counted as
+        PASS.** An input consisting only of abstentions is therefore
+        indistinguishable from an empty one and yields ``VETO`` for the same
+        reason: nothing judged the command. Returning ``PASS`` there would let a
+        gate clear a command by declining to look at it, which is precisely the
+        fail-open mode this method exists to prevent.
+
         Args:
             verdicts: Any iterable of :class:`Verdict` values.
 
         Returns:
-            ``PASS`` only if the iterable is non-empty and every element is
-            ``PASS``; otherwise ``VETO``.
+            ``PASS`` only if at least one verdict participated and every
+            participating verdict is ``PASS``; otherwise ``VETO``.
         """
-        materialised = tuple(verdicts)
-        if not materialised:
+        judged = tuple(verdict for verdict in verdicts if verdict.participates)
+        if not judged:
             return cls.VETO
-        if all(verdict is cls.PASS for verdict in materialised):
+        if all(verdict is cls.PASS for verdict in judged):
             return cls.PASS
         return cls.VETO
 
@@ -174,8 +222,12 @@ class Verdict(StrEnum):
     def is_blocking(self) -> bool:
         """Return whether this verdict prevents the proposed command from being issued.
 
+        An abstention does not block on its own -- it withdraws from the
+        judgement rather than opposing it. Whether the *tick* is blocked is a
+        question for the aggregate, which fails closed when nothing judged.
+
         Returns:
-            ``True`` for ``VETO``, ``False`` for ``PASS``.
+            ``True`` for ``VETO``, ``False`` for ``PASS`` and ``ABSTAIN``.
         """
         return self is Verdict.VETO
 
@@ -207,21 +259,47 @@ class FailSafeState(StrEnum):
     """The four states of the Core-B fail-safe state machine (L8).
 
     Transitions are driven by an out-of-distribution counter that increments on
-    every VETO and decrements on every PASS, which is what makes recovery
-    bidirectional and automatic without a restart.
+    every VETO and decrements on every PASS, which is what makes recovery from
+    DEGRADED and LIMP bidirectional and automatic without a restart. HALT is
+    terminal by design: :meth:`~astra.layers.l8_failsafe.machine.FailSafeStateMachine.reset`
+    is the only exit, because leaving a pull-over is an engineering or operator
+    decision rather than something a run of clean ticks should accomplish.
+
+    The speed caps these states report *are* enforced, as of P2.1 on 6 August
+    2026. :attr:`~astra.contracts.assurance.FailSafeSnapshot.speed_cap` is
+    projected onto the actuation vector by
+    :meth:`~astra.layers.l9_rcm.arbiter.RuntimeCalibrationManager.issue`, last
+    and after whatever governed the tick, so it binds on proposed, rate-limited,
+    fallback and exploring commands alike. Converting a cap in m/s into throttle
+    and brake needs to know which channel brakes -- platform knowledge NFR5 keeps
+    out of the core -- so the conversion happens across the
+    :class:`~astra.ports.pipeline.CommandProjector` seam, supplied by the
+    adapter.
+
+    They were *not* enforced for the whole life of the pipeline before that, and
+    the failure mode is worth remembering: every layer was individually correct,
+    L8 reported the cap and L9 labelled the command ``SPEED_CAPPED``, and no one
+    changed a number in the vector. A 100,000-tick run held 17.2 m/s in HALT,
+    whose cap is 0.0 m/s, with every audit row agreeing it had been capped.
     """
 
     NOMINAL = "NOMINAL"
     """Commands pass unmodified."""
 
     DEGRADED = "DEGRADED"
-    """OOD counter above theta-1. Fallback PID governs; speed reduced."""
+    """OOD counter above theta-1. Fallback PID governs. Reports a reduced speed
+    cap, enforced by withdrawing propulsion above it."""
 
     LIMP = "LIMP"
-    """OOD counter above theta-2. Hard speed cap; lane changes excluded."""
+    """OOD counter above theta-2. Lane changes excluded. Reports a hard speed
+    cap, enforced by withdrawing propulsion above it."""
 
     HALT = "HALT"
-    """Hardware fault, BIST failure, or counter above theta-3. Controlled pull-over."""
+    """Hardware fault, BIST failure, or counter above theta-3. Reports a cap of
+    0.0 m/s -- a commanded stop -- enforced as full braking, since this plant has
+    no drag and a vehicle that merely stops accelerating never stops. The intent
+    is a controlled pull-over; what is implemented is the deceleration, not the
+    pulling over."""
 
     @property
     def severity_rank(self) -> int:
@@ -302,6 +380,34 @@ class StreamHealth(StrEnum):
     DEGRADED = "DEGRADED"
     FAULTED = "FAULTED"
     ABSENT = "ABSENT"
+
+    @property
+    def severity_rank(self) -> int:
+        """Return a monotonically increasing rank, ``0`` for HEALTHY to ``3`` for ABSENT.
+
+        The ordering the pipeline already relied on to merge two health reports
+        by taking the worse, promoted here on 15 August 2026 because a second
+        caller needed it: ``failsafe.integrity_ceiling`` validates that a worse
+        health cannot warrant a milder posture, and that check reads the same
+        order. Two private orderings that must agree, in modules that cannot
+        import each other, is how they stop agreeing.
+
+        Returns:
+            The health's rank in order of increasing severity.
+        """
+        return _HEALTH_RANK[self]
+
+
+_HEALTH_RANK: dict[StreamHealth, int] = {
+    StreamHealth.HEALTHY: 0,
+    StreamHealth.DEGRADED: 1,
+    StreamHealth.FAULTED: 2,
+    StreamHealth.ABSENT: 3,
+}
+"""Ordered worst-last. ``FAULTED`` sits below ``ABSENT`` deliberately: a stream
+that is gone tells the estimator nothing, and one that is lying tells it
+something it can still partly bound. The same order is weighted 1.0 / 0.5 / 0.1
+/ 0.0 by the Runtime Context Signature, and the two must not disagree."""
 
 
 @unique
