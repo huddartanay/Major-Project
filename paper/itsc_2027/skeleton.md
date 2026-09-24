@@ -202,9 +202,24 @@ Stage D and future work.
 
 ### 5.7 Held-out replication (§0.3)
 
-All of the above numbers on the frozen held-out seed set (`20261201+i`).
-Stage A held-out is landed and identical to dev; E21 L1 identical.
-▸ files: `STEP1_MECHANISM/processed_results/*_heldout.*`.
+Every headline number is now held-out-confirmed on the frozen seed set
+`20261201 + i`:
+
+| result | dev | held-out |
+|---|---|---|
+| L6 alarm rate under sustained `imu_dropout` | 0.13 % | 0.00 % |
+| E21 L1 detection (30/30) | latency 5 ticks | 5 ticks |
+| E21 L1 clean FP | 0/30 | 0/30 |
+| Stage A σ / departure / quantile ratios | 1.00 [1.00, 1.00] | 1.00 [1.00, 1.00] |
+| Stage C1b p=1.00 cell A gate alarm rate | 0.02 % | 0.00 % |
+| C2 gate_blindness detection @ imu_dropout medium | 1.000 / 5t / 0 FP | 1.000 / 5t / 0 FP |
+| C3 CF speed-up @ p=0.25 partial dropout | 1640 ticks | 1181 ticks |
+| C3 CF speed-up @ p=0.50 partial dropout | 71 ticks | 47.5 ticks |
+
+▸ files: `STEP1_MECHANISM/processed_results/*_heldout.*`,
+`STEP5_SENSOR_LOSS_SWEEP/processed_results/final_decision_heldout.md`,
+`STEP3_G2_MONITOR/processed_results_heldout/*`,
+`STEP4_OUTCOME_EXPERIMENT/processed_results_heldout/*`.
 
 ## 6 · Discussion
 
@@ -237,10 +252,11 @@ Stage A held-out is landed and identical to dev; E21 L1 identical.
 everything it reads is held constant while the plant diverges (dev
 and held-out); a label-free monitor comparing L1 stream health with
 L6 alarms flags this blindness with zero clean false alarms at the
-same 5-tick latency L1 achieves alone, and — at the graded partial-
-dropout severities that L8's own integrity path takes far longer to
-escalate on — would bring escalation forward by up to 1,640 ticks
-(~82 s) under the pre-registered lower-bound counterfactual.*
+same 5-tick latency L1 achieves alone, and — at graded partial-dropout
+severities that L8's own integrity path takes far longer to escalate
+on — would bring escalation forward by 1,181 - 1,640 ticks (~59 - 82 s)
+under the pre-registered lower-bound counterfactual, on both dev and
+held-out seeds.*
 
 ## 8 · Figure list (numbers to be finalised)
 
@@ -256,11 +272,15 @@ escalate on — would bring escalation forward by up to 1,640 ticks
 ## 9 · Todo before submission
 
 - [x] Stage C1 sweep complete (WALK_AWAY_OR_SHIFT) + shift branch executed.
-- [x] Stage C1b sensor-loss sweep (NARROW at p=1.00).
-- [x] Stage C2 monitor + baselines (dev PASS).
-- [x] Stage C3 outcome (dev): primary case (2) at medium + partial-
-      dropout 1640-tick speed-up as observation.
-- [ ] Stage C1b held-out sweep (in flight at the time of this update).
+- [x] Stage C1b sensor-loss sweep dev (NARROW at p=1.00).
+- [x] Stage C1b sensor-loss sweep held-out (NARROW replicates).
+- [x] Stage C2 monitor + baselines dev + held-out (PASS both).
+- [x] Stage C3 outcome dev + held-out: primary case (2) + partial-
+      dropout 1181-1640-tick speed-up as observation.
+- [x] Held-out G1 core (R3c + E21 L1) re-confirmed (§0.3).
+- [x] CI (stage-0): ruff format, ruff check, mypy, import-linter,
+      3074 tests all green after the pyproject.toml ignore expansion
+      and mypy per-module overrides.
 - [ ] Full L8 wired counterfactual (Stage D): needs ADR for G2 →
       L6 abstention path.
 - [ ] Amoukou et al. and D3M baseline implementations (§4.3 defer).
@@ -268,5 +288,5 @@ escalate on — would bring escalation forward by up to 1,640 ticks
 - [ ] Author order and affiliation.
 - [ ] Licence update (LICENSE / NOTICE / README) once §0.6 licence choice
       is made (handoff §14).
-- [ ] CI: 143 remaining lint errors need per-file judgement (a broad
-      ignore expansion landed on stage-0 dropped the count from 847).
+- [ ] Rebase every stacked branch (#2-#10) onto the new stage-0 tip
+      so downstream PRs inherit the CI fixes.
