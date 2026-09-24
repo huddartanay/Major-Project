@@ -85,7 +85,9 @@ def main() -> None:
         for b in range(a + 1, len(names)):
             overlap = built[names[a]] & built[names[b]]
             if overlap:
-                raise SystemExit(f"seed sets {names[a]} and {names[b]} overlap: {sorted(overlap)[:5]}")
+                raise SystemExit(
+                    f"seed sets {names[a]} and {names[b]} overlap: {sorted(overlap)[:5]}"
+                )
     print(f"  seed sets disjoint: {', '.join(f'{k}({len(v)})' for k, v in built.items())}\n")
 
     pols = {k: LearnedPolicy.load(Path(f"var/policy/{v}.pt")) for k, v in POLICIES.items()}

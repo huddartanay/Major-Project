@@ -480,71 +480,71 @@ STORY: tuple[dict[str, object], ...] = (
     {
         "title": "A vehicle, driving",
         "body": "The car is following a lane. Nothing is wrong. Every 50 ms the "
-                "nine layers on the right run once: the sensors are read, the "
-                "state is estimated, the learned controller proposes a steering "
-                "and acceleration, and the safety layers decide whether to allow "
-                "it. Watch the pipeline light up green, top to bottom.",
+        "nine layers on the right run once: the sensors are read, the "
+        "state is estimated, the learned controller proposes a steering "
+        "and acceleration, and the safety layers decide whether to allow "
+        "it. Watch the pipeline light up green, top to bottom.",
         "action": None,
         "hold": 60,
     },
     {
         "title": "The proposal is not the command",
         "body": "L4 is the learned controller -- the part nobody can formally "
-                "verify. It only ever *proposes*. Its proposal crosses a one-way "
-                "boundary into the safety domain, where L6 and L7 can veto it and "
-                "L9 decides what is actually sent to the actuator. The learned "
-                "controller never drives the car directly. That separation is the "
-                "architecture.",
+        "verify. It only ever *proposes*. Its proposal crosses a one-way "
+        "boundary into the safety domain, where L6 and L7 can veto it and "
+        "L9 decides what is actually sent to the actuator. The learned "
+        "controller never drives the car directly. That separation is the "
+        "architecture.",
         "action": None,
         "hold": 60,
     },
     {
         "title": "Now we break a sensor -- and the monitor catches it",
         "body": "We inject a 1 metre position bias. Two of the three position "
-                "channels start lying, so the median the estimator fuses follows "
-                "them. Watch the non-conformity score climb past the threshold and "
-                "L6 turn red. This is the system working: evidence of the fault "
-                "reaches the monitor, and the monitor fires.",
+        "channels start lying, so the median the estimator fuses follows "
+        "them. Watch the non-conformity score climb past the threshold and "
+        "L6 turn red. This is the system working: evidence of the fault "
+        "reaches the monitor, and the monitor fires.",
         "action": {"fault": "position_bias"},
         "hold": 140,
     },
     {
         "title": "Clean slate",
         "body": "Fault cleared. The score falls back under the threshold and the "
-                "pipeline returns to green. Everything you are about to see uses "
-                "the same monitor, the same threshold and the same vehicle.",
+        "pipeline returns to green. Everything you are about to see uses "
+        "the same monitor, the same threshold and the same vehicle.",
         "action": {"clear": True},
         "hold": 80,
     },
     {
         "title": "The blind spot -- the IMU fails and the monitor stays quiet",
         "body": "Now we drop the IMU out entirely and leave it broken. The sensor "
-                "is genuinely failing: L1 shows the channel degraded and L2's "
-                "innovation moves, so the evidence is there. But watch L6 -- it "
-                "keeps saying PASS. No veto, no fallback. The monitor is quieter "
-                "than it is on a healthy car, while a sensor is failing.",
+        "is genuinely failing: L1 shows the channel degraded and L2's "
+        "innovation moves, so the evidence is there. But watch L6 -- it "
+        "keeps saying PASS. No veto, no fallback. The monitor is quieter "
+        "than it is on a healthy car, while a sensor is failing.",
         "action": {"fault": "dropout"},
         "hold": 200,
     },
     {
         "title": "It alarms only after the danger has passed",
         "body": "We repair the sensor. Now the score jumps and L6 fires -- after "
-                "the fault is over. Detection arrived too late to be useful. In "
-                "our recorded experiments a sustained dropout produced a 0.2% "
-                "alarm rate across 160 seconds, below the 5% rate on a healthy "
-                "car, and the apparent detection was entirely this recovery "
-                "spike.",
+        "the fault is over. Detection arrived too late to be useful. In "
+        "our recorded experiments a sustained dropout produced a 0.2% "
+        "alarm rate across 160 seconds, below the 5% rate on a healthy "
+        "car, and the apparent detection was entirely this recovery "
+        "spike.",
         "action": {"clear": True},
         "hold": 140,
     },
     {
         "title": "Why this matters",
         "body": "A monitor that misses a fault is a problem. A monitor that goes "
-                "quieter than normal during a fault is worse, because its silence "
-                "reads as evidence that the car is healthy. That is why our next "
-                "stage measures whether a monitor can be trusted, not just whether "
-                "it fired. Everything you have just seen is the real pipeline -- "
-                "the same code the experiments ran.",
+        "quieter than normal during a fault is worse, because its silence "
+        "reads as evidence that the car is healthy. That is why our next "
+        "stage measures whether a monitor can be trusted, not just whether "
+        "it fired. Everything you have just seen is the real pipeline -- "
+        "the same code the experiments ran.",
         "action": None,
         "hold": 0,
     },
@@ -933,7 +933,11 @@ class FrameStream:
             and self._sensing.closes_at > 0
             and self._sensing.opens_at <= sample.tick <= self._sensing.closes_at
         )
-        if self._sensing is not None and self._sensing.closes_at > 0 and sample.tick > self._sensing.closes_at:
+        if (
+            self._sensing is not None
+            and self._sensing.closes_at > 0
+            and sample.tick > self._sensing.closes_at
+        ):
             self._sensing.faulted = None
             self._sensing.also_faulted = ()
             self._sensing.bias = 0.0

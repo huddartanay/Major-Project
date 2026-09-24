@@ -328,8 +328,12 @@ def _stages_for(scenario_name: str) -> tuple[tuple[str, str, Callable[[TickSampl
     """
     base = L1_STATISTIC.get(scenario_name, _health_degraded_count)
     if scenario_name in DISPERSION_FAULTS:
-        return (("L1", f"raw channel dispersion (w={DISPERSION_WINDOW})", _RollingDispersion(base)),) + STAGES[1:]
-    label = "raw measured channel" if base is not _health_degraded_count else "stream health (dropout)"
+        return (
+            ("L1", f"raw channel dispersion (w={DISPERSION_WINDOW})", _RollingDispersion(base)),
+        ) + STAGES[1:]
+    label = (
+        "raw measured channel" if base is not _health_degraded_count else "stream health (dropout)"
+    )
     return (("L1", label, base),) + STAGES[1:]
 
 
@@ -355,8 +359,12 @@ def profile(policy: Any, seed: int, ticks: int) -> dict[str, Any]:
         d_l1 = rows[0]["D"]
         for r in rows:
             denom = d_l1 - 0.5
-            r["R"] = (r["D"] - 0.5) / denom if denom > 1e-9 and np.isfinite(r["D"]) else float("nan")
-        absorbed = [r["stage"] for r in rows if np.isfinite(r["D"]) and r["D"] < _ABSORPTION_THRESHOLD]
+            r["R"] = (
+                (r["D"] - 0.5) / denom if denom > 1e-9 and np.isfinite(r["D"]) else float("nan")
+            )
+        absorbed = [
+            r["stage"] for r in rows if np.isfinite(r["D"]) and r["D"] < _ABSORPTION_THRESHOLD
+        ]
         crossings = sum(
             1
             for a, b in zip(rows, rows[1:])

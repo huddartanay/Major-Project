@@ -96,7 +96,10 @@ def fig1_stage_profiles(a: dict, dest: Path) -> None:
                 f'fill="{col}">{f}</text>'
             )
         (dest / f"fig1_stage_profile_{p}.svg").write_text(
-            _svg("".join(parts), title=f"Figure 1{p} - stage-wise discriminability, policy {p} (median, BCa 95% CI, n=30)"),
+            _svg(
+                "".join(parts),
+                title=f"Figure 1{p} - stage-wise discriminability, policy {p} (median, BCa 95% CI, n=30)",
+            ),
             encoding="utf-8",
         )
 
@@ -133,7 +136,7 @@ def fig2_effects(a: dict, dest: Path) -> None:
             parts.append(
                 f'<circle cx="{X(e["median"]):.1f}" cy="{yy}" r="3.5" fill="{col}"/>'
                 f'<text x="{X(e["median"]) + 8:.1f}" y="{yy + 3}" fill="#888" font-size="9">'
-                f'identical across all 30 seeds</text>'
+                f"identical across all 30 seeds</text>"
             )
         else:
             parts.append(
@@ -141,7 +144,11 @@ def fig2_effects(a: dict, dest: Path) -> None:
                 f'<circle cx="{X(e["median"]):.1f}" cy="{yy}" r="3.5" fill="{col}"/>'
             )
     (dest / "fig2_effect_sizes.svg").write_text(
-        _svg("".join(parts), h=h, title=f"Figure 2 - D_L1 minus D_{PRIMARY_STAGE}, median and BCa 95% CI"),
+        _svg(
+            "".join(parts),
+            h=h,
+            title=f"Figure 2 - D_L1 minus D_{PRIMARY_STAGE}, median and BCa 95% CI",
+        ),
         encoding="utf-8",
     )
 
@@ -168,7 +175,7 @@ def fig3_regime(a: dict, rows: list[dict], dest: Path) -> None:
             )
         parts.append(
             f'<text x="{(x0 + x1) / 2:.0f}" y="{H - 12}" text-anchor="middle" fill="#333">'
-            f'veto rate (faulted arm)</text>'
+            f"veto rate (faulted arm)</text>"
         )
         parts.append(
             f'<line x1="{x0}" y1="{y(0.60):.1f}" x2="{x1}" y2="{y(0.60):.1f}" '
@@ -191,7 +198,7 @@ def fig3_regime(a: dict, rows: list[dict], dest: Path) -> None:
             )
         sp = a["H_regime_secondary"][f]["spearman_D_L1_vs_veto_rate"]
         rho = sp.get("rho")
-        note = "n/a" if rho is None or rho != rho else f'rho = {rho:+.3f}, p = {sp["p"]:.4f}'
+        note = "n/a" if rho is None or rho != rho else f"rho = {rho:+.3f}, p = {sp['p']:.4f}"
         parts.append(
             f'<text x="{x0 + 6}" y="{PAD_T + 10}" fill="#333">{note}  (EXPLORATORY)</text>'
         )
@@ -218,7 +225,11 @@ def fig4_absorption(a: dict, dest: Path) -> None:
             f'<text x="{x1 + 6}" y="{yy + 3}" fill="#333">{c["modal"]}  {frac * 100:.0f}%</text>'
         )
     (dest / "fig4_absorption_stability.svg").write_text(
-        _svg("".join(parts), h=h, title="Figure 4 - modal absorption stage and its across-seed stability"),
+        _svg(
+            "".join(parts),
+            h=h,
+            title="Figure 4 - modal absorption stage and its across-seed stability",
+        ),
         encoding="utf-8",
     )
 
@@ -236,9 +247,19 @@ def tables(a: dict, dest: Path) -> None:
         a["tableC_absorption_stability"],
         a["tableD_regime"],
     )
-    L = ["# Table A - stage-wise discriminability", "", "Median across 30 seeds, BCa 95% CI. A bare number means every seed gave the identical value.", ""]
+    L = [
+        "# Table A - stage-wise discriminability",
+        "",
+        "Median across 30 seeds, BCa 95% CI. A bare number means every seed gave the identical value.",
+        "",
+    ]
     for p in a["policies"]:
-        L += [f"## Policy {p}", "", "| fault | " + " | ".join(STAGES) + " |", "|---|" + "--:|" * len(STAGES)]
+        L += [
+            f"## Policy {p}",
+            "",
+            "| fault | " + " | ".join(STAGES) + " |",
+            "|---|" + "--:|" * len(STAGES),
+        ]
         for f in FAULTS:
             c = tA.get(f"{p}|{f}")
             if c:

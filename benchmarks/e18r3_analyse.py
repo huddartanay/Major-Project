@@ -41,8 +41,10 @@ def main() -> None:
     # ---- integrity ---------------------------------------------------------
     nf = sum(r["nonfinite"] for r in rows)
     short = [r["seed"] for r in rows if r["available_eval_ticks"] < max(WINDOWS)]
-    print(f"INTEGRITY  runs={len(rows)}  non-finite scores={nf}  "
-          f"runs too short for n={max(WINDOWS)}: {len(short)}")
+    print(
+        f"INTEGRITY  runs={len(rows)}  non-finite scores={nf}  "
+        f"runs too short for n={max(WINDOWS)}: {len(short)}"
+    )
     out["integrity"] = {"n_runs": len(rows), "nonfinite": nf, "short_runs": short}
 
     # ---- confounder: drift on the long runs (section 6) --------------------
@@ -58,11 +60,17 @@ def main() -> None:
         ratio = abs(h2 - h1) / sd if sd > 0 else float("nan")
         ok = ratio <= 1.0
         drift_ok &= ok
-        out["drift"][p] = {"first_half": float(h1), "second_half": float(h2),
-                           "drift": float(h2 - h1), "drift_over_sd": float(ratio),
-                           "within_limit": bool(ok)}
-        print(f"{p:<5}{h1:>11.4f}{h2:>11.4f}{h2 - h1:>10.4f}{ratio:>10.2f}  "
-              f"{'ok' if ok else 'EXCEEDS 1.0 -> R3 INCONCLUSIVE'}")
+        out["drift"][p] = {
+            "first_half": float(h1),
+            "second_half": float(h2),
+            "drift": float(h2 - h1),
+            "drift_over_sd": float(ratio),
+            "within_limit": bool(ok),
+        }
+        print(
+            f"{p:<5}{h1:>11.4f}{h2:>11.4f}{h2 - h1:>10.4f}{ratio:>10.2f}  "
+            f"{'ok' if ok else 'EXCEEDS 1.0 -> R3 INCONCLUSIVE'}"
+        )
 
     # ---- runs in band vs window -------------------------------------------
     print("\nRUNS IN BAND vs EVALUATION WINDOW")
@@ -78,17 +86,24 @@ def main() -> None:
             f = f[np.isfinite(f)]
             k = int(((f >= EPS / 2) & (f <= 2 * EPS)).sum())
             lo, hi = wilson(k, f.size)
-            band[p][n] = {"in_band": k, "n_runs": int(f.size), "wilson": [lo, hi],
-                          "median_far": float(np.median(f)) if f.size else float("nan"),
-                          "sd_far": float(f.std(ddof=1)) if f.size > 1 else float("nan")}
+            band[p][n] = {
+                "in_band": k,
+                "n_runs": int(f.size),
+                "wilson": [lo, hi],
+                "median_far": float(np.median(f)) if f.size else float("nan"),
+                "sd_far": float(f.std(ddof=1)) if f.size > 1 else float("nan"),
+            }
             cells.append(f"{k}/{f.size}")
         print(f"{p:<5}" + "".join(f"{c:>14}" for c in cells))
     out["runs_in_band"] = band
 
     # ---- the mechanism test: scaling exponent ------------------------------
     print("\nMECHANISM TEST - how per-run FAR variability scales with window length")
-    print(f"{'pol':<5}{'':>2}" + "".join(f"{'SD@' + str(n):>12}" for n in WINDOWS)
-          + f"{'slope b':>11}{'binomial b':>12}  interpretation")
+    print(
+        f"{'pol':<5}{'':>2}"
+        + "".join(f"{'SD@' + str(n):>12}" for n in WINDOWS)
+        + f"{'slope b':>11}{'binomial b':>12}  interpretation"
+    )
     out["scaling"] = {}
     for p in pols:
         g = [r for r in rows if r["policy"] == p]
@@ -103,11 +118,19 @@ def main() -> None:
             b, aa = np.polyfit(np.log(ns), np.log(sds), 1)
         else:
             b = aa = float("nan")
-        interp = ("precision-limited" if b <= -0.40 else
-                  "dynamics-limited" if b >= -0.10 else
-                  "partial pooling")
-        out["scaling"][p] = {"slope": float(b), "windows": ns,
-                             "sd": [float(x) for x in sds], "interpretation": interp}
+        interp = (
+            "precision-limited"
+            if b <= -0.40
+            else "dynamics-limited"
+            if b >= -0.10
+            else "partial pooling"
+        )
+        out["scaling"][p] = {
+            "slope": float(b),
+            "windows": ns,
+            "sd": [float(x) for x in sds],
+            "interpretation": interp,
+        }
         cells = "".join(f"{band[p][n]['sd_far']:>12.4f}" for n in WINDOWS)
         print(f"{p:<5}{'':>2}{cells}{b:>11.3f}{-0.5:>12.2f}  {interp}")
 
@@ -141,7 +164,9 @@ def main() -> None:
         why = "drift/SD exceeded 1.0 on the long runs; the design could not isolate its variable"
     elif p1 >= 24:
         verdict = "PASS-R3"
-        why = "precision-limited: a longer window restores per-run stability on the positive control"
+        why = (
+            "precision-limited: a longer window restores per-run stability on the positive control"
+        )
     elif p1 >= 12:
         verdict = "PARTIAL-R3"
         why = "improving but below the frozen 24/30 bar"
@@ -159,15 +184,36 @@ def main() -> None:
     (proc / "analysis.json").write_text(json.dumps(out, indent=2, default=str), encoding="utf-8")
     with (proc / "E18R3_WINDOWS.csv").open("w", newline="", encoding="utf-8") as fh:
         w = csv.writer(fh)
-        w.writerow(["policy", "window", "runs_in_band", "n_runs", "median_far", "sd_far",
-                    "overdispersion", "n_eff", "threshold"])
+        w.writerow(
+            [
+                "policy",
+                "window",
+                "runs_in_band",
+                "n_runs",
+                "median_far",
+                "sd_far",
+                "overdispersion",
+                "n_eff",
+                "threshold",
+            ]
+        )
         for p in pols:
             for n in WINDOWS:
                 bb = band[p][n]
                 od = out["overdispersion"][p][n]
-                w.writerow([p, n, bb["in_band"], bb["n_runs"], f"{bb['median_far']:.6f}",
-                            f"{bb['sd_far']:.6f}", f"{od['ratio']:.4f}", f"{od['n_eff']:.2f}",
-                            FROZEN_V3[p]])
+                w.writerow(
+                    [
+                        p,
+                        n,
+                        bb["in_band"],
+                        bb["n_runs"],
+                        f"{bb['median_far']:.6f}",
+                        f"{bb['sd_far']:.6f}",
+                        f"{od['ratio']:.4f}",
+                        f"{od['n_eff']:.2f}",
+                        FROZEN_V3[p],
+                    ]
+                )
     print(f"  -> {proc / 'analysis.json'}")
 
 

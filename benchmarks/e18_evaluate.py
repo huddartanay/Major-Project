@@ -44,42 +44,42 @@ SEVERITIES: dict[str, dict[str, Any]] = {
         "levels": {"low": 0.25, "medium": 1.0, "high": 2.0},
         "unit": "m",
         "rationale": "0.25 m ~ routine GNSS multipath error in open sky; 1.0 m is the original "
-                     "E17 magnitude, retained for comparability; 2.0 m ~ half a lane width, "
-                     "the point at which a lateral offset is safety-relevant.",
+        "E17 magnitude, retained for comparability; 2.0 m ~ half a lane width, "
+        "the point at which a lateral offset is safety-relevant.",
     },
     "position_drift": {
         "levels": {"low": 0.5, "medium": 2.0, "high": 4.0},
         "unit": "m final",
         "rationale": "final offset after a 200-tick window. 0.5 m ~ slow IMU integration drift; "
-                     "2.0 m is the original magnitude; 4.0 m ~ a full lane departure.",
+        "2.0 m is the original magnitude; 4.0 m ~ a full lane departure.",
     },
     "speed_bias": {
         "levels": {"low": 0.75, "medium": 3.0, "high": 6.0},
         "unit": "m/s",
         "rationale": "0.75 m/s ~ wheel-speed scale error from tyre-radius mismatch (~3 % at "
-                     "25 m/s); 3.0 m/s is the original magnitude; 6.0 m/s ~ a gross sensor "
-                     "failure a speed bound should certainly catch.",
+        "25 m/s); 3.0 m/s is the original magnitude; 6.0 m/s ~ a gross sensor "
+        "failure a speed bound should certainly catch.",
     },
     "lateral_noise": {
         "levels": {"low": 5.0, "medium": 25.0, "high": 50.0},
         "unit": "x sigma",
         "rationale": "multiplier on the channel's nominal noise sigma. x5 ~ a degraded but "
-                     "operating IMU; x25 is the original magnitude; x50 ~ a failing sensor.",
+        "operating IMU; x25 is the original magnitude; x50 ~ a failing sensor.",
     },
     "speed_stuck": {
         "levels": {"medium": None},
         "unit": "n/a",
         "rationale": "STUCK_AT holds the last value; it has no magnitude parameter. The "
-                     "effective severity is set by how far the true value drifts from the held "
-                     "one, which is a property of the trajectory rather than of the fault. Run "
-                     "at a single level and reported as such.",
+        "effective severity is set by how far the true value drifts from the held "
+        "one, which is a property of the trajectory rather than of the fault. Run "
+        "at a single level and reported as such.",
     },
     "imu_dropout": {
         "levels": {"medium": None},
         "unit": "n/a",
         "rationale": "DROPOUT suppresses the IMU publish; it has no magnitude parameter. "
-                     "Duration could be swept but that changes the fault definition, which the "
-                     "freeze forbids. Run at a single level.",
+        "Duration could be swept but that changes the fault definition, which the "
+        "freeze forbids. Run at a single level.",
     },
 }
 POSITION_FAULTS = ("position_bias", "position_drift")
@@ -89,13 +89,22 @@ def _build_injector(fault: str, magnitude: float | None, seed: int):
     """FaultInjector for the four channel faults; None for the position faults."""
     last = TICKS - 1
     if fault == "speed_bias":
-        specs = (bias(FaultChannel.SPEED, first_tick=_FAULT_FIRST, last_tick=last,
-                      offset=float(magnitude)),)
+        specs = (
+            bias(
+                FaultChannel.SPEED, first_tick=_FAULT_FIRST, last_tick=last, offset=float(magnitude)
+            ),
+        )
     elif fault == "speed_stuck":
         specs = (stuck_at(FaultChannel.SPEED, first_tick=_FAULT_FIRST, last_tick=last),)
     elif fault == "lateral_noise":
-        specs = (noise_burst(FaultChannel.LATERAL_ACCELERATION, first_tick=_FAULT_FIRST,
-                             last_tick=last, sigma_multiplier=float(magnitude)),)
+        specs = (
+            noise_burst(
+                FaultChannel.LATERAL_ACCELERATION,
+                first_tick=_FAULT_FIRST,
+                last_tick=last,
+                sigma_multiplier=float(magnitude),
+            ),
+        )
     elif fault == "imu_dropout":
         specs = (dropout(first_tick=_FAULT_FIRST, last_tick=last),)
     else:
@@ -103,8 +112,7 @@ def _build_injector(fault: str, magnitude: float | None, seed: int):
     return FaultInjector(specs, seed=seed, sigmas=CHANNEL_SIGMAS)
 
 
-def _sensing(fault: str, magnitude: float | None, seed: int, active: bool,
-             ticks: int = TICKS):
+def _sensing(fault: str, magnitude: float | None, seed: int, active: bool, ticks: int = TICKS):
     """Redundant spec. Position faults inject here; everything else stays clean.
 
     ``ticks`` is the run length the drift is being scaled for, and it must be the
@@ -119,8 +127,10 @@ def _sensing(fault: str, magnitude: float | None, seed: int, active: bool,
         return RedundantSensing.build(sigmas=DEFAULT_CHANNEL_SIGMAS, seed=seed)
     span = ticks - 1 - _FAULT_FIRST
     return RedundantSensing.build(
-        sigmas=DEFAULT_CHANNEL_SIGMAS, seed=seed,
-        faulted=SensorModality.IMU, also_faulted=(SensorModality.GPS,),
+        sigmas=DEFAULT_CHANNEL_SIGMAS,
+        seed=seed,
+        faulted=SensorModality.IMU,
+        also_faulted=(SensorModality.GPS,),
         opens_at=_FAULT_FIRST,
         bias=float(magnitude) if fault == "position_bias" else 0.0,
         drift_per_tick=0.0 if fault == "position_bias" else float(magnitude) / span,
@@ -152,7 +162,10 @@ def _run(policy, fault, magnitude, seed, active):  # noqa: ANN001, ANN201
         est_y.append(float(m[1]) if m is not None and len(m) > 1 else float("nan"))
 
     drive_closed_loop(
-        policy=policy, ticks=TICKS, seed=seed, observer=obs,
+        policy=policy,
+        ticks=TICKS,
+        seed=seed,
+        observer=obs,
         fault=_build_injector(fault, magnitude, seed) if active else None,
         redundant=_sensing(fault, magnitude, seed, active),
     )
@@ -163,15 +176,19 @@ def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--seeds", type=int, default=30)
     ap.add_argument("--base-seed", type=int, default=20260731)
-    ap.add_argument("--out", type=Path,
-                    default=Path("experiments/phase5_od8_h7/E18_OD8_CALIBRATION/raw_results"))
+    ap.add_argument(
+        "--out",
+        type=Path,
+        default=Path("experiments/phase5_od8_h7/E18_OD8_CALIBRATION/raw_results"),
+    )
     args = ap.parse_args()
     args.out.mkdir(parents=True, exist_ok=True)
     pols = {k: LearnedPolicy.load(Path(f"var/policy/{v}.pt")) for k, v in POLICIES.items()}
 
     records: list[dict[str, Any]] = []
-    combos = [(f, lvl, mag) for f, spec in SEVERITIES.items()
-              for lvl, mag in spec["levels"].items()]
+    combos = [
+        (f, lvl, mag) for f, spec in SEVERITIES.items() for lvl, mag in spec["levels"].items()
+    ]
     total = len(combos) * len(pols) * args.seeds
     done = 0
     t0 = time.time()
@@ -200,26 +217,35 @@ def main() -> None:
                 ey_c = np.nanmean([clean["est_y"][j] for j in win])
                 ey_f = np.nanmean([faulted["est_y"][j] for j in win])
 
-                records.append({
-                    "policy": pname, "fault": fault, "severity_level": level,
-                    "severity_value": mag, "seed": seed, "frozen_quantile": q,
-                    "D": D,
-                    "alarm_rate_faulted": float(alarms.mean()) if sf_f.size else float("nan"),
-                    "alarm_rate_clean": float((sc_f > q).mean()) if sc_f.size else float("nan"),
-                    "detected": bool(alarms.any()),
-                    "detection_latency_ticks": None if first is None else int(first),
-                    "score_mean_clean": float(sc_f.mean()) if sc_f.size else float("nan"),
-                    "score_mean_faulted": float(sf_f.mean()) if sf_f.size else float("nan"),
-                    "score_max_faulted": float(sf_f.max()) if sf_f.size else float("nan"),
-                    "threshold_margin": float(sf_f.mean() - q) if sf_f.size else float("nan"),
-                    "fault_reached_estimator": bool(abs(ey_f - ey_c) > 1e-9),
-                })
+                records.append(
+                    {
+                        "policy": pname,
+                        "fault": fault,
+                        "severity_level": level,
+                        "severity_value": mag,
+                        "seed": seed,
+                        "frozen_quantile": q,
+                        "D": D,
+                        "alarm_rate_faulted": float(alarms.mean()) if sf_f.size else float("nan"),
+                        "alarm_rate_clean": float((sc_f > q).mean()) if sc_f.size else float("nan"),
+                        "detected": bool(alarms.any()),
+                        "detection_latency_ticks": None if first is None else int(first),
+                        "score_mean_clean": float(sc_f.mean()) if sc_f.size else float("nan"),
+                        "score_mean_faulted": float(sf_f.mean()) if sf_f.size else float("nan"),
+                        "score_max_faulted": float(sf_f.max()) if sf_f.size else float("nan"),
+                        "threshold_margin": float(sf_f.mean() - q) if sf_f.size else float("nan"),
+                        "fault_reached_estimator": bool(abs(ey_f - ey_c) > 1e-9),
+                    }
+                )
                 done += 1
-            print(f"  [{done:>4}/{total}] {pname} {fault} {level}  {time.time() - t0:.0f}s",
-                  flush=True)
+            print(
+                f"  [{done:>4}/{total}] {pname} {fault} {level}  {time.time() - t0:.0f}s",
+                flush=True,
+            )
 
     (args.out / "fault_evaluation.json").write_text(
-        json.dumps(records, indent=2, default=str), encoding="utf-8")
+        json.dumps(records, indent=2, default=str), encoding="utf-8"
+    )
     reached = sum(1 for r in records if r["fault_reached_estimator"])
     print(f"\n  {len(records)} records | fault reached estimator in {reached}/{len(records)}")
     print(f"  -> {args.out / 'fault_evaluation.json'}")

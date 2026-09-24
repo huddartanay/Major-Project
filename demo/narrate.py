@@ -88,7 +88,14 @@ _DEFAULT_SEED = 20260810
 
 #: Faults this trace can inject, matching the dashboard's buttons exactly so a
 #: number seen here is the number the demonstration would have shown.
-FAULTS = ("dropout", "position_bias", "position_drift", "speed_bias", "speed_stuck", "lateral_noise")
+FAULTS = (
+    "dropout",
+    "position_bias",
+    "position_drift",
+    "speed_bias",
+    "speed_stuck",
+    "lateral_noise",
+)
 
 
 class Palette:
@@ -108,9 +115,14 @@ class Palette:
             enabled: Whether to emit escape sequences at all.
         """
         codes = {
-            "dim": "\033[2m", "bold": "\033[1m", "off": "\033[0m",
-            "green": "\033[32m", "red": "\033[31m", "yellow": "\033[33m",
-            "cyan": "\033[36m", "violet": "\033[35m",
+            "dim": "\033[2m",
+            "bold": "\033[1m",
+            "off": "\033[0m",
+            "green": "\033[32m",
+            "red": "\033[31m",
+            "yellow": "\033[33m",
+            "cyan": "\033[36m",
+            "violet": "\033[35m",
         }
         for name, code in codes.items():
             setattr(self, name, code if enabled else "")
@@ -208,9 +220,7 @@ def _block(frame: Frame, palette: Palette) -> str:
         else abs(frame.truth_y - frame.estimate_y)
     )
     issued = (
-        "nothing issued"
-        if frame.issued is None
-        else "  ".join(f"{v:+.4f}" for v in frame.issued)
+        "nothing issued" if frame.issued is None else "  ".join(f"{v:+.4f}" for v in frame.issued)
     )
 
     def gate(name: str) -> str:
@@ -337,9 +347,7 @@ class Narrator:
             }.get(frame.failsafe_state or "", "")
             if self._last.get("failsafe") is not None:
                 colour = p.green if frame.failsafe_state == "NOMINAL" else p.red
-                out.append(
-                    f"{colour}L8 -> {frame.failsafe_state}{p.off}  {p.dim}{why}{p.off}"
-                )
+                out.append(f"{colour}L8 -> {frame.failsafe_state}{p.off}  {p.dim}{why}{p.off}")
             self._last["failsafe"] = frame.failsafe_state
 
         if frame.blocking:
@@ -379,7 +387,11 @@ class Narrator:
 
         due = frame.tick % self._every == 0
         if due:
-            self._say(_block(frame, self._palette) if self._mode == "explain" else _line(frame, self._palette))
+            self._say(
+                _block(frame, self._palette)
+                if self._mode == "explain"
+                else _line(frame, self._palette)
+            )
         for line in events:
             self._say(f"{'':>6}  {line}")
         if (due or events) and self._pause > 0.0:

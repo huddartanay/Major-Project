@@ -52,8 +52,10 @@ def _capture(policy: Any, fault: Any, seed: int) -> tuple[float, float]:
     a = np.array(scores, float)
     b = np.array(quants, float)
     a, b = a[np.isfinite(a)], b[np.isfinite(b)]
-    return (float(a.mean()) if a.size else float("nan"),
-            float(b.mean()) if b.size else float("nan"))
+    return (
+        float(a.mean()) if a.size else float("nan"),
+        float(b.mean()) if b.size else float("nan"),
+    )
 
 
 def main() -> None:
@@ -80,10 +82,17 @@ def main() -> None:
                 shift = abs(sc_f - sc_c)
                 rows.append(
                     {
-                        "policy": pname, "fault": fname, "seed": seed,
-                        "l6_score_clean": sc_c, "l6_score_faulted": sc_f,
-                        "l6_shift": shift, "l6_threshold": q, "l6_headroom": head,
-                        "l6_shift_over_headroom": shift / head if np.isfinite(head) and head > 0 else float("nan"),
+                        "policy": pname,
+                        "fault": fname,
+                        "seed": seed,
+                        "l6_score_clean": sc_c,
+                        "l6_score_faulted": sc_f,
+                        "l6_shift": shift,
+                        "l6_threshold": q,
+                        "l6_headroom": head,
+                        "l6_shift_over_headroom": shift / head
+                        if np.isfinite(head) and head > 0
+                        else float("nan"),
                         "could_fire": bool(np.isfinite(head) and shift >= head),
                     }
                 )
@@ -99,7 +108,9 @@ def main() -> None:
         w.writeheader()
         w.writerows(rows)
 
-    print(f"\n{'policy':<8}{'fault':<16}{'score_clean':>12}{'shift':>10}{'threshold':>11}{'headroom':>10}{'ratio':>9}{'fires?':>8}")
+    print(
+        f"\n{'policy':<8}{'fault':<16}{'score_clean':>12}{'shift':>10}{'threshold':>11}{'headroom':>10}{'ratio':>9}{'fires?':>8}"
+    )
     for p in POLICIES:
         for f in VALID:
             g = [r for r in rows if r["policy"] == p and r["fault"] == f]

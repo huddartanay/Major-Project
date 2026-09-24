@@ -35,8 +35,7 @@ from benchmarks.discriminability import CHANNEL_SIGMAS, _FAULT_FIRST
 from benchmarks.e18_evaluate import SEVERITIES
 from benchmarks.e18r3b_detect import RUN_LEVEL_BOUND
 from training.closed_loop import DEFAULT_CHANNEL_SIGMAS, RedundantSensing, drive_closed_loop
-from training.faults import (FaultChannel, FaultInjector, bias, dropout,
-                             noise_burst, stuck_at)
+from training.faults import FaultChannel, FaultInjector, bias, dropout, noise_burst, stuck_at
 
 FROZEN_V3_P1 = 3.7024
 POLICY, CKPT = "P1", "synthetic"
@@ -50,12 +49,20 @@ def _injector_full(fault: str, mag: float | None, seed: int, ticks: int):
     """Channel-fault injector active for the whole window (last_tick = ticks-1)."""
     last = ticks - 1
     if fault == "speed_bias":
-        specs = (bias(FaultChannel.SPEED, first_tick=_FAULT_FIRST, last_tick=last, offset=float(mag)),)
+        specs = (
+            bias(FaultChannel.SPEED, first_tick=_FAULT_FIRST, last_tick=last, offset=float(mag)),
+        )
     elif fault == "speed_stuck":
         specs = (stuck_at(FaultChannel.SPEED, first_tick=_FAULT_FIRST, last_tick=last),)
     elif fault == "lateral_noise":
-        specs = (noise_burst(FaultChannel.LATERAL_ACCELERATION, first_tick=_FAULT_FIRST,
-                             last_tick=last, sigma_multiplier=float(mag)),)
+        specs = (
+            noise_burst(
+                FaultChannel.LATERAL_ACCELERATION,
+                first_tick=_FAULT_FIRST,
+                last_tick=last,
+                sigma_multiplier=float(mag),
+            ),
+        )
     elif fault == "imu_dropout":
         specs = (dropout(first_tick=_FAULT_FIRST, last_tick=last),)
     else:
@@ -67,10 +74,12 @@ def _sensing_full(fault: str, mag: float | None, seed: int, ticks: int, active: 
     """Position fault sustained the whole window, drift scaled to the true run end."""
     if fault not in POSITION or not active:
         return RedundantSensing.build(sigmas=DEFAULT_CHANNEL_SIGMAS, seed=seed)
-    span = ticks - 1 - _FAULT_FIRST            # CORRECTED: real run length, not TICKS=400
+    span = ticks - 1 - _FAULT_FIRST  # CORRECTED: real run length, not TICKS=400
     return RedundantSensing.build(
-        sigmas=DEFAULT_CHANNEL_SIGMAS, seed=seed,
-        faulted=SensorModality.IMU, also_faulted=(SensorModality.GPS,),
+        sigmas=DEFAULT_CHANNEL_SIGMAS,
+        seed=seed,
+        faulted=SensorModality.IMU,
+        also_faulted=(SensorModality.GPS,),
         opens_at=_FAULT_FIRST,
         bias=float(mag) if fault == "position_bias" else 0.0,
         drift_per_tick=0.0 if fault == "position_bias" else float(mag) / span,
@@ -96,7 +105,10 @@ def _run_sustained(policy, fault, mag, seed, ticks):
         est_y.append(float(m[1]) if m is not None and len(m) > 1 else float("nan"))
 
     drive_closed_loop(
-        policy=policy, ticks=ticks, seed=seed, observer=obs,
+        policy=policy,
+        ticks=ticks,
+        seed=seed,
+        observer=obs,
         fault=_injector_full(fault, mag, seed, ticks),
         redundant=_sensing_full(fault, mag, seed, ticks, True),
     )
@@ -107,15 +119,19 @@ def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--seeds", type=int, default=N_SEEDS)
     ap.add_argument("--ticks", type=int, default=TICKS)
-    ap.add_argument("--out", type=Path,
-                    default=Path("experiments/phase5_od8_h7/E18_R3c/raw_results"))
+    ap.add_argument(
+        "--out", type=Path, default=Path("experiments/phase5_od8_h7/E18_R3c/raw_results")
+    )
     a = ap.parse_args()
     a.out.mkdir(parents=True, exist_ok=True)
     commit = subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip()
     policy = LearnedPolicy.load(Path(f"var/policy/{CKPT}.pt"))
     q = FROZEN_V3_P1
-    faults = [(f, SEVERITIES[f]["levels"].get(LEVEL)) for f in SEVERITIES
-              if LEVEL in SEVERITIES[f]["levels"]]
+    faults = [
+        (f, SEVERITIES[f]["levels"].get(LEVEL))
+        for f in SEVERITIES
+        if LEVEL in SEVERITIES[f]["levels"]
+    ]
     print(f"frozen threshold (v3, not recomputed): {POLICY} = {q}")
     print(f"faults sustained ticks 200-{a.ticks - 1}\n")
 
@@ -132,10 +148,17 @@ def main() -> None:
             key = f"{fault}_{seed}"
             ticks_store[key] = [round(float(x), 6) for x in sc]
             rec: dict[str, Any] = {
-                "experiment_id": "E18-R3c", "git_commit": commit, "policy": POLICY,
-                "fault": fault, "severity_level": LEVEL, "severity_value": mag,
-                "seed": seed, "ticks": a.ticks, "threshold": q,
-                "sustained": True, "tick_series_key": key,
+                "experiment_id": "E18-R3c",
+                "git_commit": commit,
+                "policy": POLICY,
+                "fault": fault,
+                "severity_level": LEVEL,
+                "severity_value": mag,
+                "seed": seed,
+                "ticks": a.ticks,
+                "threshold": q,
+                "sustained": True,
+                "tick_series_key": key,
                 "nonfinite": int((~np.isfinite(sc)).sum()),
             }
             for n in WINDOWS:
@@ -161,8 +184,11 @@ def main() -> None:
             vals = [x[f"detected_{n}"] for x in rows if x[f"detected_{n}"] is not None]
             return f"{np.mean(vals):>6.0%}" if vals else "     -"
 
-        print(f"  {fault:<16} n=200 {rate(200)}  ->  n={WINDOWS[-1]} {rate(WINDOWS[-1])}   "
-              f"[{time.time() - t0:.0f}s]", flush=True)
+        print(
+            f"  {fault:<16} n=200 {rate(200)}  ->  n={WINDOWS[-1]} {rate(WINDOWS[-1])}   "
+            f"[{time.time() - t0:.0f}s]",
+            flush=True,
+        )
 
     (a.out / "faulted_sustained.json").write_text(json.dumps(records, indent=2), encoding="utf-8")
     (a.out / "tick_series.json").write_text(json.dumps(ticks_store), encoding="utf-8")

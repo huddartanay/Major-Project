@@ -209,21 +209,28 @@ def main() -> int:
     verdict = _verdict(primary["rho"], primary["p"])
     # The honest verdict is the identity-free one; the frozen rule is applied to
     # it and reported alongside, never instead of, the pre-registered result.
-    corrected = (
-        _verdict(within_below["rho"], within_below["p"]) if within_below else "INSUFFICIENT"
-    )
+    corrected = _verdict(within_below["rho"], within_below["p"]) if within_below else "INSUFFICIENT"
 
     print()
     print(f"{'test':<34}{'rho':>8}{'p':>10}   n")
     print("-" * 62)
-    print(f"{'PRIMARY  M vs alarm rate':<34}{primary['rho']:>8.3f}{primary['p']:>10.4f}   {len(rows)}")
-    print(f"{'incumbent  D_s vs alarm rate':<34}{incumbent['rho']:>8.3f}{incumbent['p']:>10.4f}   {len(rows)}")
-    print(f"{'conservative  per-fault medians':<34}{conservative['rho']:>8.3f}{conservative['p']:>10.4f}   {len(per_fault_m)}")
+    print(
+        f"{'PRIMARY  M vs alarm rate':<34}{primary['rho']:>8.3f}{primary['p']:>10.4f}   {len(rows)}"
+    )
+    print(
+        f"{'incumbent  D_s vs alarm rate':<34}{incumbent['rho']:>8.3f}{incumbent['p']:>10.4f}   {len(rows)}"
+    )
+    print(
+        f"{'conservative  per-fault medians':<34}{conservative['rho']:>8.3f}{conservative['p']:>10.4f}   {len(per_fault_m)}"
+    )
     print()
     print(f"threshold in M units = {m_threshold:.3f}")
     print(f"identity median>threshold <=> alarm>0.5 holds in every cell: {identity_holds}")
     print(f"  cells above {len(above)}, below {len(below)} -- that split is forced, not evidence")
-    for label, res in (("within below-threshold", within_below), ("within above-threshold", within_above)):
+    for label, res in (
+        ("within below-threshold", within_below),
+        ("within above-threshold", within_above),
+    ):
         if res is None:
             continue
         n = len(below) if "below" in label else len(above)

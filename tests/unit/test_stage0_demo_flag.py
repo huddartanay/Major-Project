@@ -79,11 +79,7 @@ def test_the_flag_exists_and_defaults_to_off() -> None:
 
 def _iter_python_files_under(directory: Path) -> list[Path]:
     """Every ``*.py`` under ``directory``, sorted, excluding caches."""
-    return sorted(
-        path
-        for path in directory.rglob("*.py")
-        if "__pycache__" not in path.parts
-    )
+    return sorted(path for path in directory.rglob("*.py") if "__pycache__" not in path.parts)
 
 
 def _calls_enabling_demo_speed_assist(module_path: Path) -> list[int]:
@@ -195,8 +191,7 @@ def test_both_named_demo_entry_points_do_enable_the_hack() -> None:
         if not _calls_enabling_demo_speed_assist(module_path):
             missing.append(f"  {relative}: allow-listed but no True call site")
     assert not missing, (
-        "Every allow-listed demo file must pass demo_speed_assist=True:\n"
-        + "\n".join(missing)
+        "Every allow-listed demo file must pass demo_speed_assist=True:\n" + "\n".join(missing)
     )
 
 

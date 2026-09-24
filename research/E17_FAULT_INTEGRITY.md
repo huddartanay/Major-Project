@@ -76,7 +76,10 @@ which returns `RedundantSensing.build(...)` **by default**. Redundancy is the dr
 `training/closed_loop.py:365-374` — for every modality in `redundant.sigmas`:
 
 ```python
-published = {**payload, "y": float(state[1]) + redundant.draw(modality) + redundant.offset(modality, tick)}
+published = {
+    **payload,
+    "y": float(state[1]) + redundant.draw(modality) + redundant.offset(modality, tick),
+}
 ```
 
 `y` is rebuilt from `state[1]`, the plant's **ground truth**, discarding the corrupted value. Only
