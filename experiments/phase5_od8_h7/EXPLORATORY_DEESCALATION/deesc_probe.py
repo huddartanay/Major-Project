@@ -1,8 +1,11 @@
 """Exploratory probe (dev seeds only, not a pre-registered experiment):
 does L8 step DOWN to a less severe mode while a sustained fault is still active,
-and if so, which counter allowed it?"""
+and if so, which counter allowed it?
+"""
 
-import json, sys, time
+import json
+import sys
+import time
 from pathlib import Path
 
 sys.path.insert(0, ".")
@@ -62,7 +65,7 @@ def analyse(rows, active):
     peak = 0
     events = []
     for i in range(1, len(rows)):
-        t, st, ood, integ, blk, unhealthy = rows[i]
+        t, st, ood, integ, _blk, unhealthy = rows[i]
         prev = rows[i - 1][1]
         if st is None or prev is None:
             continue
@@ -84,7 +87,7 @@ def analyse(rows, active):
     veto_frac = sum(bool(r[4]) for r in after) / max(len(after), 1)
     unhealthy_frac = sum(r[5] for r in after) / max(len(after), 1)
     return {
-        "peak": [k for k, v in RANK.items() if v == peak][0],
+        "peak": next(k for k, v in RANK.items() if v == peak),
         "final": rows[-1][1],
         "n_deescalations": len(events),
         "first_deesc": events[:3],

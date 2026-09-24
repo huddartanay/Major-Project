@@ -115,8 +115,8 @@ def fig2_effects(a: dict, dest: Path) -> None:
     ]
     h = 60 + 20 * len(rows)
     x0, x1 = 190, W - 30
-    lo = min(0.0, min(r[1]["lo"] for r in rows)) - 0.05
-    hi = max(0.0, max(r[1]["hi"] for r in rows)) + 0.05
+    lo = min(0.0, *(r[1]["lo"] for r in rows)) - 0.05
+    hi = max(0.0, *(r[1]["hi"] for r in rows)) + 0.05
 
     def X(v: float) -> float:
         return x0 + (x1 - x0) * (v - lo) / (hi - lo)

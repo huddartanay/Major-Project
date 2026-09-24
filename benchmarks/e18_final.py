@@ -385,11 +385,11 @@ def main() -> None:
                 col = ["#1b6ca8", "#c0392b", "#27795b", "#8e44ad", "#b8860b", "#2c3e50"][k]
                 if len(xs) > 1:
                     body += (
-                        f'<polyline points="{" ".join(f"{X(x):.1f},{Y(y):.1f}" for x, y in zip(xs, ys))}" '
+                        f'<polyline points="{" ".join(f"{X(x):.1f},{Y(y):.1f}" for x, y in zip(xs, ys, strict=False))}" '
                         f'fill="none" stroke="{col}" stroke-width="1.4" '
                         f'{"stroke-dasharray='4,2'" if p == "P3" else ""} opacity="0.85"/>'
                     )
-                for x, y in zip(xs, ys):
+                for x, y in zip(xs, ys, strict=False):
                     body += f'<circle cx="{X(x):.1f}" cy="{Y(y):.1f}" r="3" fill="{col}"/>'
     for k, f in enumerate(faults):
         col = ["#1b6ca8", "#c0392b", "#27795b", "#8e44ad", "#b8860b", "#2c3e50"][k]

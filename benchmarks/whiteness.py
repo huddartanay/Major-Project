@@ -368,7 +368,7 @@ def _residuals(
     collected: list[_Row] = []
     holder: dict[str, Any] = {}
 
-    def capture(sample: Any) -> None:  # noqa: ANN401
+    def capture(sample: Any) -> None:
         estimator = holder["estimator"]
         innovation = estimator.latest_innovation()
         if innovation is not None:
@@ -381,8 +381,8 @@ def _residuals(
                 )
             )
 
-    def remember(assembled: Any) -> None:  # noqa: ANN401
-        holder["estimator"] = assembled.pipeline._estimator  # noqa: SLF001
+    def remember(assembled: Any) -> None:
+        holder["estimator"] = assembled.pipeline._estimator
 
     result = drive_closed_loop(
         policy=policy,

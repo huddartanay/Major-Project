@@ -143,7 +143,7 @@ def main() -> None:
                         "could_fire": fires,
                     }
                 )
-                print(f"  {cond:<14}{p:<5}{f:<17}{sh:>9.4f}{hd:>10.4f}{ra:>9.4f}{str(fires):>8}")
+                print(f"  {cond:<14}{p:<5}{f:<17}{sh:>9.4f}{hd:>10.4f}{ra:>9.4f}{fires!s:>8}")
     out["l6_headroom"] = l6
 
     (args.dir / "analysis.json").write_text(

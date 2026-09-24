@@ -115,9 +115,9 @@ def main() -> None:
                 sds.append(f.std(ddof=1))
                 ns.append(n)
         if len(ns) >= 3:
-            b, aa = np.polyfit(np.log(ns), np.log(sds), 1)
+            b, _aa = np.polyfit(np.log(ns), np.log(sds), 1)
         else:
-            b = aa = float("nan")
+            b = float("nan")
         interp = (
             "precision-limited"
             if b <= -0.40

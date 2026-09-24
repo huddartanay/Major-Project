@@ -54,7 +54,7 @@ def wilcoxon_signed_rank(x: np.ndarray, y: np.ndarray) -> dict[str, float]:
     w = min(w_plus, w_minus)
     mean_w = n * (n + 1) / 4.0
     _, counts = np.unique(np.abs(d), return_counts=True)
-    tie_term = float(((counts**3 - counts).sum())) / 48.0
+    tie_term = float((counts**3 - counts).sum()) / 48.0
     var_w = n * (n + 1) * (2 * n + 1) / 24.0 - tie_term
     if var_w <= 0:
         return {"n": n, "n_dropped": n_all - n, "W": w, "z": float("nan"), "p": 1.0}

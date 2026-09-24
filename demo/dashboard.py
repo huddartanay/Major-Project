@@ -106,12 +106,12 @@ from astra.kernel.units import Probability
 from astra.layers.l4_proposer.learned import LearnedPolicy
 from astra.runtime.pipeline import ColdPathContext
 from training.closed_loop import (
-    DEFAULT_CHANNEL_SIGMAS,
-    RedundantSensing,
     CHANNEL_SIGMAS,
     CORPUS,
+    DEFAULT_CHANNEL_SIGMAS,
     ENVIRONMENT,
     TWIN,
+    RedundantSensing,
     TickSample,
     drive_closed_loop,
 )
@@ -119,7 +119,6 @@ from training.faults import (
     FaultChannel,
     FaultInjector,
     bias,
-    drift,
     dropout,
     noise_burst,
     stuck_at,
@@ -671,7 +670,7 @@ class FrameStream:
         if hasattr(self.pipeline, "enter_context"):
             self.pipeline.enter_context(ctx_obj)
         else:
-            self.pipeline._context = ctx_obj  # type: ignore[attr-defined]  # noqa: SLF001
+            self.pipeline._context = ctx_obj  # type: ignore[attr-defined]
         if where == TUNNEL:
             self.context_name = "tunnel"
             return "tunnel"
@@ -810,7 +809,7 @@ class FrameStream:
         """Perform the operator reset on L8, if the drive has started."""
         if self.pipeline is None:
             return
-        machine = getattr(self.pipeline, "_failsafe", None)  # noqa: SLF001
+        machine = getattr(self.pipeline, "_failsafe", None)
         if machine is not None:
             machine.reset()
 
@@ -1177,8 +1176,8 @@ def replay(stream: FrameStream, recording: Path, *, period_s: float) -> None:
         if not line.strip():
             continue
         payload = line
-        with stream._lock:  # noqa: SLF001 - same module, and the lock is the API
-            subscribers = list(stream._subscribers)  # noqa: SLF001
+        with stream._lock:
+            subscribers = list(stream._subscribers)
         for outbox in subscribers:
             try:
                 outbox.put_nowait(payload)

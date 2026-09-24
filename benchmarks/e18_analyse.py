@@ -112,13 +112,13 @@ def main() -> None:
             "in_band": bool(ok),
             "headroom": float(q_global - flat(cal, p).mean()),
         }
-        print(f"{p:<5}{far:>12.4%}{eps:>10.1%}{str(ok):>10}{q_global - flat(cal, p).mean():>11.4f}")
+        print(f"{p:<5}{far:>12.4%}{eps:>10.1%}{ok!s:>10}{q_global - flat(cal, p).mean():>11.4f}")
     g["all_in_band"] = all(v["in_band"] for v in g["per_policy"].values())
     res["schemes"]["global"] = g
 
     # ---- scheme 2: policy-conditional --------------------------------------
     pc = {"per_policy": {}}
-    print(f"\nSCHEME 2 - POLICY-CONDITIONAL")
+    print("\nSCHEME 2 - POLICY-CONDITIONAL")
     print(
         f"{'pol':<5}{'quantile':>11}{'clean FAR':>12}{'nominal':>10}{'in band?':>10}{'headroom':>11}"
     )
@@ -136,7 +136,7 @@ def main() -> None:
             "quantile_ci": [ci["lo"], ci["hi"]],
             "n_calibration": int(c.size),
         }
-        print(f"{p:<5}{q:>11.4f}{far:>12.4%}{eps:>10.1%}{str(ok):>10}{q - c.mean():>11.4f}")
+        print(f"{p:<5}{q:>11.4f}{far:>12.4%}{eps:>10.1%}{ok!s:>10}{q - c.mean():>11.4f}")
     pc["all_in_band"] = all(v["in_band"] for v in pc["per_policy"].values())
     res["schemes"]["policy_conditional"] = pc
 

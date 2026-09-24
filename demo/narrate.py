@@ -236,26 +236,34 @@ def _block(frame: Frame, palette: Palette) -> str:
         rule,
         head,
         f"  L1 sensing      {_health(frame)}",
-        f"  L2 estimate     lateral {_fmt(frame.estimate_y)} m"
-        f"     innovation {_fmt(frame.innovation, 2)}",
-        f"  L3 trust        Trust Index {_fmt(frame.trust_index, 2)}"
-        f"     context {frame.context or '--'}",
-        f"  L4 proposer     learned policy -- proposes only, never commands",
-        f"  L5 twin         physics reference L6 measures the proposal against",
+        (
+            f"  L2 estimate     lateral {_fmt(frame.estimate_y)} m"
+            f"     innovation {_fmt(frame.innovation, 2)}"
+        ),
+        (
+            f"  L3 trust        Trust Index {_fmt(frame.trust_index, 2)}"
+            f"     context {frame.context or '--'}"
+        ),
+        "  L4 proposer     learned policy -- proposes only, never commands",
+        "  L5 twin         physics reference L6 measures the proposal against",
         f"  L6 conformal    {gate('STATISTICAL')}",
         f"                  {palette.dim}quantile {_fmt(frame.quantile, 4)}{palette.off}",
         f"  L7b physical    {gate('PHYSICAL')}",
         f"  L7a hard bound  {gate('DETERMINISTIC')}",
-        f"  L8 fail-safe    {frame.failsafe_state or '--':<12}"
-        f" OOD {frame.ood_counter if frame.ood_counter is not None else '--'}"
-        f"   cap {'none' if frame.speed_cap is None else f'{frame.speed_cap:.1f} m/s'}",
+        (
+            f"  L8 fail-safe    {frame.failsafe_state or '--':<12}"
+            f" OOD {frame.ood_counter if frame.ood_counter is not None else '--'}"
+            f"   cap {'none' if frame.speed_cap is None else f'{frame.speed_cap:.1f} m/s'}"
+        ),
         f"  L9 arbitration  {frame.arbitration or '--':<17}"
         f" profile {frame.active_profile or '--'}"
         + (f"  {palette.violet}EXPLORING{palette.off}" if frame.exploring else ""),
         f"  -> issued       {frame.origin or 'none'}   {issued}",
-        f"  {palette.dim}ground truth    y {_fmt(frame.truth_y)} m"
-        f"   speed {_fmt(frame.truth_speed, 2)} m/s"
-        f"   belief off by {_fmt(error)} m   (simulator only){palette.off}",
+        (
+            f"  {palette.dim}ground truth    y {_fmt(frame.truth_y)} m"
+            f"   speed {_fmt(frame.truth_speed, 2)} m/s"
+            f"   belief off by {_fmt(error)} m   (simulator only){palette.off}"
+        ),
     ]
     return "\n".join(rows)
 
@@ -263,7 +271,7 @@ def _block(frame: Frame, palette: Palette) -> str:
 class Narrator:
     """Formats ticks, and remembers enough to report what changed."""
 
-    __slots__ = ("_every", "_last", "_mode", "_pause", "_palette", "_stream", "printed")
+    __slots__ = ("_every", "_last", "_mode", "_palette", "_pause", "_stream", "printed")
 
     def __init__(
         self,

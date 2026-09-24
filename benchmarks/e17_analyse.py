@@ -80,7 +80,8 @@ def main() -> None:
     args = ap.parse_args()
     rows = load(args.dir / "raw")
     if not rows:
-        raise SystemExit("no raw runs found")
+        msg = "no raw runs found"
+        raise SystemExit(msg)
 
     policies = sorted({r["policy"] for r in rows})
     out: dict[str, object] = {

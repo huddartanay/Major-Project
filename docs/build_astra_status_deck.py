@@ -251,7 +251,7 @@ def build(out: Path) -> None:
         yy = Inches(1.55) + i * Inches(1.62)
         tf = tb(s, Inches(9.15), yy, Inches(3.7), Inches(1.35))
         p(tf, v, 33, RGBColor(0x6E, 0xC8, 0xE8), bold=True, first=True, space=2, font=HEAD)
-        for k, line in enumerate(l.split("\n")):
+        for _k, line in enumerate(l.split("\n")):
             p(tf, line, 10.5, RGBColor(0xA8, 0xC0, 0xD4), space=0)
     p(
         tb(s, Inches(0.85), Inches(1.5), Inches(7.4), Inches(0.3)),

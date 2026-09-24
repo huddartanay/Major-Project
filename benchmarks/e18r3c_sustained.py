@@ -31,7 +31,7 @@ import numpy as np
 
 from astra.kernel.enums import SensorModality
 from astra.layers.l4_proposer.learned import LearnedPolicy
-from benchmarks.discriminability import CHANNEL_SIGMAS, _FAULT_FIRST
+from benchmarks.discriminability import _FAULT_FIRST, CHANNEL_SIGMAS
 from benchmarks.e18_evaluate import SEVERITIES
 from benchmarks.e18r3b_detect import RUN_LEVEL_BOUND
 from training.closed_loop import DEFAULT_CHANNEL_SIGMAS, RedundantSensing, drive_closed_loop

@@ -11,7 +11,7 @@ import hashlib
 import platform
 import subprocess
 import sys
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -134,7 +134,7 @@ def main() -> None:
     for r in rows:
         by_cat.setdefault(r["category"], []).append(r["bytes"])
 
-    ts = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%SZ")
+    ts = datetime.now(UTC).strftime("%Y-%m-%d %H:%M:%SZ")
     lines = [
         "# E17 Baseline Manifest",
         "",

@@ -378,7 +378,7 @@ def _publish_state(
         Returned so a caller can record what the *sensors* said, which is
         neither the plant's truth nor what the filter later concluded.
     """
-    state = plant._state  # noqa: SLF001 - the plant is the test fixture
+    state = plant._state
     payload = {
         "y": float(state[1]) + noise.gauss(0.0, POSITION_SIGMA),
         "v": float(state[2]) + noise.gauss(0.0, SPEED_SIGMA),
@@ -636,7 +636,7 @@ def _sample(
         The sample.
     """
     shadow = outcome.shadow
-    state = plant._state  # noqa: SLF001 - the plant is the test fixture
+    state = plant._state
     return TickSample(
         tick=tick,
         record=outcome.record,
@@ -778,7 +778,7 @@ def drive_closed_loop(
     # this module's plant sigmas, so a top-level import would close a cycle.
     # The adapter is the natural owner of the constants and this module is
     # the natural owner of the plant, and one of the two has to give.
-    from training.redundant import RedundantExtractor, ResidualMonitor  # noqa: PLC0415
+    from training.redundant import RedundantExtractor, ResidualMonitor
 
     redundant = _resolved_sensing(redundant, single_channel=single_channel, seed=seed)
 
@@ -879,8 +879,8 @@ def drive_closed_loop(
             and float(plant._state[2]) < 1.0
         ):
             plant._state[2] = plant.spec_.reference_speed_mps
-        previous_lateral = float(plant._state[4])  # noqa: SLF001
-        deviation_total += abs(float(plant._state[1]))  # noqa: SLF001
+        previous_lateral = float(plant._state[4])
+        deviation_total += abs(float(plant._state[1]))
         if observer is not None:
             observer(
                 _sample(
@@ -902,8 +902,8 @@ def drive_closed_loop(
     sink.flush()
     sink.close()
     result.mean_absolute_deviation_m = deviation_total / ticks
-    result.final_speed_mps = float(plant._state[2])  # noqa: SLF001
-    result.final_absolute_deviation_m = abs(float(plant._state[1]))  # noqa: SLF001
+    result.final_speed_mps = float(plant._state[2])
+    result.final_absolute_deviation_m = abs(float(plant._state[1]))
     result.dropped_records = sink.dropped_records
     result.audit_path = sink.path
     return result
@@ -931,7 +931,7 @@ def main() -> int:
     Returns:
         Always ``0``; this is a report, not a gate.
     """
-    from astra.layers.l4_proposer.learned import LearnedPolicy  # noqa: PLC0415
+    from astra.layers.l4_proposer.learned import LearnedPolicy
 
     checkpoint = Path("var/policy/synthetic.pt")
     _report("placeholder", drive_closed_loop(policy=None))

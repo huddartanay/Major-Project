@@ -26,7 +26,7 @@ from typing import Any
 import numpy as np
 
 from astra.layers.l4_proposer.learned import LearnedPolicy
-from benchmarks.discriminability import CHANNEL_SIGMAS, _FAULT_FIRST
+from benchmarks.discriminability import _FAULT_FIRST, CHANNEL_SIGMAS
 from benchmarks.e17_position import _l6
 from benchmarks.fault_study import SCENARIOS
 from training.closed_loop import drive_closed_loop
@@ -122,7 +122,7 @@ def main() -> None:
                 f"{np.mean([x['l6_threshold'] for x in g]):>11.4f}"
                 f"{np.mean([x['l6_headroom'] for x in g]):>10.4f}"
                 f"{np.nanmean([x['l6_shift_over_headroom'] for x in g]):>9.4f}"
-                f"{str(any(x['could_fire'] for x in g)):>8}"
+                f"{any(x['could_fire'] for x in g)!s:>8}"
             )
 
 

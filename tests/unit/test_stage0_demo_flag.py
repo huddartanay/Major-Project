@@ -161,8 +161,7 @@ def test_only_the_two_named_demo_files_may_enable_the_hack() -> None:
             continue
         if relative in DEMO_CALLERS_ALLOWED_TO_ENABLE:
             continue
-        for line in hits:
-            unexpected_enablers.append(f"  {relative}:{line}")
+        unexpected_enablers.extend(f"  {relative}:{line}" for line in hits)
     assert not unexpected_enablers, (
         "demo_speed_assist=True is allow-listed to demo/dashboard.py and "
         "demo/narrate.py only. Unexpected callers:\n"

@@ -22,13 +22,13 @@ import numpy as np
 
 from astra.kernel.enums import SensorModality
 from astra.layers.l4_proposer.learned import LearnedPolicy
-from benchmarks.discriminability import CHANNEL_SIGMAS, _FAULT_FIRST, _stages_for, auc
+from benchmarks.discriminability import _FAULT_FIRST, CHANNEL_SIGMAS, _stages_for, auc
 from training.closed_loop import (
     DEFAULT_CHANNEL_SIGMAS,
     RedundantSensing,
     drive_closed_loop,
 )
-from training.faults import FaultChannel, FaultInjector, bias, drift, dropout, noise_burst, stuck_at
+from training.faults import FaultChannel, FaultInjector, bias, dropout, noise_burst, stuck_at
 
 # ---- FROZEN. From E18_OD8_CALIBRATION/configuration.md. Do not edit. -------
 FROZEN_QUANTILE = {"P1": 3.7095, "P2": 5.9024, "P3": 3.4000}
@@ -137,7 +137,7 @@ def _sensing(fault: str, magnitude: float | None, seed: int, active: bool, ticks
     )
 
 
-def _run(policy, fault, magnitude, seed, active):  # noqa: ANN001, ANN201
+def _run(policy, fault, magnitude, seed, active):
     stages = _stages_for(fault)
     vals: dict[str, list[float]] = {c: [] for c, _, _ in stages}
     ticks: list[int] = []

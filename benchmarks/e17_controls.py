@@ -28,8 +28,8 @@ import numpy as np
 
 from astra.layers.l4_proposer.learned import LearnedPolicy
 from benchmarks.discriminability import (
-    CHANNEL_SIGMAS,
     _FAULT_FIRST,
+    CHANNEL_SIGMAS,
     _collect,
     _stages_for,
     auc,
@@ -57,16 +57,16 @@ def _profile(policy: Any, name: str, seed: int, ticks: int, **kw: Any) -> dict[s
     return out
 
 
-def _collect_kw(policy, fault, seed, ticks, stages, kw):  # noqa: ANN001, ANN201
+def _collect_kw(policy, fault, seed, ticks, stages, kw):
     """`_collect`, but able to pass `single_channel` through to the closed loop."""
     if not kw:
         return _collect(policy, fault, seed, ticks, stages)
-    from training.closed_loop import TickSample, drive_closed_loop  # noqa: F401
     from benchmarks.discriminability import Trace
+    from training.closed_loop import TickSample, drive_closed_loop  # noqa: F401
 
     trace = Trace(values={c: [] for c, _, _ in stages}, ticks=[], speeds=[])
 
-    def observe(s):  # noqa: ANN001
+    def observe(s):
         trace.ticks.append(s.tick)
         trace.speeds.append(float(s.speed_mps))
         for code, _, fn in stages:
