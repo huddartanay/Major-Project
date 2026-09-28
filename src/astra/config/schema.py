@@ -36,6 +36,7 @@ configuration.
 from __future__ import annotations
 
 import math
+from collections.abc import Mapping
 from typing import Annotated, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
@@ -48,6 +49,7 @@ from astra.kernel.constants import (
     SLOW_STATE_DIMENSION,
     SLOW_STATE_FIELDS,
 )
+from astra.kernel.enums import FailSafeState, SensorModality, StreamHealth
 from astra.kernel.units import (
     Degrees,
     Hertz,
@@ -87,6 +89,7 @@ type UnitInterval = Annotated[float, Field(ge=0.0, le=1.0)]
 type PositiveFloat = Annotated[float, Field(gt=0.0)]
 type NonNegativeFloat = Annotated[float, Field(ge=0.0)]
 type PositiveInt = Annotated[int, Field(gt=0)]
+type NonNegativeInt = Annotated[int, Field(ge=0)]
 
 
 class _Section(BaseModel):
@@ -128,9 +131,24 @@ class EstimationSettings(_Section):
         slow_rate_hz: The slow filter's rate. 1 Hz in deployment, 0.1 Hz in the
             prototype -- both are configuration, not a contradiction between the
             documents (finding R-5).
-        innovation_gate_gamma: The Mahalanobis threshold above which the
-            innovation monitor raises a sensor fault. **No default**: it is one
-            of the empirically determined safety thresholds of A-4.
+        innovation_gate_gamma: The Mahalanobis threshold above which an
+            innovation is flagged as anomalous. **No default**: it is one of the
+            empirically determined safety thresholds of A-4.
+
+            **It does not raise a fault, and this docstring said it did until
+            11 August 2026.** The flag reaches exactly one consumer -- L3's
+            classifier, which switches the Mondrian context class to
+            ``DEGRADED_SENSOR`` -- so it changes which calibration window L6
+            compares against and nothing else. The measurement is **not**
+            rejected: ``update_fast`` fuses it first and computes the flag from
+            the residual afterwards.
+
+            Measured at the shipped value of 7.5, the flag fires on **one tick
+            in every arm of the fault study including the control** -- tick 0,
+            the plant's deliberate 1 m initial offset -- and is silent on every
+            injected fault but the 25-sigma noise burst (E-105). It is a
+            gross-outlier check, and every fault in that study is designed to be
+            self-consistent.
         fast_process_noise: Diagonal of the fast filter's process noise ``Q_f``,
             one variance per field of
             :data:`~astra.kernel.constants.FAST_STATE_FIELDS`. **No default**:
@@ -219,10 +237,24 @@ class EstimationSettings(_Section):
 class TrustSettings(_Section):
     """L3 -- the conformal Trust Module.
 
+    **There is no `ensemble_size`, and its absence is a decision.** The paper's
+    first stated contribution is EnbPI -- an ensemble of bootstrap models --
+    and this schema carried `ensemble_size: PositiveInt = 10` to match it. **No
+    ensemble was ever built.** L3 and L6 both run Mondrian class-conditional
+    inductive conformal prediction, which is a different method with a different
+    guarantee, and the field was read by nothing: not by the trust module, not
+    by the gate, not by the corpus generator.
+
+    A configuration field nothing reads is worse than a missing one. It reads as
+    a knob a deployment can turn, it appears in every rendered profile, and it
+    tells a reviewer the ensemble exists. Deleted 15 August 2026
+    (`PAPER_ADHERENCE.md` section 4, item 2); `extra="forbid"` means a profile
+    still declaring it now fails at startup rather than being quietly ignored,
+    which is the correct loudness for a claim being withdrawn.
+
     Attributes:
         coverage_level: The conformal coverage ``1 - epsilon`` the Trust Module
             targets. **No default** (A-4).
-        ensemble_size: Number of bootstrap models in the EnbPI ensemble.
         minimum_calibration_samples: Below this many residuals in a context
             class, the class-conditional quantile is not yet meaningful. The
             validation plan calls for at least 500 calibration samples per
@@ -230,7 +262,6 @@ class TrustSettings(_Section):
     """
 
     coverage_level: UnitInterval
-    ensemble_size: PositiveInt = 10
     minimum_calibration_samples: PositiveInt = 500
     calibration_window: PositiveInt = 500
     highway_speed_boundary_kmh: PositiveFloat
@@ -259,10 +290,6 @@ class TwinSettings(_Section):
             sets how strongly the twin is held to Newtonian consistency versus
             fitting its training data, which is the whole point of a PINN rather
             than a plain regressor. **No default** (A-4).
-        ewc_lambda: Strength of the Fisher-anchored elastic-weight-consolidation
-            penalty applied during online adaptation. Too low and adapting to
-            rain forgets the highway; too high and the twin cannot adapt at all.
-            The balance is empirical. **No default** (A-4).
         control_effectiveness: Row mapping a command vector to the lateral
             acceleration it produces, in the actuation space's channel order.
             This is a platform fact, not a core assumption, which is why it is
@@ -273,24 +300,17 @@ class TwinSettings(_Section):
             rather than empirical, so it carries a default.
         adaptation_buffer: Fresh measurements to accumulate before an EWC update
             fires. The validation plan specifies 50.
-        adaptation_steps: Gradient steps taken per consolidation. More than one
-            is required for the elastic penalty to do anything at all: on the
-            first step the parameters still sit on their anchor, where the
-            penalty has zero value *and* zero gradient.
-        fisher_sample_count: Historical samples the Fisher information is
-            estimated over. The validation plan specifies 200.
+        adaptation_steps: Gradient steps taken per consolidation.
         seed: Seed for weight initialisation. Present because A-5 requires a run
             to be byte-reproducible, and a randomly initialised network would
             defeat that in the one layer whose output feeds a gate.
     """
 
     physics_weight: NonNegativeFloat
-    ewc_lambda: NonNegativeFloat
     control_effectiveness: list[float]
     hidden_width: PositiveInt = 32
     adaptation_buffer: PositiveInt = 50
     adaptation_steps: PositiveInt = 10
-    fisher_sample_count: PositiveInt = 200
     seed: int = 0
 
     @field_validator("control_effectiveness")
@@ -409,12 +429,29 @@ class ShieldSettings(_Section):
             assures rather than against a measured one. Sourcing ``d_avail``
             from perception would require extending the state vector, which is
             a visible architectural change and is recorded as Phase 3 debt.
+        lateral_corridor_half_width_m: How far the vehicle may be from the
+            centreline of the path it is permitted to occupy.
+
+            Deliberately *not* called a lane. A lane is a road concept and NFR5
+            keeps road concepts out of the core; a warehouse AGV has a permitted
+            corridor just as a car has a lane, and the bound is the same
+            quantity in both. The adapter decides what the corridor is.
+
+            Added 5 August 2026, after a 100,000-tick run in which the vehicle
+            travelled 2.9 km outside a corridor 1.75 m wide with a **0.00% veto
+            rate and a Trust Index of exactly 1.00**. No gate in Core-B measured
+            where the vehicle was: this one bounded speed, lateral acceleration
+            and stopping distance; L7b bounds jerk and divergence from the twin;
+            L6 scores the proposal against the twin. A departure was invisible
+            to all three, which meant the three-gate argument did not cover the
+            hazard that actually occurred.
     """
 
     legal_speed_limit_kmh: PositiveFloat
     friction_margin: UnitInterval
     minimum_stopping_distance_m: NonNegativeFloat
     assured_clear_distance_m: PositiveFloat
+    lateral_corridor_half_width_m: PositiveFloat
 
     @property
     def legal_speed_limit(self) -> MetresPerSecond:
@@ -431,17 +468,118 @@ class ShieldSettings(_Section):
         """Return the ODD's assured clear distance ahead, in metres."""
         return Metres(self.assured_clear_distance_m)
 
+    @property
+    def lateral_corridor_half_width(self) -> Metres:
+        """Return the permitted lateral corridor half-width, in metres."""
+        return Metres(self.lateral_corridor_half_width_m)
+
 
 class FailSafeSettings(_Section):
     """L8 -- the fail-safe state machine's thresholds and speed caps.
+
+    **The thresholds are durations wearing counts.** The out-of-distribution
+    counter increments on a VETO and decrements on a PASS, so a threshold
+    divided by ``estimation.fast_rate_hz`` is how long sustained refusal must
+    last before the posture escalates. Choosing them as bare integers is how
+    ``ood_threshold_halt = 20`` came to mean "declare a terminal pull-over after
+    one second", which is shorter than a legitimate recovery from 1 m off the
+    lane centre -- see the note in ``config/environments/simulation.toml``.
+
+    Set them by deciding the duration first.
 
     Attributes:
         ood_threshold_degraded: ``theta-1``. OOD counter above this enters
             DEGRADED. **No default** (A-4).
         ood_threshold_limp: ``theta-2``. Enters LIMP. **No default** (A-4).
-        ood_threshold_halt: ``theta-3``. Enters HALT. **No default** (A-4).
-        degraded_speed_cap_kmh: Speed cap imposed in DEGRADED.
-        limp_speed_cap_kmh: Speed cap imposed in LIMP.
+        ood_threshold_halt: ``theta-3``. Enters HALT, which is terminal --
+            :meth:`~astra.layers.l8_failsafe.machine.FailSafeStateMachine.reset`
+            is its only exit. A threshold reachable by a transient therefore
+            makes the transient permanent. **No default** (A-4).
+        degraded_speed_cap_kmh: Speed cap imposed in DEGRADED. Reported to L9
+            and, today, enforced on no actuator -- see
+            :class:`~astra.kernel.enums.FailSafeState`.
+        limp_speed_cap_kmh: Speed cap imposed in LIMP. The same caveat applies.
+        integrity_threshold_degraded: ``phi-1``. **Sensor-integrity** counter
+            above this enters DEGRADED. **No default** (A-4).
+        integrity_threshold_limp: ``phi-2``. Enters LIMP. **No default** (A-4).
+        integrity_threshold_halt: ``phi-3``. Enters HALT. **No default** (A-4).
+        critical_modalities: The modalities whose health drives the integrity
+            counter. A modality **outside** this set is still recorded in every
+            frame-health map and every audit record -- it is simply not counted
+            as a reason to change the vehicle's posture.
+
+            **No default** (A-4), because naming a modality non-critical is a
+            safety claim: that nothing the safety argument depends on reads it.
+            Get it wrong and the vehicle drives on a dead sensor it needed.
+
+            **Every shipped profile lists all five**, which is exactly the
+            behaviour before this field existed. The prototype deliberately does
+            **not** use the escape hatch it provides: its extractor happens to
+            read only the IMU, so declaring the other four non-critical would be
+            *true of this build* -- and true only because of OD-15, which is a
+            defect to fix rather than a property to encode in a safety file
+            (ADR-0028).
+        integrity_tolerated_faults: How many modalities may be unhealthy
+            *simultaneously* before the integrity counter rises. **No
+            default** (A-4), and **zero is the only value a deployment
+            without redundancy may set**.
+
+            Raising it above zero is a *claim*: that the sensor set carries
+            enough independent measurements of each quantity to keep working
+            with that many of them lying, and that something excludes the
+            liar from the fusion. A deployment fusing three position
+            channels by median tolerates one; a deployment with one channel
+            per quantity tolerates none, and setting one there would mean
+            ignoring the only sensor it has (ADR-0027).
+        capabilities: What each autonomy function requires, as
+            ``{name: modalities}``. A function is **withdrawn** for as long as
+            any modality it requires is worse than ``HEALTHY``.
+
+            **This is the second axis, and it is orthogonal to everything above
+            it.** The thresholds and ``critical_modalities`` answer *how bad is
+            this getting* with a severity level; this answers *what is broken*
+            with a set of lost functions. One integer cannot hold both, and
+            ADR-0029 is the record of finding that out: before it, a camera
+            fault could stop the vehicle or do nothing at all, and could not do
+            the one useful thing -- stop offering lane changes and drive on.
+
+            The two axes compose by **intersection**: a capability is available
+            only where the posture allows it *and* its sensors support it.
+            Withdrawal can therefore only ever subtract. A capability set that
+            could *grant* something the posture forbids would be a fourth gate
+            with veto-override authority, which SI-3 forbids.
+
+            Being orthogonal to ``critical_modalities`` is the point. A camera
+            may be non-critical -- never a reason to slow down -- *and* required
+            by ``lane_change``, so losing it withdraws lane changes and leaves
+            the vehicle driving. Neither field alone can express that.
+
+            The names are **opaque to L8**, which is what keeps NFR5: the layer
+            knows that capabilities exist and get withdrawn, never what a lane
+            is. Only a domain adapter reads the names.
+
+            **Defaults to empty**, and that is not an A-4 exception. An empty
+            ``critical_modalities`` would disable a counter that already
+            escalates, so it is a fail-open claim and is refused. An empty
+            ``capabilities`` withdraws nothing, which is precisely the behaviour
+            shipped before this field existed -- an absence of a claim rather
+            than a weak one. ``benchmarks/commissioning.py`` prints the
+            resulting degradation table, so a deployment that declared none can
+            see that it declared none.
+
+    **Why there are two sets of thresholds, and why the second set is tighter.**
+    The ``ood_*`` thresholds answer *"how long should sustained refusal be
+    tolerated?"*, and their floor is set by a legitimate recovery: a vehicle 1 m
+    off the lane centre needs ~21 vetoed ticks to correct, so a threshold below
+    that turns a correction into a pull-over. The ``integrity_*`` thresholds
+    answer a different question -- *"how long should a sensor channel be allowed
+    to say nothing?"* -- and it has no legitimate answer above a fraction of a
+    second. There is no benign reason for a modality to stop publishing.
+
+    Sharing one set would have forced the tighter question to accept the looser
+    answer, and measured (E-46) the loose answer is too slow: the vehicle leaves
+    its corridor 73 ticks after an IMU dropout opens, and ``ood_threshold_halt``
+    is 100. See ADR-0024.
     """
 
     ood_threshold_degraded: PositiveInt
@@ -449,6 +587,246 @@ class FailSafeSettings(_Section):
     ood_threshold_halt: PositiveInt
     degraded_speed_cap_kmh: PositiveFloat
     limp_speed_cap_kmh: PositiveFloat
+    integrity_threshold_degraded: PositiveInt
+    integrity_threshold_limp: PositiveInt
+    integrity_threshold_halt: PositiveInt
+    integrity_tolerated_faults: NonNegativeInt
+    critical_modalities: tuple[SensorModality, ...]
+    capabilities: tuple[tuple[str, tuple[SensorModality, ...]], ...] = ()
+    integrity_ceiling: tuple[tuple[StreamHealth, FailSafeState], ...] = ()
+    decay_window_ticks: PositiveInt = 200
+    decay_service_threshold: float | None = None
+
+    @field_validator("integrity_ceiling", mode="before")
+    @classmethod
+    def _ceiling_is_sorted_pairs(cls, value: object) -> object:
+        """Normalise the TOML table into pairs, ordered by health severity.
+
+        Sorted for the same reason ``capabilities`` is -- the config hash must
+        not depend on the order keys happen to appear in the file -- but sorted
+        by *severity* rather than by name, because that is the order the
+        monotonicity validator reads them in and the order a reader expects.
+
+        Args:
+            value: A table from TOML, or pairs from a direct constructor.
+
+        Returns:
+            Pairs ordered worst-health-last, or the value untouched when it is
+            not a mapping.
+        """
+        if isinstance(value, Mapping):
+            return tuple(
+                sorted(
+                    (
+                        (StreamHealth(str(level)), FailSafeState(str(state)))
+                        for level, state in value.items()
+                    ),
+                    key=lambda pair: pair[0].severity_rank,
+                )
+            )
+        return value
+
+    @field_validator("integrity_ceiling")
+    @classmethod
+    def _ceiling_rises_with_health_severity(
+        cls, value: tuple[tuple[StreamHealth, FailSafeState], ...]
+    ) -> tuple[tuple[StreamHealth, FailSafeState], ...]:
+        """Validate that a worse stream health may not reach a milder posture.
+
+        A `DEGRADED` stream permitted to HALT while an `ABSENT` one is capped at
+        LIMP is incoherent: it says a late reading is more dangerous than no
+        reading at all. It is also the shape a typo makes, because the two
+        values sit on adjacent lines of the same table.
+
+        `HEALTHY` is refused outright. It is not a fault, nothing counts it, and
+        a ceiling for it would be a line of configuration that reads like a
+        safety decision and governs nothing.
+
+        Args:
+            value: The declared ceilings, ordered by health severity.
+
+        Returns:
+            The value, unchanged.
+
+        Raises:
+            ValueError: If `HEALTHY` appears, or the ceilings fall as health
+                worsens.
+        """
+        previous: FailSafeState | None = None
+        for level, ceiling in value:
+            if level is StreamHealth.HEALTHY:
+                message = (
+                    "failsafe.integrity_ceiling must not name HEALTHY; "
+                    "a healthy stream is not a fault and no counter reads it"
+                )
+                raise ValueError(message)
+            if previous is not None and ceiling.severity_rank < previous.severity_rank:
+                message = (
+                    f"failsafe.integrity_ceiling falls as health worsens: {level.value} "
+                    f"may reach {ceiling.value}, milder than the level before it. A worse "
+                    "stream health cannot warrant a milder posture"
+                )
+                raise ValueError(message)
+            previous = ceiling
+        return value
+
+    @field_validator("decay_service_threshold")
+    @classmethod
+    def _service_threshold_is_a_fraction(cls, value: float | None) -> float | None:
+        """Validate that the service threshold is a fraction strictly inside (0, 1].
+
+        The decayed value is the **fraction of recent frames a modality was
+        unhealthy**, so it is bounded in `[0, 1]` by construction. Zero would
+        flag every sensor that ever glitched once and one is unreachable through
+        smoothing, so both ends are refused: a threshold nothing can clear and a
+        threshold everything trips are the same bug wearing different numbers.
+
+        Args:
+            value: The declared threshold, or ``None`` for no service signal.
+
+        Returns:
+            The value, unchanged.
+
+        Raises:
+            ValueError: If the threshold is outside ``(0, 1)``.
+        """
+        if value is not None and not 0.0 < value < 1.0:
+            message = (
+                f"failsafe.decay_service_threshold must be a fraction strictly "
+                f"between 0 and 1, got {value}"
+            )
+            raise ValueError(message)
+        return value
+
+    @field_validator("capabilities", mode="before")
+    @classmethod
+    def _capabilities_are_sorted_pairs(cls, value: object) -> object:
+        """Normalise the TOML table into sorted name/requirement pairs.
+
+        The file declares a table because ``lane_change = ["CAMERA"]`` is what a
+        safety engineer can read, and the readability of that table is half the
+        point of the feature. The field stores **pairs** because a ``dict`` on a
+        frozen settings model is mutable through the attribute, and because
+        pydantic can serialise neither it nor a ``mappingproxy`` -- the config
+        hash that pins a run to its operating point is computed by serialising
+        this model, so an unserialisable field would have taken the provenance
+        record down with it.
+
+        Sorting makes the hash independent of the order the keys happen to
+        appear in the file. Two profiles that declare the same capabilities
+        differently ordered are the same operating point and must hash alike.
+
+        Args:
+            value: Whatever the loader produced -- a table from TOML, or pairs
+                from a caller constructing settings directly.
+
+        Returns:
+            Sorted pairs, or the value untouched when it is not a mapping.
+        """
+        if isinstance(value, Mapping):
+            return tuple(sorted((str(name), tuple(required)) for name, required in value.items()))
+        return value
+
+    @field_validator("capabilities")
+    @classmethod
+    def _every_capability_requires_a_modality(
+        cls, value: tuple[tuple[str, tuple[SensorModality, ...]], ...]
+    ) -> tuple[tuple[str, tuple[SensorModality, ...]], ...]:
+        """Validate that no capability declares an empty requirement.
+
+        A capability requiring nothing can never be withdrawn: the derivation
+        intersects its requirement with the unhealthy set, and an empty
+        requirement intersects nothing. It would sit in the commissioning table
+        looking like a modelled function and would survive the loss of every
+        sensor on the vehicle.
+
+        That is the same fail-open shape as an empty ``critical_modalities`` and
+        it is refused for the same reason -- a capability nobody can withdraw is
+        indistinguishable, in the record, from one that was never at risk.
+
+        Args:
+            value: The declared capability requirements.
+
+        Returns:
+            The value, unchanged.
+
+        Raises:
+            ValueError: If any capability requires no modality, or is unnamed.
+        """
+        for name, required in value:
+            if not name.strip():
+                message = "failsafe.capabilities contains an unnamed capability"
+                raise ValueError(message)
+            if not required:
+                message = (
+                    f"failsafe.capabilities[{name!r}] requires no modality; "
+                    "a capability that requires nothing can never be withdrawn"
+                )
+                raise ValueError(message)
+        return value
+
+    @field_validator("critical_modalities")
+    @classmethod
+    def _at_least_one_modality_is_critical(
+        cls, value: tuple[SensorModality, ...]
+    ) -> tuple[SensorModality, ...]:
+        """Validate that the critical set is not empty.
+
+        An empty set silently disables the sensor-integrity counter: nothing
+        would ever be counted, the machine would never escalate on sensor
+        health, and every run would look healthy. That is a fail-open mode
+        reachable by deleting a line from a TOML file, which is precisely the
+        failure ``extra="forbid"`` and A-4 exist to prevent elsewhere.
+
+        Args:
+            value: The declared critical modalities.
+
+        Returns:
+            The value, unchanged.
+
+        Raises:
+            ValueError: If the set is empty.
+        """
+        if not value:
+            message = (
+                "failsafe.critical_modalities must name at least one modality; "
+                "an empty set disables the integrity counter entirely"
+            )
+            raise ValueError(message)
+        return value
+
+    @field_validator("integrity_threshold_halt")
+    @classmethod
+    def _integrity_thresholds_must_be_ordered(cls, value: int, info: object) -> int:
+        """Validate that the three integrity thresholds increase with severity.
+
+        Same reasoning as :meth:`_thresholds_must_be_ordered`, and it is a
+        separate validator rather than a shared one because the two triples are
+        independent operating points: nothing requires them to relate, and a
+        validator that compared them would invent a constraint the architecture
+        does not have.
+
+        Args:
+            value: The HALT threshold under validation.
+            info: Pydantic's validation context, carrying the already-validated
+                fields.
+
+        Returns:
+            The value, unchanged.
+
+        Raises:
+            ValueError: If the thresholds are not strictly increasing.
+        """
+        data = getattr(info, "data", {})
+        degraded = data.get("integrity_threshold_degraded")
+        limp = data.get("integrity_threshold_limp")
+        if degraded is not None and limp is not None and not degraded < limp < value:
+            message = (
+                f"sensor-integrity thresholds must strictly increase with severity: "
+                f"phi1={degraded} < phi2={limp} < phi3={value}"
+            )
+            raise ValueError(message)
+        return value
 
     @field_validator("ood_threshold_halt")
     @classmethod

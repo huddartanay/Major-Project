@@ -65,6 +65,7 @@ loop that owned its own timing would be unable to serve all three.
 
 from __future__ import annotations
 
+import math
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
@@ -72,6 +73,7 @@ from astra.contracts.assurance import GateVerdict, SafetyVerdict
 from astra.contracts.audit import DecisionRecord
 from astra.kernel.enums import (
     ArbitrationOutcome,
+    ContextClass,
     GateId,
     LayerId,
     SensorModality,
@@ -79,6 +81,7 @@ from astra.kernel.enums import (
     Verdict,
 )
 from astra.kernel.errors import AstraError, SafetyPathError
+from astra.layers.l6_statistical_gate.gate import CONTROL_DIMENSION, non_conformity_score
 from astra.layers.l9_rcm.exploration import exploration_envelope, restricted_space
 from astra.layers.l9_rcm.signature import build_signature
 
@@ -95,6 +98,8 @@ if TYPE_CHECKING:
     from astra.kernel.units import MetresPerSecond, Probability, Seconds
     from astra.layers.l1_sensing.bus import SharedSensorBus
     from astra.layers.l2_estimation.filter import DualRateUKF
+    from astra.layers.l2_estimation.measurement import IntegrityMonitor
+    from astra.layers.l3_trust.mondrian import MondrianCalibration
     from astra.layers.l3_trust.trust import ConformalTrustModule
     from astra.layers.l4_proposer.proposer import CmdpProposer
     from astra.layers.l5_twin.twin import PhysicsInformedTwin
@@ -152,6 +157,69 @@ class ColdPathContext:
 
 
 @dataclass(frozen=True, slots=True)
+class ShadowLoops:
+    """What the dormant feedback loops *would* have done this tick.
+
+    Deliberately not part of :class:`~astra.contracts.audit.DecisionRecord`. The
+    audit log is a certification artefact and describes what the system did; a
+    counterfactual produced by a loop that is switched off is a different kind of
+    claim, and filing the two together would be a category error that a reader
+    years from now has no way to unpick.
+
+    Attributes:
+        divergence: The largest absolute per-channel difference between the
+            prediction the live twin made and the one the shadow would have made.
+            Zero until the shadow's first consolidation fires.
+        digest: The shadow twin's weights digest, so a run can show the shadow
+            actually moved rather than assuming it did.
+        adapted: Whether this tick's outcome was handed to the shadow at all.
+            False on a tick that issued nothing, or one with no context to adapt
+            in -- both are cases FB2 would also have skipped.
+        quantile: The conformal quantile L6 actually used this tick -- static,
+            because the corpus is seeded once and never updated.
+        shadow_quantile: The quantile L6 *would* have used had FB3 been
+            requantilising online on realised scores. **The FB3 counterfactual.**
+        shadow_would_veto: Whether this tick's score exceeds that shadow
+            quantile. Summed over a run it gives the veto rate FB3 would have
+            produced.
+        shadow_failsafe: The state a *second* fail-safe machine reaches when fed
+            those counterfactual vetoes and nothing else.
+
+            This is what answers D-1. A veto is not an intervention: it runs the
+            fallback for one tick and nothing degrades until the OOD counter
+            crosses theta-1. So "false-positive rate" has two readings -- per
+            tick, which is epsilon by construction and not a defect, and per
+            *intervention*, which is what a fleet operator actually pays for.
+            They are not the same number and the target of < 1% never said
+            which it meant.
+        live_score: The non-conformity score L6 computed this tick, against the
+            twin the gates actually read.
+        shadow_score: The score L6 *would* have computed had it read the shadow
+            twin instead. The pair is the whole question about FB2: the twin's
+            module docstring says training it on the proposer's output would
+            "make every score small and quietly disarm the statistical gate",
+            and FB2's only labels are the proposer's commands. If the shadow's
+            scores fall away from the live ones over a long run, that is the
+            disarming, observed before it was ever given authority.
+
+            Both are computed with
+            :func:`~astra.layers.l6_statistical_gate.gate.non_conformity_score`,
+            the gate's own arithmetic, because a comparison against a
+            reimplementation would be evidence about the reimplementation.
+    """
+
+    divergence: float
+    digest: str
+    adapted: bool
+    live_score: float
+    shadow_score: float
+    quantile: float
+    shadow_quantile: float
+    shadow_would_veto: bool
+    shadow_failsafe: str
+
+
+@dataclass(frozen=True, slots=True)
 class TickOutcome:
     """Everything one tick produced.
 
@@ -164,11 +232,14 @@ class TickOutcome:
         failed_stage: The pipeline stage that raised, if one did. ``None`` on a
             tick that completed, whether the verdict was PASS or VETO -- a VETO
             is a working pipeline reaching a conclusion, not a failure.
+        shadow: FB2's counterfactual, when a shadow twin was supplied. ``None``
+            means no shadow was running, which is the default.
     """
 
     record: DecisionRecord
     issued: IssuedCommand | None = None
     failed_stage: str | None = None
+    shadow: ShadowLoops | None = None
 
     @property
     def was_issued(self) -> bool:
@@ -199,6 +270,7 @@ class GovernancePipeline[PayloadT]:
     """
 
     __slots__ = (
+        "_ablation",
         "_arbiter",
         "_arbitration",
         "_audit_sink",
@@ -209,12 +281,16 @@ class GovernancePipeline[PayloadT]:
         "_degradation",
         "_estimator",
         "_failsafe",
+        "_integrity",
         "_physical_gate",
         "_proposal_reader",
         "_proposal_writer",
         "_proposer",
         "_run",
         "_sensor_bus",
+        "_shadow_calibration",
+        "_shadow_failsafe",
+        "_shadow_twin",
         "_shield",
         "_slow_period_ticks",
         "_staleness_budget",
@@ -246,6 +322,11 @@ class GovernancePipeline[PayloadT]:
         slow_period_ticks: int,
         context: ColdPathContext | None = None,
         control_effectiveness: Sequence[float] | None = None,
+        shadow_twin: PhysicsInformedTwin | None = None,
+        shadow_calibration: MondrianCalibration | None = None,
+        shadow_failsafe: FailSafeStateMachine | None = None,
+        ablation: str = "NONE",
+        integrity: IntegrityMonitor[PayloadT] | None = None,
     ) -> None:
         """Assemble the pipeline from already-constructed layers.
 
@@ -253,13 +334,19 @@ class GovernancePipeline[PayloadT]:
             run: The run these ticks belong to.
             config_hash: The frozen configuration's hash, stamped on every
                 record so each number is attributable to an operating point.
+            integrity: An adapter-supplied cross-modality monitor, or ``None``.
+                It is the producer of ``StreamHealth.FAULTED`` -- the value L1
+                reserves for a *lying* stream and cannot decide itself. ``None``
+                leaves health exactly as L1 determined it, which is what every
+                caller predating ADR-0026 gets.
             sensor_bus: L1.
             estimator: L2.
             trust_module: L3.
             proposer: L4.
             proposal_writer: Core-A's end of the one-way channel.
             proposal_reader: Core-B's end of the one-way channel.
-            twin: L5.
+            twin: L5. Never adapted by the tick loop: FB2 is not wired, and
+                repairing its mechanism (ADR-0019) did not switch it on.
             statistical_gate: L6.
             physical_gate: L7b.
             shield: L7a.
@@ -283,16 +370,49 @@ class GovernancePipeline[PayloadT]:
                 the thresholds, and the three signature components the pipeline
                 cannot observe. ``None`` leaves the cold path dormant, which is
                 what every test that only exercises the hot path wants.
+            shadow_twin: A second twin, of the same architecture and starting
+                from the same checkpoint, which **is** fed executed outcomes.
+                Nothing reads its predictions: it exists so a long run can
+                measure how far FB2 would have moved the twin, and whether that
+                movement would have been an improvement, before FB2 is given any
+                authority over a command. ``None``, the default, runs no shadow.
+
+                The idiom is L9's, not a new one -- :class:`ShadowExecution`
+                stages a candidate calibration profile and measures its
+                divergence before committing to it, for the same reason.
+            ablation: Which layers were disarmed for this run, rendered by
+                :meth:`~astra.runtime.ablation.AblationProfile.render`.
+                ``"NONE"`` -- the default -- is a governed run. Carried here
+                only so that every decision record can be stamped with it: an
+                ablated run's evidence is otherwise indistinguishable from a
+                governed run's, which is precisely what an ablation is
+                (ADR-0021).
+            shadow_failsafe: A second fail-safe machine, driven only by the
+                counterfactual verdicts FB3's quantile would have produced. It
+                governs nothing. It exists to answer D-1's real question: a veto
+                runs the fallback for one tick, and nothing degrades until the
+                OOD counter crosses theta-1, so the per-tick veto rate and the
+                per-*intervention* rate are different numbers.
+            shadow_calibration: A second Mondrian calibration, seeded from the
+                same corpus as L6's, which **is** fed realised scores. Nothing
+                thresholds against it. It answers FB3's question -- what would
+                the acceptance quantile become, and what veto rate would that
+                have produced -- without FB3 having any say in a verdict.
         """
         self._run = run
         self._config_hash = config_hash
         self._sensor_bus = sensor_bus
+        self._integrity = integrity
         self._estimator = estimator
         self._trust_module = trust_module
         self._proposer = proposer
         self._proposal_writer = proposal_writer
         self._proposal_reader = proposal_reader
         self._twin = twin
+        self._shadow_twin = shadow_twin
+        self._shadow_calibration = shadow_calibration
+        self._shadow_failsafe = shadow_failsafe
+        self._ablation = ablation
         self._statistical_gate = statistical_gate
         self._physical_gate = physical_gate
         self._shield = shield
@@ -329,13 +449,20 @@ class GovernancePipeline[PayloadT]:
 
         try:
             frame = self._sensor_bus.acquire(tick)
-            frame_health = tuple(self._sensor_bus.health(frame).items())
+            frame_health = self._frame_health(frame)
             state = self._estimate(frame, tick)
-            trust = self._trust_module.assess(
-                tick=tick, state=state, innovation=self._estimator.latest_innovation()
-            )
+            innovation = self._estimator.latest_innovation()
+            # Read once and threaded to both consumers and the record. Calling
+            # `latest_innovation()` twice would be harmless today and is exactly
+            # the kind of duplicate read that lets an audit row disagree with
+            # the gate it claims to describe.
+            fast_innovation = None if innovation is None else innovation.mahalanobis_distance
+            trust = self._trust_module.assess(tick=tick, state=state, innovation=innovation)
             proposal = self._deliver(tick=tick, state=state, trust=trust)
-            prediction = self._twin.predict(tick=tick, state=state)
+            # The context L3 just classified selects the twin's output head, so
+            # the non-conformity score's reference and the quantile it is
+            # compared against are conditioned on the same partition (ADR-0019).
+            prediction = self._twin.predict(tick=tick, state=state, context=trust.context_class)
         except AstraError as error:
             return self._abort(
                 tick=tick,
@@ -347,12 +474,31 @@ class GovernancePipeline[PayloadT]:
             )
 
         verdict = self._adjudicate(tick=tick, proposal=proposal, prediction=prediction, state=state)
-        failsafe = self._failsafe.observe(tick=tick, verdict=verdict)
+        failsafe = self._failsafe.observe(
+            tick=tick,
+            verdict=verdict,
+            frame_health=frame_health,
+            exploring=self._is_exploring,
+        )
         issued = self._issue(
-            tick=tick, proposal=proposal, verdict=verdict, failsafe=failsafe, trust=trust
+            tick=tick,
+            proposal=proposal,
+            verdict=verdict,
+            failsafe=failsafe,
+            trust=trust,
+            state=state,
         )
 
         self._reanchor(issued)
+        shadow = self._shadow(
+            tick=tick,
+            state=state,
+            issued=issued,
+            proposal=proposal,
+            prediction=prediction,
+            trust=trust,
+            failsafe=failsafe,
+        )
         self._maybe_arbitrate(tick=tick, frame=frame, frame_health=frame_health, state=state)
 
         record = DecisionRecord(
@@ -361,6 +507,7 @@ class GovernancePipeline[PayloadT]:
             config_hash=self._config_hash,
             frame_health=frame_health,
             fast_state=state,
+            fast_innovation=fast_innovation,
             trust=trust,
             proposal=proposal,
             prediction=prediction,
@@ -370,9 +517,10 @@ class GovernancePipeline[PayloadT]:
             failsafe=failsafe,
             arbitration=self._arbitration,
             issued=issued,
+            ablation=self._ablation,
         )
         self._audit_sink.record_decision(record)
-        return TickOutcome(record=record, issued=issued)
+        return TickOutcome(record=record, issued=issued, shadow=shadow)
 
     # ----------------------------------------------------------------- #
     # Stages
@@ -503,6 +651,7 @@ class GovernancePipeline[PayloadT]:
         verdict: SafetyVerdict,
         failsafe: FailSafeSnapshot,
         trust: TrustAssessment,
+        state: FastStateEstimate,
     ) -> IssuedCommand | None:
         """Ask L9 for the final command.
 
@@ -512,6 +661,7 @@ class GovernancePipeline[PayloadT]:
             verdict: Core-B's combined verdict.
             failsafe: The posture after this tick.
             trust: The Trust Index, a routing input for L9.
+            state: The fast state estimate, for the fail-safe speed cap.
 
         Returns:
             The issued command, or ``None`` if the arbitrator could not produce
@@ -525,6 +675,7 @@ class GovernancePipeline[PayloadT]:
                 verdict=verdict,
                 failsafe=failsafe,
                 trust=trust,
+                state=state,
             )
         except AstraError:
             return None
@@ -555,6 +706,169 @@ class GovernancePipeline[PayloadT]:
             context: The new cold-path context.
         """
         self._context = context
+
+    def _shadow(
+        self,
+        *,
+        tick: TickId,
+        state: FastStateEstimate,
+        issued: IssuedCommand | None,
+        proposal: ProposedCommand,
+        prediction: PredictedCommand,
+        trust: TrustAssessment,
+        failsafe: FailSafeSnapshot,
+    ) -> ShadowLoops | None:
+        """Run FB2 against a twin nothing reads, and report what it would do.
+
+        Placed after the command has been issued, on the cold path, so the extra
+        forward pass cannot enter the hot-path latency budget. Nothing here can
+        change this tick's verdict or the next one's: the shadow twin is not the
+        twin the gates consult, and the only thing that leaves this method is a
+        number for a report.
+
+        That isolation is the whole point. FB2 has never run, and the honest way
+        to find out whether it should is to measure it -- how far it moves the
+        twin over a real drive, and whether the movement tracks the plant or
+        wanders. Choosing its step size first and observing afterwards is how
+        ``ewc_lambda`` came to be set to a value that did nothing for months.
+
+        Args:
+            tick: The control tick.
+            state: The fast state estimate, both the adaptation's target and the
+                input the shadow's prediction is read at.
+            issued: The command actually sent to the actuators, or ``None``.
+            proposal: The untrusted proposal, the score's left operand.
+            prediction: What the live twin predicted, to difference against.
+            trust: Supplies the context the shadow adapts in.
+            failsafe: The live posture, reported back unchanged when no shadow
+                machine is running so the field is never empty.
+
+        Returns:
+            The counterfactual, or ``None`` if no shadow twin was supplied.
+        """
+        if self._shadow_twin is None:
+            return None
+
+        context = trust.context_class or ContextClass.UNCLASSIFIED
+        shadow = self._shadow_twin.predict(tick=tick, state=state, context=context)
+        divergence = max(
+            (
+                abs(mine - theirs)
+                for mine, theirs in zip(
+                    prediction.command.values, shadow.command.values, strict=True
+                )
+            ),
+            default=0.0,
+        )
+
+        variance = state.variance_of(CONTROL_DIMENSION)
+        live_score, _, _ = non_conformity_score(
+            proposed=proposal.command.values,
+            predicted=prediction.command.values,
+            variance=variance,
+        )
+        shadow_score, _, _ = non_conformity_score(
+            proposed=proposal.command.values,
+            predicted=shadow.command.values,
+            variance=variance,
+        )
+
+        # FB3's counterfactual. The live quantile is static -- the corpus is
+        # seeded once -- so the pair says how far online requantilisation would
+        # have moved the acceptance threshold, and whether this tick would have
+        # been vetoed under the moved one.
+        quantile = self._statistical_gate.quantile_for(context)
+        shadow_quantile = quantile
+        if self._shadow_calibration is not None:
+            shadow_quantile = self._shadow_calibration.quantile(
+                context, self._statistical_gate.effective_epsilon()
+            )
+            self._shadow_calibration.observe(context, live_score)
+
+        # Adapt on the *issued* command, not the proposal: FB2's contract is that
+        # the twin learns the vehicle's response, and the vehicle responds to
+        # what it was told, which on a blocked tick is the fallback's command
+        # rather than the proposer's.
+        adapted = issued is not None
+        if issued is not None:
+            self._shadow_twin.adapt(applied=issued.command, measured=state, context=context)
+        # Feed the counterfactual verdict to a fail-safe machine of its own, so
+        # the escalation this veto rate would have caused is measured rather
+        # than reasoned about. Independent instance: it must not perturb the one
+        # the vehicle is actually governed by.
+        would_veto = math.isfinite(shadow_quantile) and live_score > shadow_quantile
+        shadow_state = failsafe.state.value
+        if self._shadow_failsafe is not None:
+            shadow_state = self._shadow_failsafe.observe(
+                tick=tick,
+                verdict=SafetyVerdict(
+                    tick=tick,
+                    gate_verdicts=(
+                        GateVerdict(
+                            tick=tick,
+                            gate=GateId.STATISTICAL,
+                            verdict=Verdict.VETO if would_veto else Verdict.PASS,
+                            reason_code="SHADOW_REQUANTILISED",
+                        ),
+                    ),
+                ),
+            ).state.value
+
+        return ShadowLoops(
+            divergence=divergence,
+            digest=self._shadow_twin.weights_digest,
+            adapted=adapted,
+            live_score=live_score,
+            shadow_score=shadow_score,
+            quantile=quantile,
+            shadow_quantile=shadow_quantile,
+            shadow_would_veto=would_veto,
+            shadow_failsafe=shadow_state,
+        )
+
+    def _frame_health(
+        self, frame: FusedSensorFrame[PayloadT]
+    ) -> tuple[tuple[SensorModality, StreamHealth], ...]:
+        """Return per-modality health, merging staleness with integrity.
+
+        L1 decides ``HEALTHY`` and ``DEGRADED`` from **freshness**. It cannot
+        decide ``FAULTED``, and says so in its own docstring: a monitor that
+        knows what a reading *should* have been is required, and *"a stale
+        stream and a lying stream are different faults and are deliberately not
+        collapsed"*.
+
+        When an adapter supplies an :class:`IntegrityMonitor`, its verdict is
+        merged here by taking the **worse** of the two per modality. Neither can
+        mask the other -- a stale channel is stale whatever its values say, and
+        a lying channel is lying however punctually it arrives -- and a modality
+        the monitor omits keeps L1's verdict rather than being cleared by
+        silence.
+
+        This is the composition root, which is the only place that legitimately
+        sees both. L1 acquires no knowledge of cross-modality checking and the
+        monitor acquires none of staleness.
+
+        Args:
+            frame: The fused frame for this tick.
+
+        Returns:
+            One pair per modality, ordered as the sensor bus ordered them.
+        """
+        staleness = self._sensor_bus.health(frame)
+        if self._integrity is None:
+            return tuple(staleness.items())
+        integrity = self._integrity.health(frame)
+        return tuple(
+            (
+                modality,
+                max(
+                    health,
+                    integrity.get(modality, health),
+                    key=lambda health: health.severity_rank,
+                ),
+            )
+            for modality, health in staleness.items()
+        )
 
     def _reanchor(self, issued: IssuedCommand | None) -> None:
         """Feed the issued command back into the estimator. Feedback loop FB1.
@@ -655,6 +969,18 @@ class GovernancePipeline[PayloadT]:
             # The previous decision stays in force; see the docstring.
             return
 
+    @property
+    def _is_exploring(self) -> bool:
+        """Return whether L9 currently has bounded safe exploration engaged.
+
+        Read by the fail-safe machine so it can freeze its counter rather than
+        escalate a condition RCM has already answered -- ADR-0023.
+        """
+        return (
+            self._arbitration is not None
+            and self._arbitration.outcome is ArbitrationOutcome.SAFE_EXPLORATION
+        )
+
     def _follow(self, decision: ArbitrationDecision) -> None:
         """Act on what arbitration decided.
 
@@ -677,7 +1003,10 @@ class GovernancePipeline[PayloadT]:
 
         if wants_exploration and not exploring:
             envelope = exploration_envelope(float(self._arbiter.active_profile.max_speed))
-            self._arbiter.engage_exploration(restricted_space(self._arbiter.space, envelope))
+            self._arbiter.engage_exploration(
+                restricted_space(self._arbiter.space, envelope),
+                speed_cap=float(envelope.speed_cap),
+            )
         elif exploring and not wants_exploration:
             # A certified profile is reachable again -- ExplorationExit
             # PROFILE_REACQUIRED. Every exit leaves the vehicle moving; none of
@@ -781,6 +1110,7 @@ class GovernancePipeline[PayloadT]:
             twin_weights_digest=self._twin.weights_digest,
             safety_verdict=verdict,
             failsafe=failsafe,
+            ablation=self._ablation,
         )
         self._audit_sink.record_decision(record)
         return TickOutcome(record=record, issued=None, failed_stage=stage)

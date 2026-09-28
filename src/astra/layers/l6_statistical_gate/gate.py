@@ -61,14 +61,17 @@ from astra.kernel.enums import GateId, LayerId, Verdict
 from astra.kernel.errors import SafetyPathError
 
 if TYPE_CHECKING:
+    from collections.abc import Sequence
+
     from astra.contracts.actuation import PredictedCommand, ProposedCommand
     from astra.contracts.estimation import FastStateEstimate
+    from astra.kernel.enums import ContextClass
     from astra.kernel.identifiers import TickId
     from astra.layers.l3_trust.mondrian import MondrianCalibration
     from astra.layers.l3_trust.trust import ContextClassifier
     from astra.layers.l6_statistical_gate.mmd import MmdShiftDetector
 
-__all__ = ["REASON_CODES", "IcpStatisticalGate"]
+__all__ = ["REASON_CODES", "IcpStatisticalGate", "non_conformity_score"]
 
 REASON_NOMINAL: Final = "NOMINAL"
 REASON_SCORE_ABOVE_QUANTILE: Final = "SCORE_EXCEEDS_CONFORMAL_QUANTILE"
@@ -101,6 +104,33 @@ a VETO, which is the right answer, but by way of an overflow rather than a
 decision. The floor makes the veto explicit and keeps the number in the evidence
 log finite and readable.
 """
+
+
+def non_conformity_score(
+    *, proposed: Sequence[float], predicted: Sequence[float], variance: float
+) -> tuple[float, float, float]:
+    """Return ``(score, departure, sigma)`` for one proposal against one prediction.
+
+    Extracted from :meth:`IcpStatisticalGate.evaluate` so that anything wanting
+    to know what the gate *would* have said computes it with the gate's own
+    arithmetic rather than a copy. The specific thing that motivated it was
+    measuring FB2 in shadow: a shadow score computed by a reimplementation would
+    be evidence about the reimplementation.
+
+    Args:
+        proposed: The untrusted proposal's command vector.
+        predicted: The twin's prediction.
+        variance: ``P_f`` at the control dimension.
+
+    Returns:
+        The score, the raw Euclidean departure, and the normalisation term. The
+        last two are returned because they are what makes a score readable in
+        the evidence log -- a score alone cannot be told apart from a large
+        departure and a large sigma.
+    """
+    departure = math.dist(proposed, predicted)
+    sigma = math.sqrt(max(variance, _MINIMUM_SIGMA))
+    return departure / sigma, departure, sigma
 
 
 class IcpStatisticalGate:
@@ -192,6 +222,51 @@ class IcpStatisticalGate:
         """
         self._detector.observe(magnitude)
 
+    def quantile_for(self, context: ContextClass) -> float:
+        """Return the conformal quantile this gate would threshold against.
+
+        Exposed so that anything measuring what the gate *would* do reads the
+        gate's own number instead of recomputing it from the calibration and the
+        epsilon -- the same reasoning as
+        :func:`non_conformity_score`. ``math.inf`` for a class with too few
+        samples to certify, which is a VETO rather than an error.
+
+        Args:
+            context: The Mondrian class.
+
+        Returns:
+            The quantile, possibly infinite.
+        """
+        return self._calibration.quantile(context, self.effective_epsilon())
+
+    def recalibrate(self, *, score: float, context: ContextClass) -> None:
+        """Fold a realised non-conformity score into this gate's own window.
+
+        Feedback loop FB3, L6's half, and the one the roadmap's phrase "online
+        Mondrian requantilisation" most naturally describes: the acceptance
+        threshold tracks the scores the *deployed* proposer actually produces
+        rather than the ones whatever proposer generated the corpus produced.
+        E-20 measured that gap at 1.18 against 2.43 for HIGHWAY_CLEAR, so it is
+        not a small correction.
+
+        **Unwired, deliberately.** Requantilising on a self-generated
+        distribution is self-referential by construction: the threshold follows
+        the proposer, so a proposer that degrades slowly takes the threshold with
+        it and is never anomalous relative to itself. Whether that matters at
+        this operating point is measured in shadow before this is given
+        authority, exactly as FB2 was -- and FB2 is why that is now the rule.
+
+        Args:
+            score: The realised non-conformity score for the executed tick.
+            context: The Mondrian class it was observed in.
+        """
+        if not math.isfinite(score) or score < 0.0:
+            # The cold path must not take down a tick already decided, and a
+            # corrupt value admitted here would silently move every future
+            # threshold.
+            return
+        self._calibration.observe(context, score)
+
     def evaluate(
         self,
         *,
@@ -238,9 +313,9 @@ class IcpStatisticalGate:
         variance = state.variance_of(CONTROL_DIMENSION)
         self._require_finite(tick, (*proposed, *predicted, variance))
 
-        departure = math.dist(proposed, predicted)
-        sigma = math.sqrt(max(variance, _MINIMUM_SIGMA))
-        score = departure / sigma
+        score, departure, sigma = non_conformity_score(
+            proposed=proposed, predicted=predicted, variance=variance
+        )
 
         context = self._classifier.classify(state=state, innovation=None)
         epsilon = self.effective_epsilon()
@@ -260,9 +335,25 @@ class IcpStatisticalGate:
         if math.isinf(quantile):
             # No finite threshold exists for this class. A gate that cannot make
             # a statistical claim must not report that the proposal satisfied
-            # one. The quantile is logged as -1 above because the evidence
-            # schema carries floats and an infinity would not round-trip.
-            return self._veto(tick, REASON_UNCALIBRATED, evidence)
+            # one -- and, by ADR-0016, must not report that it violated one
+            # either. Both are claims about a distribution this gate has no
+            # sample of. It abstains, and the aggregate falls to the two gates
+            # whose bounds do not depend on calibration; if neither of those
+            # judged either, `Verdict.merge` fails closed exactly as it does for
+            # an empty verdict set.
+            #
+            # The quantile is logged as -1 above because the evidence schema
+            # carries floats and an infinity would not round-trip. The
+            # calibration sample count is in the evidence too, which is what
+            # makes this abstention checkable after the fact rather than taken
+            # on trust.
+            return GateVerdict(
+                tick=tick,
+                gate=GateId.STATISTICAL,
+                verdict=Verdict.ABSTAIN,
+                reason_code=REASON_UNCALIBRATED,
+                evidence=evidence,
+            )
         if score > quantile:
             return self._veto(tick, REASON_SCORE_ABOVE_QUANTILE, evidence)
         return GateVerdict(

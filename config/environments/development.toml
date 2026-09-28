@@ -46,9 +46,6 @@ highway_speed_boundary_kmh = 50.0
 # is an ordinary regressor, which would forfeit the property that makes it worth
 # calling physics-informed.
 physics_weight = 1.0
-# Fisher-anchored EWC penalty. Too small and adapting to rain forgets the
-# highway; too large and FB2 cannot adapt at all. Balance is empirical (RK-5).
-ewc_lambda = 100.0
 # Row mapping a command vector to the lateral acceleration it produces, in the
 # actuation space's channel order. A platform fact, configured rather than coded
 # so the core stays domain-independent (NFR5). This development space is
@@ -86,15 +83,114 @@ friction_margin = 0.85
 minimum_stopping_distance_m = 2.0
 # d_avail: the clear distance ahead the ODD assures. PROVISIONAL.
 assured_clear_distance_m = 60.0
+lateral_corridor_half_width_m = 1.75
 
 [failsafe]
 # Deliberately small so that state transitions are reachable in short
 # development runs and the FSM can be exercised by hand.
+#
+# As durations at 20 Hz these are 0.15 s, 0.3 s and 0.5 s -- far too twitchy to
+# run anything against, which is the point: they exist to make the graduated
+# response easy to trigger, not to describe a defensible operating point. Do not
+# read them as a model for `simulation.toml`, whose values are chosen as
+# durations and explained there.
 ood_threshold_degraded = 3
 ood_threshold_limp = 6
 ood_threshold_halt = 10
 degraded_speed_cap_kmh = 40.0
 limp_speed_cap_kmh = 20.0
+
+# The sensor-integrity counter (ADR-0024), deliberately small for the same
+# reason as the triple above: a developer must be able to reach every state by
+# hand in a short run.
+integrity_threshold_degraded = 2
+integrity_threshold_limp = 4
+integrity_threshold_halt = 8
+
+# How many modalities may be unhealthy at once before the integrity counter
+# rises. ZERO, because this profile has one publisher per modality and no
+# cross-check -- there is nothing to fall back on, so one lying channel is one
+# too many. Raising it is a claim that something excludes the liar from the
+# fusion, and this deployment has nothing that does (ADR-0027).
+integrity_tolerated_faults = 0
+
+# Which modalities' health may change the vehicle's posture. ALL FIVE, which is
+# exactly the behaviour before this field existed.
+#
+# The escape hatch is deliberately not used here. This prototype's extractor
+# happens to read only the IMU, so declaring the other four non-critical would
+# be true *of this build* -- and true only because of OD-15, five modalities
+# carrying one measurement. That is a defect to fix, not a property to write
+# into a safety file (ADR-0028).
+#
+# A modality left out of this list is still RECORDED in every frame-health map
+# and every audit record. It simply stops being a reason to slow down or stop.
+critical_modalities = ["CAMERA", "LIDAR", "IMU", "GPS", "RADAR"]
+
+# Sensor decay (ADR-0031). The integrity counter moves +1 unhealthy, -1 healthy,
+# so ANY duty cycle at or below 50% nets to zero and never escalates, however
+# long it runs. Measured over 60 s at 20 Hz: a camera dark on alternate frames
+# spent 600 of 1200 ticks absent and held NOMINAL with the counter peaking at 1
+# (E-135). A sensor dropping a quarter of its frames is failing, and the machine
+# reported perfect health.
+#
+# This window smooths the per-modality unhealth fraction. 200 ticks is 10 s at
+# 20 Hz -- long enough that one dropped frame is ~0.5%, short enough to move
+# within a trip. It is a FILTER CONSTANT, not a safety threshold, which is why
+# it carries a default where the A-4 values above do not.
+decay_window_ticks = 200
+
+# decay_service_threshold is deliberately NOT set. What fraction of dropped
+# frames means "service this" is a property of a particular sensor on a
+# particular vehicle, and this project has measured no such number; inventing
+# one would be the unfalsifiable weight ADR-0028 and ADR-0029 both refused.
+# Unset means decay is measured and reported and flags nothing -- the standing
+# rule that no mechanism gets authority until it has run with none.
+# decay_service_threshold =
+
+# What each autonomy function needs, and therefore what is withdrawn when a
+# sensor goes unhealthy. THE SECOND AXIS (ADR-0029): critical_modalities above
+# decides whether a sensor may change the POSTURE; this decides which FUNCTIONS
+# it carries. They are orthogonal on purpose -- a camera can be no reason at all
+# to slow down and still be the only thing a lane change depends on.
+#
+# Composition is an INTERSECTION and can only ever subtract: a function is
+# offered where the posture allows it AND its sensors support it. Nothing here
+# can grant what the posture forbids, which is SI-3 held by construction.
+#
+# Declaring a requirement is the SAFE direction of error, and that is why these
+# are filled in while critical_modalities deliberately is not narrowed. Naming a
+# modality non-critical RELAXES -- it removes a protection, so it needs proof
+# (ADR-0028, which is why every modality above is still listed). Naming a
+# modality REQUIRED restricts: get it wrong and the vehicle declines a function
+# it could have kept. Design intent is enough to restrict; only relaxing needs
+# evidence.
+[failsafe.capabilities]
+lane_change = ["CAMERA", "RADAR"]
+lane_keeping = ["CAMERA"]
+adaptive_cruise = ["RADAR", "IMU"]
+obstacle_avoidance = ["LIDAR", "RADAR"]
+route_following = ["GPS"]
+
+# How far the posture may escalate for each KIND of sensor fault (ADR-0030).
+# L1 tells four health values apart; until 15 August this machine read one bit
+# of them, so a camera arriving LATE stopped the vehicle exactly as a camera
+# that was GONE (E-134).
+#
+# A ceiling is the right instrument here and was the WRONG one for modalities:
+# a ceiling says "how far", and *which sensor* is not a question about how far
+# (ADR-0029 rejected it for that). StreamHealth IS a severity -- literally how
+# far past the staleness budget a stream has fallen -- so mapping it onto how
+# far the posture may go invents no weight. It need only defend "a late reading
+# is less bad than no reading".
+#
+# A level left out is UNCAPPED, not lenient: silence in a safety file is not
+# permission. Validated to rise with severity -- a worse health cannot warrant a
+# milder posture, which is also the shape a typo on adjacent lines makes.
+[failsafe.integrity_ceiling]
+DEGRADED = "LIMP"
+FAULTED = "HALT"
+ABSENT = "HALT"
 
 [arbitration]
 trust_threshold_tau = 0.60

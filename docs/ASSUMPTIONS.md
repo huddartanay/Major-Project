@@ -24,14 +24,14 @@ belief.
 
 | ID | Assumption | Status after Phase 1 |
 |---|---|---|
-| [A-1](#a-1--domain-independence-comes-from-ports-plus-a-configured-actuationspace) | Domain independence via ports + configured `ActuationSpace` | HOLDING |
+| [A-1](#a-1--domain-independence-comes-from-ports-plus-a-configured-actuationspace) | Domain independence via ports + configured `ActuationSpace` | **PARTLY VIOLATED** |
 | [A-2](#a-2--a-10-ms-end-to-end-budget-at-20-hz-is-achievable-in-cpython) | 10 ms end-to-end at 20 Hz is achievable in CPython | OPEN |
 | [A-3](#a-3--append-only-jsonl-one-file-per-run-is-adequate-prototype-evidence) | Append-only JSONL is adequate prototype evidence | HOLDING |
 | [A-4](#a-4--safety-thresholds-have-no-defensible-default) | Safety thresholds have no defensible default | **ENFORCED** |
 | [A-5](#a-5--a-single-random-runid-is-sufficient-for-byte-comparable-replay) | One random `RunId` suffices for byte-comparable replay | HOLDING (partial) |
 | [A-6](#a-6--python-312-is-supported-by-the-ml-stack-at-phase-4) | Python 3.12 is supported by the ML stack at Phase 4 | OPEN — early warning active |
 | [A-7](#a-7--the-repository-stays-private-until-the-filing-is-confirmed) | The repository stays private until the filing is confirmed | EXTERNAL |
-| [A-8](#a-8--the-carlainterpreter-incompatibility-is-resolvable-without-changing-the-core) | CARLA/interpreter incompatibility is resolvable without core changes | OPEN — **highest-priority spike** |
+| [A-8](#a-8--the-carlainterpreter-incompatibility-is-resolvable-without-changing-the-core) | CARLA/interpreter incompatibility is resolvable without core changes | **RESOLVED** — install verified on CPython 3.12, 5 Aug 2026 |
 | [A-9](#a-9--mpc-candidate-scoring-fits-behind-the-statisticalgate-port) | MPC candidate scoring fits behind the `StatisticalGate` port | EXTERNAL |
 | [A-10](#a-10--explainability-means-decision-provenance-not-model-internal-attribution) | Explainability means decision provenance, not model-internal attribution | EXTERNAL |
 
@@ -63,6 +63,37 @@ still carry automotive vocabulary in places a reviewer should note — `road_fri
 `tyre_wear_index` in `SLOW_STATE_FIELDS`, `legal_speed_limit_kmh` in `ShieldSettings`. Those are
 defensible as the *configured* domain rather than a hardcoded one, but the argument is currently
 made in prose, not by a second working profile.
+
+### Status after the test: **PARTLY VIOLATED**, 10 August 2026
+
+The second profile was built — a differential-drive warehouse AGV,
+[`training/warehouse.py`](../training/warehouse.py) — and driven at the pipeline. The paragraph
+above was right to be uneasy and understated how much.
+
+**The assumption holds where it claimed to and for the reason it claimed.** Every layer interface
+is a structural `Protocol`, and L3, L6, L7a and L7b took the AGV without a single change: their
+inputs are numbers with units and they do not care what produced them. `FAST_STATE_FIELDS`, the
+`ActuationSpace` contract, the `Policy` protocol and the projector role were all neutral in
+practice, not just in prose.
+
+**It fails in four places, and one of them is not vocabulary** (E-72 – E-75, OD-11):
+
+1. `assemble_pipeline` calls `automotive_actuation_space()` directly and has **no parameter** for
+   one. A different platform cannot supply a different space.
+2. The command projector is equally fixed, and its arithmetic — divide a target lateral
+   acceleration by a *steering effectiveness* — has no differential-drive counterpart.
+3. **L2's process model is a bicycle model.** Given the AGV's ordinary condition of pivoting at
+   zero forward speed, it propagates a heading change of exactly `0.000000`. That is domain
+   knowledge inside a layer, which is the thing this assumption exists to forbid.
+4. `astra.kernel` names road friction, tyre wear, highways and rain.
+
+**This entry's own "impact if wrong" called it.** *"Extracting vehicle vocabulary from a core that
+has absorbed it is a migration, not a refactor — which is precisely why the assumption was made at
+Phase 1 rather than tested later."* Items 1, 2 and 4 are a refactor. Item 3 is the migration.
+
+Each is pinned as a strict xfail in `tests/architecture/test_domain_independence.py`, so closing
+any of them turns the suite red and forces this section to be rewritten rather than quietly
+outgrown.
 
 ---
 
@@ -333,12 +364,27 @@ official `cp310`/`cp311`/`cp312` wheels to PyPI. Verified against
 10 ms budget is untouched. Recorded in
 [`adr/0015-carla-interpreter-strategy.md`](adr/0015-carla-interpreter-strategy.md).
 
-**Two things stop this being "closed".**
+**Update, 5 August 2026 — the install half is now verified.** Run on WSL2 Ubuntu into a throwaway
+CPython 3.12.13 environment, deliberately isolated so nothing reaches the project venv or the
+lockfile:
 
-*Nothing has been run.* The finding rests on published wheel metadata, not on an install. Until
-`pip install carla==0.9.16` and a client-to-server connection have actually succeeded on Linux,
-this is *evidenced*, not *verified*. Treat the difference as real — it is exactly the distinction
-the project's honesty boundaries require elsewhere.
+```bash
+uv venv --python 3.12 ~/carlacheck
+uv pip install --python ~/carlacheck/bin/python carla==0.9.16
+~/carlacheck/bin/python -c "import carla; carla.Client('localhost', 2000)"
+```
+
+`carla==0.9.16` resolved and installed as a single package with no dependency tree, imported
+cleanly, and exposes every symbol the adapter design needs: `Client`, `World`, `Vehicle`, `Sensor`,
+`Transform`, `Location`, `Rotation`, `VehicleControl`, `WorldSettings`. A `Client` constructs and
+`get_server_version()` raises `RuntimeError` with no server listening — which is the correct
+failure and confirms the client is live rather than inert.
+
+**So the interpreter risk is closed.** No sidecar, no IPC hop, no unofficial binary. What remains
+unverified is the *connection* half, which needs a running simulator and therefore the Linux GPU
+host of Phase 7 — a hardware dependency, not a compatibility one.
+
+**One thing still stops this being fully "closed".**
 
 *A new constraint replaced the old one.* CARLA has no macOS build and its wheels carry no `macosx`
 tag, so `pip install carla` fails on Darwin regardless of interpreter. Simulator work needs a Linux

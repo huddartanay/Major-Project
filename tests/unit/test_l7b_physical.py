@@ -31,6 +31,12 @@ from astra.layers.l7b_physical.checker import (
     REASON_NOMINAL,
     PhysicalAdmissibilityGate,
 )
+from astra.layers.l9_rcm.arbiter import (
+    _EVIDENCE_CURRENT,
+    _EVIDENCE_JERK,
+    _EVIDENCE_JERK_LIMIT,
+    _EVIDENCE_PROPOSED,
+)
 from astra.ports.pipeline import PhysicalAdmissibilityChecker
 
 # Stated here rather than loaded, so the tests assert against bounds they
@@ -220,6 +226,9 @@ def test_the_physical_gate_vetoes_a_command_the_shield_passes() -> None:
             friction_margin=0.85,
             minimum_stopping_distance_m=2.0,
             assured_clear_distance_m=500.0,
+            # Wide: this test is about L7b's jerk bound, and a corridor breach
+            # here would make L7a the gate under test instead.
+            lateral_corridor_half_width_m=1000.0,
         )
     )
     state = _state(lateral=0.0, speed=10.0)
@@ -288,3 +297,38 @@ def test_the_gate_holds_no_state_between_ticks() -> None:
 
     assert first.verdict is last.verdict
     assert first.evidence == last.evidence
+
+
+# --------------------------------------------------------------------------- #
+# The evidence record is a contract with L9 (ADR-0017)
+# --------------------------------------------------------------------------- #
+
+
+def test_the_evidence_carries_every_key_rate_limiting_reads() -> None:
+    # L9 breaks the veto latch by stepping toward a rate-vetoed proposal, and it
+    # reads the current acceleration, the proposed one, the demanded jerk and
+    # the bound out of *this* gate's evidence rather than recomputing them --
+    # so that one projection exists in the system instead of two that could
+    # disagree.
+    #
+    # That makes the evidence keys an interface, and an interface of bare
+    # strings. Rename one on either side and nothing raises: rate limiting
+    # silently stops happening, the fallback governs every blocked tick again,
+    # the vehicle leaves the lane, and every unit test on both sides still
+    # passes because they each build their own fixtures. This is the only test
+    # that would notice.
+    written = dict(_evaluate(_gate(), proposed=0.5, predicted=0.5, current=0.0).evidence)
+
+    assert _EVIDENCE_CURRENT in written
+    assert _EVIDENCE_PROPOSED in written
+    assert _EVIDENCE_JERK in written
+    assert _EVIDENCE_JERK_LIMIT in written
+
+
+def test_the_evidence_reports_the_accelerations_rate_limiting_will_step_between() -> None:
+    # Not just present: correct. A limiter fed the wrong pair would step toward
+    # the wrong target at the right speed, which is harder to see than a crash.
+    written = dict(_evaluate(_gate(), proposed=0.5, predicted=0.5, current=0.1).evidence)
+
+    assert written[_EVIDENCE_CURRENT] == pytest.approx(0.1)
+    assert written[_EVIDENCE_PROPOSED] == pytest.approx(0.5 * EFFECTIVENESS[0])

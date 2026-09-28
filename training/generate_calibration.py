@@ -1,6 +1,6 @@
 """Harvest non-conformity scores from the trained twin, and measure the coverage they buy.
 
-    python training/generate_calibration.py --out var/calibration/synthetic.json
+    python -m training.generate_calibration --out var/calibration/synthetic.json
 
 What a calibration corpus is for
 ---------------------------------
@@ -67,16 +67,19 @@ from astra.layers.l2_estimation.filter import DualRateUKF
 from astra.layers.l2_estimation.measurement import fast_measurement, slow_measurement
 from astra.layers.l3_trust.classifier import RuleBasedContextClassifier
 from astra.layers.l3_trust.corpus import CalibrationCorpus, coverage_report
+from astra.layers.l4_proposer.learned import LearnedPolicy
 from astra.layers.l4_proposer.policies import KinematicPlaceholderPolicy
 from astra.layers.l4_proposer.proposer import CmdpProposer
 from astra.layers.l5_twin.twin import PhysicsInformedTwin
 from astra.layers.l6_statistical_gate.gate import CONTROL_DIMENSION
 from astra.runtime.assembly import STEER_INDEX, THROTTLE_INDEX, automotive_actuation_space
+from training.closed_loop import LATERAL_SIGMA, POSITION_SIGMA, SPEED_SIGMA
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
 
     from astra.layers.l2_estimation.measurement import Measurement
+    from astra.layers.l4_proposer.proposer import Policy
 
 DEFAULT_CHECKPOINT = Path("var/twin/synthetic.pt")
 DEFAULT_OUT = Path("var/calibration/synthetic.json")
@@ -188,8 +191,16 @@ class _Extractor:
         payload = sample.payload
         return fast_measurement(
             [
-                ("speed", float(payload["v"]), 0.01),
-                ("lateral_acceleration", float(payload["a"]), 0.04),
+                # Lateral position is observed here for the same reason it is in
+                # `training/closed_loop.py`: a corpus harvested under different
+                # observability from the run it calibrates describes a different
+                # filter. Without it `position_y` is dead-reckoned, the
+                # covariance the non-conformity score divides by is that of an
+                # unobserved state, and the quantile certifies a filter nobody
+                # runs.
+                ("position_y", float(payload["y"]), POSITION_SIGMA),
+                ("speed", float(payload["v"]), SPEED_SIGMA),
+                ("lateral_acceleration", float(payload["a"]), LATERAL_SIGMA),
             ]
         )
 
@@ -216,14 +227,32 @@ def generate(
     checkpoint: Path,
     per_class: int,
     seed: int,
+    policy_checkpoint: Path | None = None,
 ) -> CalibrationCorpus:
     """Harvest non-conformity scores until every reachable class has enough.
+
+    **The corpus must be harvested from the proposer that will be judged
+    against it.** A conformal quantile is a statement about one distribution of
+    non-conformity scores, and scoring a different proposer against it asks
+    whether policy B is typical of policy A -- a question with no bearing on
+    whether policy B is behaving.
+
+    That was not merely theoretical. The placeholder harvested here is built with
+    ``maximum_jerk=settings.physical.max_lateral_jerk``, so it respects L7b's
+    bound *by construction*; the trained PPO policy has no such term. A corpus
+    drawn from the first and used to judge the second had the statistical gate
+    vetoing 100% of ticks in a 100,000-tick soak while the Trust Index read
+    exactly 1.00 throughout.
 
     Args:
         environment: Which configuration to load.
         checkpoint: The trained twin's weights.
         per_class: How many scores each class needs.
         seed: Random seed for the sensor noise and fault injection.
+        policy_checkpoint: A trained policy to harvest from. ``None`` keeps the
+            deterministic placeholder, which is right when no policy has been
+            trained yet -- an uncalibrated gate refuses everything, so some
+            corpus is needed before anything can be observed at all.
 
     Returns:
         The corpus.
@@ -234,16 +263,21 @@ def generate(
     noise = random.Random(seed)
 
     classifier = RuleBasedContextClassifier(highway_speed=settings.trust.highway_speed_boundary)
-    policy = KinematicPlaceholderPolicy(
-        channel_count=space.dimension,
-        speed_index=THROTTLE_INDEX,
-        steer_index=STEER_INDEX,
-        target_speed=float(settings.shield.legal_speed_limit) * 0.8,
-        steer_effectiveness=float(settings.twin.control_effectiveness[STEER_INDEX]),
-        tick_period=1.0 / settings.estimation.fast_rate_hz,
-        maximum_jerk=float(settings.physical.max_lateral_jerk),
+    policy: Policy = (
+        LearnedPolicy.load(policy_checkpoint)
+        if policy_checkpoint is not None
+        else KinematicPlaceholderPolicy(
+            channel_count=space.dimension,
+            speed_index=THROTTLE_INDEX,
+            steer_index=STEER_INDEX,
+            target_speed=float(settings.shield.legal_speed_limit) * 0.8,
+            steer_effectiveness=float(settings.twin.control_effectiveness[STEER_INDEX]),
+            tick_period=1.0 / settings.estimation.fast_rate_hz,
+            maximum_jerk=float(settings.physical.max_lateral_jerk),
+        )
     )
     scores: dict[ContextClass, list[float]] = {}
+    innovations: dict[ContextClass, list[float]] = {}
     digest = ""
     tick = 0
 
@@ -292,8 +326,15 @@ def generate(
                     observed_at=clock.now(),
                     quality=Probability(1.0),
                     payload={
-                        "v": regime.speed + noise.gauss(0.0, 0.08) + spike,
-                        "a": regime.lateral + noise.gauss(0.0, 0.12),
+                        # Injected at exactly the sigma declared to the filter.
+                        # These were 0.08 and 0.12 against declared 0.01 and
+                        # 0.04 until 5 August 2026 -- an eightfold and threefold
+                        # underestimate, which makes the UKF over-trust its
+                        # measurements and inflates every normalised innovation
+                        # the Trust Index then reads.
+                        "v": regime.speed + noise.gauss(0.0, SPEED_SIGMA) + spike,
+                        "a": regime.lateral + noise.gauss(0.0, LATERAL_SIGMA),
+                        "y": noise.gauss(0.0, POSITION_SIGMA),
                     },
                 )
             )
@@ -337,11 +378,23 @@ def generate(
             if held >= DISCARD_TICKS and len(bucket) < per_class:
                 bucket.append(departure / sigma)
 
+            # The Trust Index's calibration, harvested alongside and kept apart.
+            # It scores the filter's innovation, not the proposal: L3 runs
+            # before L4 in the tick, so no proposal exists for it to score. One
+            # distribution served both until 5 August 2026, and the Trust Index
+            # -- querying a CDF of proposal-vs-twin scores with an innovation
+            # magnitude -- returned two distinct values across 4,001 ticks.
+            if innovation is not None:
+                innovation_bucket = innovations.setdefault(context, [])
+                if held >= DISCARD_TICKS and len(innovation_bucket) < per_class:
+                    innovation_bucket.append(float(innovation.mahalanobis_distance))
+
             tick += 1
             clock.advance(period)
 
     return CalibrationCorpus(
         scores={context: tuple(values) for context, values in scores.items()},
+        innovations={context: tuple(values) for context, values in innovations.items()},
         twin_weights_digest=digest,
         config_hash=resolved.hash,
         seed=seed,
@@ -414,6 +467,15 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--environment", default="simulation")
     parser.add_argument("--per-class", type=int, default=1000)
     parser.add_argument("--seed", type=int, default=20260731)
+    parser.add_argument(
+        "--policy",
+        type=Path,
+        default=None,
+        help=(
+            "harvest from a trained policy instead of the placeholder. The corpus "
+            "must describe the proposer it will judge; see generate()"
+        ),
+    )
     arguments = parser.parse_args(argv)
 
     if not arguments.checkpoint.exists():
@@ -435,6 +497,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         checkpoint=arguments.checkpoint,
         per_class=arguments.per_class,
         seed=arguments.seed,
+        policy_checkpoint=arguments.policy,
     )
     print(f"twin digest    {corpus.twin_weights_digest}")
     for context in corpus.calibrated_classes:

@@ -1,0 +1,7 @@
+# Same as Stage A / C1: raw JSONL is large and deterministic under the
+# seeds in stage_c1b_run.py. Regenerate locally; commit only the
+# detector_summary and processed results.
+*.jsonl
+manifest.csv
+run_summary.json
+detector_summary.json

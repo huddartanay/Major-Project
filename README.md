@@ -23,9 +23,18 @@ idea.
 
 ASTRA governs the **actuation boundary**. It treats the AI controller as an *untrusted
 proposer* and interposes an independent nine-layer pipeline between it and the actuators. Every
-proposed command is validated three ways — statistically, physically, and against hard
+proposed command is evaluated three ways — statistically, physically, and against hard
 deterministic bounds — by gates with structurally different failure modes, and the whole system
 recalibrates itself from what actually happened.
+
+> **Measured, August 2026.** This was not true until
+> [ADR-0016](docs/adr/0016-exploration-may-not-override-a-deterministic-veto.md). A 100,000-tick
+> run found the proposer's command issued on **99.8% of ticks despite a blocking verdict**, because
+> bounded safe exploration was tested ahead of the verdict and, at the shipped operating point,
+> exploration is engaged almost always. A gate with no calibration for its context now abstains
+> instead of vetoing, no path overrides a veto, and the figure is zero. Six other findings from
+> that run remain open — see [`docs/SOAK_REPORT.md`](docs/SOAK_REPORT.md) and
+> [`docs/PENDING.md`](docs/PENDING.md).
 
 ```
                     L1  Shared Sensor Bus
@@ -62,13 +71,16 @@ component's PASS.
 
 | | |
 |---|---|
-| **Current phase** | **All ten layers built and composed. A trained policy drives the pipeline. FB1 closed.** |
+| **Current phase** | **All ten layers built and composed. A trained policy drives the pipeline. FB1 and FB4 closed; FB2 and FB3 measured in shadow and refused.** |
 | Implemented | All of **L1-L9** - the tick loop composing them - trained PINN digital twin - calibration corpus - **trained PPO policy under Lagrangian constraints** - **FB1 (UKF re-anchor)** - replay spine - one-way Core-A to Core-B channel |
-| Not yet implemented | **FB2, FB3, FB4** - the ASTRA-vs-Core-A comparison harness - the ablation study - the CARLA adapter - the dashboard |
-| Quality gate | Green - **2 513 tests, 97.97% coverage**, `ruff` + `mypy --strict` + **12** `lint-imports` contracts clean |
-| Invariants | 10 declared, **all 10 mechanically enforced**. SI-6 was the last review-only invariant and is now TEST-enforced. |
-| Measured | Full ten-layer tick p99 **1.98 ms** - 4% of a 50 ms tick. Closed-loop over 400 ticks: trained policy **41.0%** veto rate and **0.383 m** mean lane deviation vs **59.8%** / **0.836 m** for the deterministic placeholder, with **400/400 ticks issuing a command** under both. |
-| Next | Linux + CARLA for non-synthetic validation, then FB2-FB4 - see [`docs/2030_2026-07-31_Tanay_S_status.md`](docs/2030_2026-07-31_Tanay_S_status.md) |
+| Also built | Fault injector with recorded ground truth ([ADR-0022](docs/adr/0022-faults-are-injected-at-the-sensor-boundary.md)) - ablation study that neutralises a gate without making it optional ([ADR-0021](docs/adr/0021-ablation-neutralises-a-gate-it-never-removes-one.md)) - ASTRA-vs-ungated-Core-A comparison harness - platform-transfer study - a **commissioning certificate** that measures which operating contexts a given vehicle is actually fit for - live SSE dashboard with interactive fault injection - first-party UKF (FilterPy removed) - hash-chained audit log and [threat model](docs/THREAT_MODEL.md) |
+| Not yet implemented | **FB2, FB3** (both measured in shadow and found to break the gate they feed) - the CARLA adapter - MPC candidate scoring, which the paper's Figure 1 shows and which has never existed (A-9) |
+| Quality gate | Green - **2 958 tests + 5 strict xfail**, `ruff` + `mypy --strict` over 161 files + **12** `lint-imports` contracts clean. The 5 xfails pin the four NFR5 walls of OD-11: making the claim true turns the suite red |
+| Invariants | 10 declared, **all 10 mechanically enforced**. SI-3 now also covers issuance and abstention ([ADR-0016](docs/adr/0016-exploration-may-not-override-a-deterministic-veto.md)). |
+| Measured | **100 000 ticks, all ten soak criteria pass.** 100 000/100 000 commands issued - proposer accepted on **99 997** ticks - mean lane deviation **0.0332 m** - resident set **+0.2 MiB** - full-tick p99 **9.3 ms** against a 50 ms tick - **0** audit records dropped. Every figure traces to a row in [`docs/EVIDENCE.md`](docs/EVIDENCE.md). |
+| Decision log | [`docs/DECISION_LOG.md`](docs/DECISION_LOG.md) — every decision that could have gone another way, the options weighed, and what each choice gave up. Includes the mistakes |
+| Open defects | **21 in the register - 16 closed, 1 reclassified, 1 partly closed, 3 open** - every one self-found, none by the test suite. See [`docs/CREDIBILITY_MATRIX.md`](docs/CREDIBILITY_MATRIX.md) |
+| Next | Linux + CARLA for non-synthetic validation, which is also where OD-9's remaining two thirds are answered - see [`docs/PENDING.md`](docs/PENDING.md) |
 
 > ### The limitation that governs every number above
 >
