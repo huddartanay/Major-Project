@@ -106,12 +106,12 @@ from astra.kernel.units import Probability
 from astra.layers.l4_proposer.learned import LearnedPolicy
 from astra.runtime.pipeline import ColdPathContext
 from training.closed_loop import (
-    DEFAULT_CHANNEL_SIGMAS,
-    RedundantSensing,
     CHANNEL_SIGMAS,
     CORPUS,
+    DEFAULT_CHANNEL_SIGMAS,
     ENVIRONMENT,
     TWIN,
+    RedundantSensing,
     TickSample,
     drive_closed_loop,
 )
@@ -119,7 +119,6 @@ from training.faults import (
     FaultChannel,
     FaultInjector,
     bias,
-    drift,
     dropout,
     noise_burst,
     stuck_at,
@@ -480,71 +479,71 @@ STORY: tuple[dict[str, object], ...] = (
     {
         "title": "A vehicle, driving",
         "body": "The car is following a lane. Nothing is wrong. Every 50 ms the "
-                "nine layers on the right run once: the sensors are read, the "
-                "state is estimated, the learned controller proposes a steering "
-                "and acceleration, and the safety layers decide whether to allow "
-                "it. Watch the pipeline light up green, top to bottom.",
+        "nine layers on the right run once: the sensors are read, the "
+        "state is estimated, the learned controller proposes a steering "
+        "and acceleration, and the safety layers decide whether to allow "
+        "it. Watch the pipeline light up green, top to bottom.",
         "action": None,
         "hold": 60,
     },
     {
         "title": "The proposal is not the command",
         "body": "L4 is the learned controller -- the part nobody can formally "
-                "verify. It only ever *proposes*. Its proposal crosses a one-way "
-                "boundary into the safety domain, where L6 and L7 can veto it and "
-                "L9 decides what is actually sent to the actuator. The learned "
-                "controller never drives the car directly. That separation is the "
-                "architecture.",
+        "verify. It only ever *proposes*. Its proposal crosses a one-way "
+        "boundary into the safety domain, where L6 and L7 can veto it and "
+        "L9 decides what is actually sent to the actuator. The learned "
+        "controller never drives the car directly. That separation is the "
+        "architecture.",
         "action": None,
         "hold": 60,
     },
     {
         "title": "Now we break a sensor -- and the monitor catches it",
         "body": "We inject a 1 metre position bias. Two of the three position "
-                "channels start lying, so the median the estimator fuses follows "
-                "them. Watch the non-conformity score climb past the threshold and "
-                "L6 turn red. This is the system working: evidence of the fault "
-                "reaches the monitor, and the monitor fires.",
+        "channels start lying, so the median the estimator fuses follows "
+        "them. Watch the non-conformity score climb past the threshold and "
+        "L6 turn red. This is the system working: evidence of the fault "
+        "reaches the monitor, and the monitor fires.",
         "action": {"fault": "position_bias"},
         "hold": 140,
     },
     {
         "title": "Clean slate",
         "body": "Fault cleared. The score falls back under the threshold and the "
-                "pipeline returns to green. Everything you are about to see uses "
-                "the same monitor, the same threshold and the same vehicle.",
+        "pipeline returns to green. Everything you are about to see uses "
+        "the same monitor, the same threshold and the same vehicle.",
         "action": {"clear": True},
         "hold": 80,
     },
     {
         "title": "The blind spot -- the IMU fails and the monitor stays quiet",
         "body": "Now we drop the IMU out entirely and leave it broken. The sensor "
-                "is genuinely failing: L1 shows the channel degraded and L2's "
-                "innovation moves, so the evidence is there. But watch L6 -- it "
-                "keeps saying PASS. No veto, no fallback. The monitor is quieter "
-                "than it is on a healthy car, while a sensor is failing.",
+        "is genuinely failing: L1 shows the channel degraded and L2's "
+        "innovation moves, so the evidence is there. But watch L6 -- it "
+        "keeps saying PASS. No veto, no fallback. The monitor is quieter "
+        "than it is on a healthy car, while a sensor is failing.",
         "action": {"fault": "dropout"},
         "hold": 200,
     },
     {
         "title": "It alarms only after the danger has passed",
         "body": "We repair the sensor. Now the score jumps and L6 fires -- after "
-                "the fault is over. Detection arrived too late to be useful. In "
-                "our recorded experiments a sustained dropout produced a 0.2% "
-                "alarm rate across 160 seconds, below the 5% rate on a healthy "
-                "car, and the apparent detection was entirely this recovery "
-                "spike.",
+        "the fault is over. Detection arrived too late to be useful. In "
+        "our recorded experiments a sustained dropout produced a 0.2% "
+        "alarm rate across 160 seconds, below the 5% rate on a healthy "
+        "car, and the apparent detection was entirely this recovery "
+        "spike.",
         "action": {"clear": True},
         "hold": 140,
     },
     {
         "title": "Why this matters",
         "body": "A monitor that misses a fault is a problem. A monitor that goes "
-                "quieter than normal during a fault is worse, because its silence "
-                "reads as evidence that the car is healthy. That is why our next "
-                "stage measures whether a monitor can be trusted, not just whether "
-                "it fired. Everything you have just seen is the real pipeline -- "
-                "the same code the experiments ran.",
+        "quieter than normal during a fault is worse, because its silence "
+        "reads as evidence that the car is healthy. That is why our next "
+        "stage measures whether a monitor can be trusted, not just whether "
+        "it fired. Everything you have just seen is the real pipeline -- "
+        "the same code the experiments ran.",
         "action": None,
         "hold": 0,
     },
@@ -671,7 +670,7 @@ class FrameStream:
         if hasattr(self.pipeline, "enter_context"):
             self.pipeline.enter_context(ctx_obj)
         else:
-            self.pipeline._context = ctx_obj  # type: ignore[attr-defined]  # noqa: SLF001
+            self.pipeline._context = ctx_obj  # type: ignore[attr-defined]
         if where == TUNNEL:
             self.context_name = "tunnel"
             return "tunnel"
@@ -810,7 +809,7 @@ class FrameStream:
         """Perform the operator reset on L8, if the drive has started."""
         if self.pipeline is None:
             return
-        machine = getattr(self.pipeline, "_failsafe", None)  # noqa: SLF001
+        machine = getattr(self.pipeline, "_failsafe", None)
         if machine is not None:
             machine.reset()
 
@@ -933,7 +932,11 @@ class FrameStream:
             and self._sensing.closes_at > 0
             and self._sensing.opens_at <= sample.tick <= self._sensing.closes_at
         )
-        if self._sensing is not None and self._sensing.closes_at > 0 and sample.tick > self._sensing.closes_at:
+        if (
+            self._sensing is not None
+            and self._sensing.closes_at > 0
+            and sample.tick > self._sensing.closes_at
+        ):
             self._sensing.faulted = None
             self._sensing.also_faulted = ()
             self._sensing.bias = 0.0
@@ -1173,8 +1176,8 @@ def replay(stream: FrameStream, recording: Path, *, period_s: float) -> None:
         if not line.strip():
             continue
         payload = line
-        with stream._lock:  # noqa: SLF001 - same module, and the lock is the API
-            subscribers = list(stream._subscribers)  # noqa: SLF001
+        with stream._lock:
+            subscribers = list(stream._subscribers)
         for outbox in subscribers:
             try:
                 outbox.put_nowait(payload)
@@ -1242,6 +1245,7 @@ def serve(
                 setattr(stream, "pipeline", built.pipeline),
                 setattr(stream, "plant", plant),
             ),
+            demo_speed_assist=True,
         )
         if handle is not None:
             handle.flush()

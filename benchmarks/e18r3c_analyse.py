@@ -15,10 +15,20 @@ from pathlib import Path
 import numpy as np
 
 Q = 3.7024
-PHASES = [("during 200-399", 200, 400), ("400-999", 400, 1000),
-          ("1000-1999", 1000, 2000), ("2000-3399", 2000, 3400)]
-FAULTS = ("position_bias", "position_drift", "speed_bias",
-          "lateral_noise", "speed_stuck", "imu_dropout")
+PHASES = [
+    ("during 200-399", 200, 400),
+    ("400-999", 400, 1000),
+    ("1000-1999", 1000, 2000),
+    ("2000-3399", 2000, 3400),
+]
+FAULTS = (
+    "position_bias",
+    "position_drift",
+    "speed_bias",
+    "lateral_noise",
+    "speed_stuck",
+    "imu_dropout",
+)
 R3B = Path("experiments/phase5_od8_h7/E18_R3b/raw_results/tick_series.json")
 R3C = Path("experiments/phase5_od8_h7/E18_R3c/raw_results/tick_series.json")
 
@@ -43,7 +53,9 @@ def main() -> None:
     print("R3b = fault ticks 200-399 then aftermath | R3c = fault sustained whole window\n")
     for f in FAULTS:
         print(f"  {f}")
-        print(f"    {'phase':<16}{'R3b alarm':>11}{'R3c alarm':>11}{'R3b mean':>11}{'R3c mean':>11}")
+        print(
+            f"    {'phase':<16}{'R3b alarm':>11}{'R3c alarm':>11}{'R3b mean':>11}{'R3c mean':>11}"
+        )
         rec = {}
         for name, lo, hi in PHASES:
             mb, ab = phase_alarm(r3b, f, lo, hi)
@@ -62,23 +74,30 @@ def main() -> None:
     print(f"  during-fault alarm rate (R3c): {dur:.3f}   clean ~{clean:.2f}")
     print(f"  late-window alarm rate  (R3c): {late:.3f}")
     if dur < 2 * clean and late < 2 * clean:
-        verdict = ("H-AFTERMATH SUPPORTED: a sustained fault stays near-invisible for the "
-                   "whole window. R3b detection was aftermath. A persistent sensor failure "
-                   "is not detected while it persists.")
+        verdict = (
+            "H-AFTERMATH SUPPORTED: a sustained fault stays near-invisible for the "
+            "whole window. R3b detection was aftermath. A persistent sensor failure "
+            "is not detected while it persists."
+        )
     elif late > 0.0725:
-        verdict = ("H-ACCUMULATION SUPPORTED: detection rises over the sustained window. "
-                   "The monitor eventually catches a persistent fault, but slowly.")
+        verdict = (
+            "H-ACCUMULATION SUPPORTED: detection rises over the sustained window. "
+            "The monitor eventually catches a persistent fault, but slowly."
+        )
     else:
-        verdict = ("MIXED: neither pre-registered reading holds cleanly. Report the phase "
-                   "curve as-is without forcing it into either hypothesis.")
+        verdict = (
+            "MIXED: neither pre-registered reading holds cleanly. Report the phase "
+            "curve as-is without forcing it into either hypothesis."
+        )
     out["imu_dropout_verdict"] = verdict
     print(f"\n  -> {verdict}")
 
     (ap_out := out) and None
     dest = Path("experiments/phase5_od8_h7/E18_R3c/processed_results")
     dest.mkdir(parents=True, exist_ok=True)
-    (dest / "phase_comparison.json").write_text(json.dumps(out, indent=2, default=str),
-                                                encoding="utf-8")
+    (dest / "phase_comparison.json").write_text(
+        json.dumps(out, indent=2, default=str), encoding="utf-8"
+    )
     print(f"\n  -> {dest / 'phase_comparison.json'}")
 
 

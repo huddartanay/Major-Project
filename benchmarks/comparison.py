@@ -211,7 +211,7 @@ def drive_core_a_raw(
     issued = 0
     held: dict[str, float] | None = None
     for tick in range(ticks):
-        state = plant._state  # noqa: SLF001 - the plant is the test fixture
+        state = plant._state
         # Drawn in the same order as the closed-loop harness: y, v, a. The draw
         # happens on every tick whether or not the reading survives, so the noise
         # stream stays in phase with ASTRA's even across a dropout.
@@ -248,17 +248,17 @@ def drive_core_a_raw(
         plant.step((2.0 * (command - lower) / (upper - lower) - 1.0).astype(np.float32))
         issued += 1
 
-        deviation = abs(float(plant._state[1]))  # noqa: SLF001
+        deviation = abs(float(plant._state[1]))
         worst = max(worst, deviation)
         outside += int(deviation > CORRIDOR_HALF_WIDTH_M)
 
     return ArmResult(
         arm="core_a_raw",
         scenario="",
-        final_deviation_m=abs(float(plant._state[1])),  # noqa: SLF001
+        final_deviation_m=abs(float(plant._state[1])),
         max_deviation_m=worst,
         ticks_outside_corridor=outside,
-        final_speed_mps=float(plant._state[2]),  # noqa: SLF001
+        final_speed_mps=float(plant._state[2]),
         issued=issued,
         ticks=ticks,
     )

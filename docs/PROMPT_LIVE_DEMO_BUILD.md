@@ -27,12 +27,12 @@ exists.
 from training.closed_loop import drive_closed_loop
 
 drive_closed_loop(
-    policy=...,        # LearnedPolicy
-    ticks=...,         # int
-    seed=...,          # int
-    observer=...,      # callable(TickSample) -> None, invoked once per tick
-    fault=...,         # FaultInjector | None
-    redundant=...,     # RedundantSensing | None
+    policy=...,  # LearnedPolicy
+    ticks=...,  # int
+    seed=...,  # int
+    observer=...,  # callable(TickSample) -> None, invoked once per tick
+    fault=...,  # FaultInjector | None
+    redundant=...,  # RedundantSensing | None
 )
 ```
 

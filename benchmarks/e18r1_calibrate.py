@@ -64,8 +64,9 @@ def _clean_run(policy: Any, seed: int) -> dict:
 
 def git_commit() -> str:
     try:
-        return subprocess.check_output(["git", "rev-parse", "HEAD"], text=True,
-                                       stderr=subprocess.DEVNULL).strip()
+        return subprocess.check_output(
+            ["git", "rev-parse", "HEAD"], text=True, stderr=subprocess.DEVNULL
+        ).strip()
     except Exception:
         return "unknown"
 
@@ -74,8 +75,9 @@ def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--seeds", type=int, default=N_SEEDS)
     ap.add_argument("--skip-faults", action="store_true")
-    ap.add_argument("--out", type=Path,
-                    default=Path("experiments/phase5_od8_h7/E18_R1/raw_results"))
+    ap.add_argument(
+        "--out", type=Path, default=Path("experiments/phase5_od8_h7/E18_R1/raw_results")
+    )
     a = ap.parse_args()
     a.out.mkdir(parents=True, exist_ok=True)
     commit = git_commit()
@@ -93,24 +95,38 @@ def main() -> None:
             q = conformal_q(cal)
             alarms = int((ev > q).sum())
             far = alarms / ev.size if ev.size else float("nan")
-            clean_records.append({
-                "experiment": "E18-R1", "git_commit": commit,
-                "calibration_version": CALIBRATION_VERSION,
-                "policy": pname, "seed": seed, "condition": "clean",
-                "threshold": q, "calibration_n": int(cal.size),
-                "calibration_window": "ticks 1-200", "evaluation_n": int(ev.size),
-                "alarm_count": alarms, "run_far": far,
-                "cal_mean": float(cal.mean()), "cal_sd": float(cal.std(ddof=1)),
-                "eval_mean": float(ev.mean()), "eval_sd": float(ev.std(ddof=1)),
-                "drift": float(ev.mean() - cal.mean()),
-                "threshold_margin": float(ev.mean() - q),
-            })
+            clean_records.append(
+                {
+                    "experiment": "E18-R1",
+                    "git_commit": commit,
+                    "calibration_version": CALIBRATION_VERSION,
+                    "policy": pname,
+                    "seed": seed,
+                    "condition": "clean",
+                    "threshold": q,
+                    "calibration_n": int(cal.size),
+                    "calibration_window": "ticks 1-200",
+                    "evaluation_n": int(ev.size),
+                    "alarm_count": alarms,
+                    "run_far": far,
+                    "cal_mean": float(cal.mean()),
+                    "cal_sd": float(cal.std(ddof=1)),
+                    "eval_mean": float(ev.mean()),
+                    "eval_sd": float(ev.std(ddof=1)),
+                    "drift": float(ev.mean() - cal.mean()),
+                    "threshold_margin": float(ev.mean() - q),
+                }
+            )
         fars = [x["run_far"] for x in clean_records if x["policy"] == pname]
         inband = sum(1 for v in fars if EPS / 2 <= v <= 2 * EPS)
-        print(f"  {pname}: runs in band {inband}/{len(fars)}   "
-              f"median FAR {np.median(fars):.2%}   [{time.time() - t0:.0f}s]", flush=True)
-    (a.out / "clean_runlocal.json").write_text(json.dumps(clean_records, indent=2, default=str),
-                                               encoding="utf-8")
+        print(
+            f"  {pname}: runs in band {inband}/{len(fars)}   "
+            f"median FAR {np.median(fars):.2%}   [{time.time() - t0:.0f}s]",
+            flush=True,
+        )
+    (a.out / "clean_runlocal.json").write_text(
+        json.dumps(clean_records, indent=2, default=str), encoding="utf-8"
+    )
 
     if a.skip_faults:
         print("\n  (faulted evaluation skipped)")
@@ -119,7 +135,9 @@ def main() -> None:
     # ---- SECONDARY: detection after recalibration -------------------------
     print("\nSECONDARY - faulted runs, detection at run-local thresholds")
     fault_records: list[dict] = []
-    combos = [(f, lvl, mag) for f, spec in SEVERITIES.items() for lvl, mag in spec["levels"].items()]
+    combos = [
+        (f, lvl, mag) for f, spec in SEVERITIES.items() for lvl, mag in spec["levels"].items()
+    ]
     total = len(combos) * len(pols) * a.seeds
     done = 0
     for pname, policy in pols.items():
@@ -143,28 +161,42 @@ def main() -> None:
                     D[code] = auc(fv, c)
                 ey_c = float(np.nanmean([clean["est_y"][j] for j in win]))
                 ey_f = float(np.nanmean([faulted["est_y"][j] for j in win]))
-                fault_records.append({
-                    "experiment": "E18-R1", "git_commit": commit,
-                    "calibration_version": CALIBRATION_VERSION,
-                    "policy": pname, "fault": fault, "severity_level": level,
-                    "severity_value": mag, "seed": seed, "condition": "faulted",
-                    "threshold": q, "calibration_n": int(cal_f.size),
-                    "alarm_rate_faulted": float(alarms.mean()) if ev_f.size else float("nan"),
-                    "alarm_rate_clean_same_seed": float((ev_c > conformal_q(cal_c)).mean())
-                    if ev_c.size else float("nan"),
-                    "detected": bool(alarms.any()),
-                    "detection_latency_ticks": None if first is None else int(first),
-                    "threshold_margin": float(ev_f.mean() - q) if ev_f.size else float("nan"),
-                    "D": D,
-                    "fault_reached_estimator": bool(abs(ey_f - ey_c) > 1e-9),
-                })
+                fault_records.append(
+                    {
+                        "experiment": "E18-R1",
+                        "git_commit": commit,
+                        "calibration_version": CALIBRATION_VERSION,
+                        "policy": pname,
+                        "fault": fault,
+                        "severity_level": level,
+                        "severity_value": mag,
+                        "seed": seed,
+                        "condition": "faulted",
+                        "threshold": q,
+                        "calibration_n": int(cal_f.size),
+                        "alarm_rate_faulted": float(alarms.mean()) if ev_f.size else float("nan"),
+                        "alarm_rate_clean_same_seed": float((ev_c > conformal_q(cal_c)).mean())
+                        if ev_c.size
+                        else float("nan"),
+                        "detected": bool(alarms.any()),
+                        "detection_latency_ticks": None if first is None else int(first),
+                        "threshold_margin": float(ev_f.mean() - q) if ev_f.size else float("nan"),
+                        "D": D,
+                        "fault_reached_estimator": bool(abs(ey_f - ey_c) > 1e-9),
+                    }
+                )
                 done += 1
-            print(f"  [{done:>4}/{total}] {pname} {fault} {level}  {time.time() - t0:.0f}s",
-                  flush=True)
-    (a.out / "faulted_runlocal.json").write_text(json.dumps(fault_records, indent=2, default=str),
-                                                 encoding="utf-8")
+            print(
+                f"  [{done:>4}/{total}] {pname} {fault} {level}  {time.time() - t0:.0f}s",
+                flush=True,
+            )
+    (a.out / "faulted_runlocal.json").write_text(
+        json.dumps(fault_records, indent=2, default=str), encoding="utf-8"
+    )
     reached = sum(1 for r in fault_records if r["fault_reached_estimator"])
-    print(f"\n  {len(fault_records)} faulted records | reached estimator {reached}/{len(fault_records)}")
+    print(
+        f"\n  {len(fault_records)} faulted records | reached estimator {reached}/{len(fault_records)}"
+    )
     print(f"  -> {a.out}")
 
 
