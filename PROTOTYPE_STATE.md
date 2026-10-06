@@ -19,6 +19,17 @@ this document only navigates them.
 
 ---
 
+> **Reviewer corrections applied at merge (6 October 2026, Sushanth).** Three claims were corrected
+> against the committed held-out data; details in `docs/REVIEW_TANAY_2026-10-06.md`.
+> 1. **G2 matches L1-only; it does not beat it.** Held-out latency G2 / L1-only: 5.0/5.0 (p=1.00),
+>    8.0/8.0 (0.75), 18.5/17.5 (0.50), 220.5/220.5 (0.25); detection 1.000 for both. G2 fires only when
+>    L1 is already unhealthy, so it cannot detect more, or sooner, than L1-only.
+> 2. **The 1,181–1,640-tick speed-up is measured against L8's integrity counter, not against L1-only**,
+>    and is a median over the runs that escalated: at p=0.25 held-out, 53 % of runs never escalate.
+>    The KS(conf) clean-FP figure reflects an implementation defect and is not a valid comparison.
+> 3. **Stages C2 and C3 are exploratory.** C2's pre-registration and results share one commit
+>    (`a42c1a7`); C3's pre-registration precedes its results by one minute on data already on disk.
+
 ## 1 · Executive summary
 
 The system under study is a **nine-layer autonomous-vehicle safety pipeline**
@@ -41,16 +52,19 @@ Three headline results are held-out-confirmed on the frozen seed set
 2. **G2 (the monitor).** `GateBlindnessMonitor` fires when L1 stream health
    is unhealthy AND L6 stays silent for 5 consecutive ticks. On the primary
    case (`imu_dropout` medium) it hits **1.000 detection / 5-tick latency /
-   0.000 clean FP** on both dev and held-out, matching L1's own timing and
-   beating label-free baselines (KS(conf), conformal test martingale) on
-   the clean-FP axis (0.000 vs KS(conf) 0.733–0.833).
+   0.000 clean FP** on both dev and held-out, **matching, not beating, the L1-only baseline**
+   (identical detection, latency and clean FP; see the corrections above). The conformal test
+   martingale also has 0.000 clean FP; the KS(conf) figure (0.733–0.833) reflects an implementation
+   defect and is not a valid comparison. **Exploratory** (pre-registration not prior to results).
    *Evidence:* `experiments/phase5_od8_h7/STEP3_G2_MONITOR/processed_results{,_heldout}/`.
 
 3. **Outcome benefit at partial dropouts.** At 25 % partial dropout the
    monitor would bring L8 escalation forward by **1,181–1,640 ticks
-   (~59–82 s)** relative to L1's own integrity-counter path
-   (dev: 1,640; held-out: 1,181). This is the lower-bound counterfactual,
-   pending the full L8 wired version (Stage D).
+   (~59–82 s)** relative to **L8's integrity-counter path**
+   (dev: 1,640; held-out: 1,181). **Caveats:** this is a median over the runs that escalated (at
+   p=0.25 held-out, 53 % never escalate); an L1-only trigger would give the same or a larger speed-up
+   (not yet computed); and at the pre-registered primary case (p=1.00) the benefit is **zero**.
+   **Exploratory**, pending Stage D's three-way comparison (no monitor / act on L1 / act on G2).
    *Evidence:* `experiments/phase5_od8_h7/STEP4_OUTCOME_EXPERIMENT/`.
 
 **The pre-committed C1 rule fired the "shift" branch of §5** (the tested
@@ -432,12 +446,13 @@ one-sentence claim now pinned to the held-out numbers:
 > *Under total IMU loss, the L6 conformal gate goes silent because
 > everything it reads is held constant while the plant diverges (dev
 > and held-out); a label-free monitor comparing L1 stream health with
-> L6 alarms flags this blindness with zero clean false alarms at the
-> same 5-tick latency L1 achieves alone, and — at graded partial-
-> dropout severities that L8's own integrity path takes far longer to
-> escalate on — would bring escalation forward by 1,181–1,640 ticks
-> (~59–82 s) under the pre-registered lower-bound counterfactual, on
-> both dev and held-out seeds.*
+> L6 alarms flags this with zero clean false alarms at the same 5-tick
+> latency L1 achieves alone — matching, not exceeding, the L1-only
+> baseline; whether acting on it improves outcomes beyond acting on L1
+> alone is untested (Stage D).*
+
+*(Corrected at merge, 6 Oct: the earlier sentence claimed a 1,181–1,640-tick speed-up as a
+pre-registered result; it is exploratory, censored, and measured against L8's counter.)*
 
 Every subsection ends with a `▸ file:` pointer to committed evidence.
 Section §9 enumerates the remaining pre-submission work (Stage D wired

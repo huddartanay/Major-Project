@@ -9,6 +9,17 @@ main claims, the figure list, and points every claim at the evidence file
 that has to survive review. It is committed so any change to the story
 leaves a trace, per handoff §14 working practice.
 
+> **Reviewer corrections applied at merge (6 October 2026, Sushanth).** Three claims were corrected
+> against the committed held-out data; details in `docs/REVIEW_TANAY_2026-10-06.md`.
+> 1. **G2 matches L1-only; it does not beat it.** Held-out latency G2 / L1-only: 5.0/5.0 (p=1.00),
+>    8.0/8.0 (0.75), 18.5/17.5 (0.50), 220.5/220.5 (0.25); detection 1.000 for both. G2 fires only when
+>    L1 is already unhealthy, so it cannot detect more, or sooner, than L1-only.
+> 2. **The 1,181–1,640-tick speed-up is measured against L8's integrity counter, not against L1-only**,
+>    and is a median over the runs that escalated: at p=0.25 held-out, 53 % of runs never escalate.
+>    The KS(conf) clean-FP figure reflects an implementation defect and is not a valid comparison.
+> 3. **Stages C2 and C3 are exploratory.** C2's pre-registration and results share one commit
+>    (`a42c1a7`); C3's pre-registration precedes its results by one minute on data already on disk.
+
 Owner: Tanay Huddar. Co-authors: Sushanth C (per handoff §0.6, author order
 still to be decided when Sushanth is back); institutional affiliation and
 guide (Dr. Chaitra R.) TBD.
@@ -33,11 +44,13 @@ duration of a sustained IMU dropout. Same run, two axes.
    moves 0.3 % while the alarm rate collapses 38× — a threshold-crossing
    effect on a distribution held constant by the estimator, not a
    variance-inflation effect as one might expect.
-2. **G2 · GateBlindnessMonitor:** the first label-free monitor of gate
-   blindness built on the L1-vs-L6 comparison. Matches L1's detection on
-   `imu_dropout` with zero clean false alarms; correctly restricts to
-   the *gate-blindness* subset of L1-detected events; beats KS(conf) on
-   clean false-alarm rate (0.000 vs 0.733).
+2. **G2 · GateBlindnessMonitor (exploratory; not yet a contribution):** a
+   label-free check built on the L1-vs-L6 comparison. **Matches** L1-only on
+   `imu_dropout` (same detection, latency, zero clean false alarms) and never
+   exceeds it. It also fires at p=0.50 and 0.75, where the gate is reacting, so
+   it does not isolate a gate-blindness subset. The KS(conf) comparison is
+   invalid until its implementation defect is fixed. To our knowledge no prior
+   work applies such a check to a vehicle safety gate — never "the first".
 3. **Held-out evidence** on `20261201+i` for the G1 story (E21 L1 30/30
    / 5-tick / 0-FP replicates dev exactly; Stage A mechanism ratios
    replicate bit-identically).
@@ -251,12 +264,13 @@ Every headline number is now held-out-confirmed on the frozen seed set
 *Under total IMU loss, the L6 conformal gate goes silent because
 everything it reads is held constant while the plant diverges (dev
 and held-out); a label-free monitor comparing L1 stream health with
-L6 alarms flags this blindness with zero clean false alarms at the
-same 5-tick latency L1 achieves alone, and — at graded partial-dropout
-severities that L8's own integrity path takes far longer to escalate
-on — would bring escalation forward by 1,181 - 1,640 ticks (~59 - 82 s)
-under the pre-registered lower-bound counterfactual, on both dev and
-held-out seeds.*
+L6 alarms flags this with zero clean false alarms at the same 5-tick
+latency L1 achieves alone — matching, not exceeding, the L1-only
+baseline; whether acting on it improves outcomes beyond acting on L1
+alone is untested (Stage D).*
+
+*(Corrected at merge, 6 Oct. The 1,181–1,640-tick figure is exploratory, censored — 53 % of p=0.25
+held-out runs never escalate — and measured against L8's counter, not L1-only.)*
 
 ## 8 · Figure list (numbers to be finalised)
 
