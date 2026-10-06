@@ -1,0 +1,382 @@
+[
+ {
+  "n": 3000,
+  "alarm": 0.05,
+  "p50": 3.689,
+  "p95": 3.702,
+  "p99": 3.708,
+  "score_sd": 0.009,
+  "dep_sd": 0.0016,
+  "sigma_med": 0.1879,
+  "true_speed": 11.12,
+  "est_speed": 11.12,
+  "est_speed_sd": 0.10469,
+  "max_abs_dev": 0.24,
+  "states": {
+   "NOMINAL": 3000
+  },
+  "seed": 20260731,
+  "arm": "clean"
+ },
+ {
+  "n": 3000,
+  "alarm": 0.05,
+  "p50": 3.689,
+  "p95": 3.702,
+  "p99": 3.708,
+  "score_sd": 0.009,
+  "dep_sd": 0.0016,
+  "sigma_med": 0.1879,
+  "true_speed": 11.12,
+  "est_speed": 11.12,
+  "est_speed_sd": 0.10469,
+  "max_abs_dev": 0.24,
+  "states": {
+   "NOMINAL": 3000
+  },
+  "seed": 20260731,
+  "arm": "clean_L8int_off"
+ },
+ {
+  "n": 3000,
+  "alarm": 0.0013,
+  "p50": 3.686,
+  "p95": 3.697,
+  "p99": 3.699,
+  "score_sd": 0.009,
+  "dep_sd": 0.0017,
+  "sigma_med": 0.1879,
+  "true_speed": 0.0,
+  "est_speed": 10.59,
+  "est_speed_sd": 0.0,
+  "max_abs_dev": 0.25,
+  "states": {
+   "LIMP": 3000
+  },
+  "seed": 20260731,
+  "arm": "dropout_governed"
+ },
+ {
+  "n": 3000,
+  "alarm": 0.0007,
+  "p50": 3.683,
+  "p95": 3.697,
+  "p99": 3.699,
+  "score_sd": 0.01,
+  "dep_sd": 0.0019,
+  "sigma_med": 0.1879,
+  "true_speed": 1.9,
+  "est_speed": 10.59,
+  "est_speed_sd": 0.0,
+  "max_abs_dev": 0.39,
+  "states": {
+   "NOMINAL": 3000
+  },
+  "seed": 20260731,
+  "arm": "dropout_L8int_off"
+ },
+ {
+  "n": 3000,
+  "alarm": 0.056,
+  "p50": 3.69,
+  "p95": 3.703,
+  "p99": 3.709,
+  "score_sd": 0.009,
+  "dep_sd": 0.0018,
+  "sigma_med": 0.1879,
+  "true_speed": 11.07,
+  "est_speed": 11.07,
+  "est_speed_sd": 0.06688,
+  "max_abs_dev": 0.26,
+  "states": {
+   "NOMINAL": 3000
+  },
+  "seed": 20260732,
+  "arm": "clean"
+ },
+ {
+  "n": 3000,
+  "alarm": 0.056,
+  "p50": 3.69,
+  "p95": 3.703,
+  "p99": 3.709,
+  "score_sd": 0.009,
+  "dep_sd": 0.0018,
+  "sigma_med": 0.1879,
+  "true_speed": 11.07,
+  "est_speed": 11.07,
+  "est_speed_sd": 0.06688,
+  "max_abs_dev": 0.26,
+  "states": {
+   "NOMINAL": 3000
+  },
+  "seed": 20260732,
+  "arm": "clean_L8int_off"
+ },
+ {
+  "n": 3000,
+  "alarm": 0.0,
+  "p50": 3.679,
+  "p95": 3.695,
+  "p99": 3.698,
+  "score_sd": 0.009,
+  "dep_sd": 0.0018,
+  "sigma_med": 0.1879,
+  "true_speed": 0.0,
+  "est_speed": 11.02,
+  "est_speed_sd": 0.0,
+  "max_abs_dev": 0.15,
+  "states": {
+   "LIMP": 3000
+  },
+  "seed": 20260732,
+  "arm": "dropout_governed"
+ },
+ {
+  "n": 3000,
+  "alarm": 0.0003,
+  "p50": 3.679,
+  "p95": 3.692,
+  "p99": 3.696,
+  "score_sd": 0.009,
+  "dep_sd": 0.0018,
+  "sigma_med": 0.1879,
+  "true_speed": 0.91,
+  "est_speed": 11.02,
+  "est_speed_sd": 0.0,
+  "max_abs_dev": 0.38,
+  "states": {
+   "NOMINAL": 3000
+  },
+  "seed": 20260732,
+  "arm": "dropout_L8int_off"
+ },
+ {
+  "n": 3000,
+  "alarm": 0.06,
+  "p50": 3.689,
+  "p95": 3.703,
+  "p99": 3.709,
+  "score_sd": 0.01,
+  "dep_sd": 0.0018,
+  "sigma_med": 0.1879,
+  "true_speed": 11.24,
+  "est_speed": 11.24,
+  "est_speed_sd": 0.33605,
+  "max_abs_dev": 0.27,
+  "states": {
+   "NOMINAL": 3000
+  },
+  "seed": 20260733,
+  "arm": "clean"
+ },
+ {
+  "n": 3000,
+  "alarm": 0.06,
+  "p50": 3.689,
+  "p95": 3.703,
+  "p99": 3.709,
+  "score_sd": 0.01,
+  "dep_sd": 0.0018,
+  "sigma_med": 0.1879,
+  "true_speed": 11.24,
+  "est_speed": 11.24,
+  "est_speed_sd": 0.33605,
+  "max_abs_dev": 0.27,
+  "states": {
+   "NOMINAL": 3000
+  },
+  "seed": 20260733,
+  "arm": "clean_L8int_off"
+ },
+ {
+  "n": 3000,
+  "alarm": 0.0,
+  "p50": 3.681,
+  "p95": 3.689,
+  "p99": 3.691,
+  "score_sd": 0.005,
+  "dep_sd": 0.0009,
+  "sigma_med": 0.1879,
+  "true_speed": 0.0,
+  "est_speed": 13.4,
+  "est_speed_sd": 0.0,
+  "max_abs_dev": 0.27,
+  "states": {
+   "LIMP": 3000
+  },
+  "seed": 20260733,
+  "arm": "dropout_governed"
+ },
+ {
+  "n": 3000,
+  "alarm": 0.0007,
+  "p50": 3.669,
+  "p95": 3.687,
+  "p99": 3.694,
+  "score_sd": 0.009,
+  "dep_sd": 0.0018,
+  "sigma_med": 0.1879,
+  "true_speed": 0.32,
+  "est_speed": 13.4,
+  "est_speed_sd": 0.0,
+  "max_abs_dev": 0.58,
+  "states": {
+   "NOMINAL": 3000
+  },
+  "seed": 20260733,
+  "arm": "dropout_L8int_off"
+ },
+ {
+  "n": 3000,
+  "alarm": 0.044,
+  "p50": 3.689,
+  "p95": 3.702,
+  "p99": 3.706,
+  "score_sd": 0.009,
+  "dep_sd": 0.0017,
+  "sigma_med": 0.1879,
+  "true_speed": 11.22,
+  "est_speed": 11.22,
+  "est_speed_sd": 0.23255,
+  "max_abs_dev": 0.26,
+  "states": {
+   "NOMINAL": 3000
+  },
+  "seed": 20260734,
+  "arm": "clean"
+ },
+ {
+  "n": 3000,
+  "alarm": 0.044,
+  "p50": 3.689,
+  "p95": 3.702,
+  "p99": 3.706,
+  "score_sd": 0.009,
+  "dep_sd": 0.0017,
+  "sigma_med": 0.1879,
+  "true_speed": 11.22,
+  "est_speed": 11.22,
+  "est_speed_sd": 0.23255,
+  "max_abs_dev": 0.26,
+  "states": {
+   "NOMINAL": 3000
+  },
+  "seed": 20260734,
+  "arm": "clean_L8int_off"
+ },
+ {
+  "n": 3000,
+  "alarm": 0.007,
+  "p50": 3.678,
+  "p95": 3.695,
+  "p99": 3.702,
+  "score_sd": 0.009,
+  "dep_sd": 0.0018,
+  "sigma_med": 0.1879,
+  "true_speed": 0.0,
+  "est_speed": 12.84,
+  "est_speed_sd": 0.0,
+  "max_abs_dev": 0.24,
+  "states": {
+   "LIMP": 3000
+  },
+  "seed": 20260734,
+  "arm": "dropout_governed"
+ },
+ {
+  "n": 3000,
+  "alarm": 0.009,
+  "p50": 3.677,
+  "p95": 3.695,
+  "p99": 3.702,
+  "score_sd": 0.01,
+  "dep_sd": 0.0018,
+  "sigma_med": 0.1879,
+  "true_speed": 0.33,
+  "est_speed": 12.84,
+  "est_speed_sd": 0.0,
+  "max_abs_dev": 0.35,
+  "states": {
+   "NOMINAL": 3000
+  },
+  "seed": 20260734,
+  "arm": "dropout_L8int_off"
+ },
+ {
+  "n": 3000,
+  "alarm": 0.0497,
+  "p50": 3.689,
+  "p95": 3.702,
+  "p99": 3.707,
+  "score_sd": 0.009,
+  "dep_sd": 0.0017,
+  "sigma_med": 0.1879,
+  "true_speed": 11.18,
+  "est_speed": 11.18,
+  "est_speed_sd": 0.1676,
+  "max_abs_dev": 0.26,
+  "states": {
+   "NOMINAL": 3000
+  },
+  "seed": 20260735,
+  "arm": "clean"
+ },
+ {
+  "n": 3000,
+  "alarm": 0.0497,
+  "p50": 3.689,
+  "p95": 3.702,
+  "p99": 3.707,
+  "score_sd": 0.009,
+  "dep_sd": 0.0017,
+  "sigma_med": 0.1879,
+  "true_speed": 11.18,
+  "est_speed": 11.18,
+  "est_speed_sd": 0.1676,
+  "max_abs_dev": 0.26,
+  "states": {
+   "NOMINAL": 3000
+  },
+  "seed": 20260735,
+  "arm": "clean_L8int_off"
+ },
+ {
+  "n": 3000,
+  "alarm": 0.0,
+  "p50": 3.686,
+  "p95": 3.69,
+  "p99": 3.693,
+  "score_sd": 0.005,
+  "dep_sd": 0.0009,
+  "sigma_med": 0.1879,
+  "true_speed": 0.0,
+  "est_speed": 12.09,
+  "est_speed_sd": 0.0,
+  "max_abs_dev": 0.16,
+  "states": {
+   "LIMP": 3000
+  },
+  "seed": 20260735,
+  "arm": "dropout_governed"
+ },
+ {
+  "n": 3000,
+  "alarm": 0.0,
+  "p50": 3.683,
+  "p95": 3.692,
+  "p99": 3.694,
+  "score_sd": 0.008,
+  "dep_sd": 0.0016,
+  "sigma_med": 0.1879,
+  "true_speed": 1.98,
+  "est_speed": 12.09,
+  "est_speed_sd": 0.0,
+  "max_abs_dev": 0.31,
+  "states": {
+   "NOMINAL": 3000
+  },
+  "seed": 20260735,
+  "arm": "dropout_L8int_off"
+ }
+]
