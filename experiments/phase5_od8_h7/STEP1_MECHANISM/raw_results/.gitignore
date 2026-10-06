@@ -1,0 +1,17 @@
+# Raw tick-level JSONL is large (~1.6 MB per run x 210 runs = ~430 MB) and
+# deterministic under the seeds recorded in stage_a_run.py, so it is not
+# tracked. Regenerate any subset locally with:
+#
+#   uv run python experiments/phase5_od8_h7/STEP1_MECHANISM/stage_a_run.py
+#
+# and analyse with:
+#
+#   uv run python experiments/phase5_od8_h7/STEP1_MECHANISM/stage_a_analyse.py
+#
+# The committed evidence for what each seed did lives in
+# ../processed_results/per_run_summary_<suffix>.json, which is the only file
+# a reviewer needs to reproduce the mechanism verdict without re-running the
+# sweep.
+*.jsonl
+manifest.csv
+run_summary.json
