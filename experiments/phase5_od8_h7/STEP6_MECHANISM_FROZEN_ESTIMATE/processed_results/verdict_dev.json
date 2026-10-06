@@ -1,0 +1,34 @@
+{
+ "verdicts": {
+  "H-indep": "SUPPORTED",
+  "H-freeze": "SUPPORTED",
+  "H-noise": "REFUTED"
+ },
+ "ratios": {
+  "dropout": {
+   "median": 0.002173913043478261,
+   "lo": 0.0,
+   "hi": 0.01330532212885154,
+   "n": 30
+  },
+  "dropout_noL8": {
+   "median": 0.0,
+   "lo": 0.0,
+   "hi": 0.015625,
+   "n": 30
+  },
+  "stuck": {
+   "median": 0.0,
+   "lo": 0.0,
+   "hi": 0.008238636363636363,
+   "n": 30
+  },
+  "stuck_noise": {
+   "median": 0.0,
+   "lo": 0.0,
+   "hi": 0.006386007728289607,
+   "n": 30
+  }
+ },
+ "excluded_seeds": []
+}
