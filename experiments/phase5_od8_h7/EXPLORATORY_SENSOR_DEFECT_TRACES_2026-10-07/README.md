@@ -8,7 +8,8 @@ default redundant sensing (position from IMU σ 0.10 m, GPS σ 0.20 m, LIDAR σ 
 acceleration one source each). Code at `09dc6e3` plus this folder.
 
 - `record_traces.py` — runs the arms, writes `traces.json` (every 4th tick).
-- `build_sim.py` + `sim_template.html` — pack the traces into `mp_review_sim.html` at the repository root.
+- `record_features.py` — the runs with dormant features on, writes `traces_features.json`.
+- `build_sim.py` + `sim_template.html` — pack both trace files and the design targets into `mp_review_sim.html`.
 
 Unit and sign errors are injected by a small `FaultInjector` subclass in `record_traces.py`; that path is new
 and untested beyond these runs.
@@ -52,6 +53,39 @@ Times are measured from the moment the defect starts (10.0 s into the run). Lane
    after 0.45 s, then returned to NOMINAL with the defect still present, the car crawling at 4 km/h.
 6. **Freezing both speed and lateral acceleration stops the car without any layer knowing**; freezing speed alone
    speeds it up. The same kind of defect has opposite effects depending on which channels it hits.
+
+## Runs with dormant features switched on (`record_features.py`, `traces_features.json`)
+
+Same seed, 120 s each. The L9 cold path is given a context (calibration search every 20 ticks); surroundings are
+changed mid-run through `pipeline.enter_context`; `integrity_tolerated_faults` is raised to 1 in two groups by
+overriding the fail-safe's settings inside the recorder only. **No project configuration was changed.**
+
+| run | what was switched on | what happened |
+|---|---|---|
+| open road only | cold path | L9 found a better calibration (`urban_clear`, trust 0.71–0.74) and ran it in shadow for the whole 120 s. **It never committed and never rolled back.** Driving unaffected, 40 km/h |
+| road → tunnel (20 s) → road (50 s) → rain at night (75 s) → road (105 s) | cold path, changing surroundings | Safe exploration engaged at the first check after the tunnel began and the car slowed (18 km/h after 20 s). **It never exited**: back on the open road and in rain the car was still exploring at about 4 km/h. No calibration switch for rain |
+| GPS reads 1.0 m off | cold path, tolerance 1 | Fail-safe stayed in NOMINAL (no stop). But one check after L1 flagged GPS, L9 entered safe exploration and stayed; car ended at 4 km/h. L1's flag flickered throughout |
+| LIDAR reads 1.0 m off | cold path, tolerance 1 | Same: NOMINAL, exploration within a second, ended at 4 km/h |
+| IMU + GPS both read 1.0 m off | cold path, tolerance 1 | L1 blamed LIDAR. One flagged source is within tolerance, so **the fail-safe never left NOMINAL** and the car was never stopped; it only crawled because of exploration |
+| IMU stream off for 10 s | cold path | **Graded response and recovery worked**: DEGRADED at 0.25 s, LIMP at 0.75 s, NOMINAL again 1.8 s after the stream returned. But L9 had entered exploration and never left; the car was at 0 km/h at the end with the mode at NOMINAL |
+| tunnel, then IMU stream off for 10 s | cold path | Exploration engaged in the tunnel; when the stream stopped the fail-safe went to HALT in 3 s and stayed (latched) |
+
+**What these suggest (single runs, to be tested):**
+
+1. **Safe exploration is a one-way door.** In every run where it engaged, it never ended. A likely cause, not yet
+   verified: the context signature includes the car's own speed, exploration halves the speed, so afterwards no
+   stored calibration matches.
+2. **Any L1 flag pushes L9 into exploration**, because sensor health is part of the context signature. So raising
+   the fail-safe's tolerance does not keep the car driving normally; it trades a stop for a permanent crawl.
+3. **Tolerance 1 hides a two-source lie** from the fail-safe, because L1 flags only the honest source.
+4. **Shadow execution never resolved** on the open road in 120 s.
+5. **The fail-safe's own recovery path works** for a defect that ends, as long as HALT is not reached.
+
+## Design-target scenarios in the page
+
+`build_sim.py` also writes 11 **design-target** scenarios (`TARGETS`). They are hand-written illustrations of the
+intended behaviour, synthesised from the healthy run's lane-keeping trace and a scripted speed and mode schedule.
+**They are not runs and are not evidence.** The page labels them on screen.
 
 ## Limits
 

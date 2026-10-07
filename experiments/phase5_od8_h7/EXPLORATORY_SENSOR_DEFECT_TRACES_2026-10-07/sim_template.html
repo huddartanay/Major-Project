@@ -16,9 +16,10 @@
   #stage canvas { display:block; }
   .glass { background:rgba(22,27,34,.88); border:1px solid var(--line); border-radius:8px; }
 
-  #stats { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:8px; padding:10px 12px 8px; border-bottom:1px solid var(--line); background:var(--panel); }
+  #stats { display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:8px; padding:10px 12px 8px; border-bottom:1px solid var(--line); background:var(--panel); }
   .stat { padding:6px 12px; background:#1c2129; border:1px solid var(--line); border-radius:8px; }
   .stat small { display:block; color:var(--dim); font-size:11px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .stat b.txt { font-size:14px; line-height:1.9; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; display:block; }
   .stat b { font-size:22px; font-variant-numeric:tabular-nums; line-height:1.2; }
   .stat span { font-size:12px; color:var(--dim); }
   #mid { flex:1; min-height:0; display:flex; }
@@ -37,6 +38,11 @@
   .chip.alert { border-color:var(--alert); color:var(--text); background:rgba(210,153,34,.2); }
   #fault { margin-left:auto; font-size:12.5px; color:var(--text); visibility:hidden; }
   #fault b { color:var(--blind); }
+  #kind { position:absolute; left:10px; top:8px; padding:3px 10px; font-size:12px; font-weight:600; pointer-events:none; }
+  #kind.design { border-color:var(--accent); color:var(--accent); } #kind.rec { border-color:var(--ok); color:var(--ok); } #kind.feat { border-color:var(--alert); color:var(--alert); }
+  .tabs { display:grid; grid-template-columns:1fr 1fr; gap:6px; margin:10px 0 2px; }
+  .tabs button { text-align:center; padding:7px 6px; font-weight:600; }
+  #today { margin-top:8px; width:100%; text-align:center; }
   #callout { position:absolute; transform:translate(-50%,-100%); padding:2px 9px; font-size:12px; font-weight:600; white-space:nowrap; border-color:var(--blind); display:none; pointer-events:none; }
   #hint { position:absolute; right:10px; bottom:6px; font-size:11.5px; color:var(--dim); pointer-events:none; }
   #err { position:absolute; inset:0; display:none; align-items:center; justify-content:center; padding:30px; text-align:center; color:var(--veto); }
@@ -73,7 +79,7 @@
   .note { font-size:12px; color:var(--dim); border:1px solid var(--line); border-radius:6px; padding:8px 10px; margin-top:12px; }
   .note b { color:var(--text); }
   @media (max-width:900px) { #wrap { flex-direction:column; } #panel { width:auto; max-width:none; height:42%; border-left:0; border-top:1px solid var(--line); }
-    #charts { height:150px; } #layerCol { width:170px; } .lay span { display:none; } #stats { grid-template-columns:repeat(2,1fr); } }
+    #charts { height:150px; } #layerCol { width:170px; } .lay span { display:none; } #stats { grid-template-columns:repeat(3,1fr); } }
 </style>
 </head>
 <body>
@@ -84,10 +90,13 @@
       <div class="stat"><small>Speed ASTRA believes</small><b id="hVe"></b> <span>km/h</span></div>
       <div class="stat"><small>Real distance from lane centre</small><b id="hDv"></b> <span>m &nbsp;(edge 1.75)</span></div>
       <div class="stat"><small>Driving mode</small><b id="hMode"></b></div>
+      <div class="stat"><small>Surroundings</small><b class="txt" id="hEnv"></b></div>
+      <div class="stat"><small>Calibration (L9)</small><b class="txt" id="hCal"></b></div>
     </div>
     <div id="mid">
       <div id="layerCol"><h3>ASTRA layers, right now</h3><div id="layers"></div></div>
       <div id="stage">
+        <div id="kind" class="glass"></div>
         <div id="callout" class="glass"></div>
         <div id="hint">drag to rotate · scroll to zoom</div>
         <div id="err">The 3D library could not be loaded. Connect to the internet and reload this page.</div>
@@ -101,11 +110,13 @@
   </div>
   <aside id="panel">
     <h1>ASTRA sensor-defect replay</h1>
-    <div class="sub">Each replay is one real run of the ASTRA code in its simulator. The defect switches on at 10.0 s. Drag the 3D view to rotate, scroll to zoom.</div>
+    <div class="sub">How the car should react to each sensor defect and change of surroundings, and what the code does today. Drag the 3D view to rotate, scroll to zoom.</div>
+    <div class="tabs"><button id="tabD">Target behaviour</button><button id="tabR">What the code does today</button></div>
+    <div class="sub" id="tabNote"></div>
 
-    <h2>1 · Which sensor</h2>
+    <h2>1 · Which sensor or situation</h2>
     <div class="btns" id="sensors"></div>
-    <h2>2 · Which defect</h2>
+    <h2>2 · Which case</h2>
     <div class="btns" id="defects"></div>
     <div id="desc"></div>
 
@@ -121,6 +132,7 @@
 
     <h2>Result of this run</h2>
     <ul id="outcome"></ul>
+    <button id="today">See what the code does today for this case</button>
 
     <h2>Colours</h2>
     <div class="legend">
@@ -131,11 +143,13 @@
     </div>
     <div class="sub" style="margin-top:6px">Solid car = the real car. Blue outline = where ASTRA believes the car is. Glow under the car = driving mode. Red lamps = braking; blinking amber = stopped.</div>
 
-    <div class="note"><b>What this is.</b> Recorded output of the ASTRA pipeline: 120 s per run at 20 ticks per second, one run per
-      defect, all with the same seed (<span id="seed"></span>). Speeds, positions, modes, gate verdicts and L1 flags are the recorded
-      values. Purple is added by this page by comparing ASTRA's estimate with the simulator's ground truth, which ASTRA itself
-      never sees.<br><br><b>What this is not.</b> Evidence. It is one run per defect, not pre-registered. A different seed can
-      end differently — in the 30-run studies, a frozen sensor led to a stop in about a third of runs and not in the rest.</div>
+    <div class="note"><b>Target behaviour</b> is a hand-written illustration of what ASTRA is designed to do. It is <b>not</b> a run of the
+      code and proves nothing; it is the specification the project is working towards.<br><br>
+      <b>What the code does today</b> is recorded output of the ASTRA pipeline: 120 s per run at 20 ticks per second, one run per case,
+      seed <span id="seed"></span>. "Dormant features on" runs switch on parts that every experiment so far leaves off. These are single,
+      exploratory runs, not evidence: a different seed can end differently.<br><br>
+      Purple means "no objection, but its picture is wrong". The page adds it by comparing ASTRA's estimate with the simulator's ground
+      truth, which ASTRA never sees.</div>
   </aside>
 </div>
 
@@ -145,24 +159,30 @@
 const DATA = /*__DATA__*/null;
 if (!window.THREE) { document.getElementById("err").style.display = "flex"; throw new Error("three.js missing"); }
 const $ = id => document.getElementById(id);
-const DT = DATA.step / DATA.hz, T_ON = DATA.onset / DATA.hz, T_END = (DATA.arms[0].vt.length - 1) * DT, LANE = 1.75;
+const DT = DATA.step / DATA.hz, T_END = (DATA.arms[0].vt.length - 1) * DT, LANE = 1.75; let T_ON = 10, T_OFF = 1e9;
 const MODES = ["NOMINAL", "DEGRADED", "LIMP", "HALT"], MODE_CSS = ["#3fb950", "#d29922", "#db6d28", "#f85149"];
 const MODE_RGB = [0x3fb950, 0xd29922, 0xdb6d28, 0xf85149].map(h => new THREE.Color(h));
-const ORIG = ["Learned controller drives", "Command rate-limited", "Command speed-capped", "Fallback controller drives", "No command issued"];
+const ORIG = ["Learned controller drives", "Command rate-limited", "Command speed-capped", "Fallback controller drives", "No command issued", "Driving inside the exploration envelope"];
+const ENVS = ["Open road", "Tunnel", "Rain at night"], ARBS = ["search off", "", "testing", "switched to", "rolled back to", "none fits: exploring"];
 const COL = { ok:0x3fb950, alert:0xd29922, veto:0xf85149, blind:0xa371f7 }, CSS = { ok:"var(--ok)", alert:"var(--alert)", veto:"var(--veto)", blind:"var(--blind)" };
+const C0 = DATA.arms[0]; DATA.arms.forEach(a => { for (const k of ["dv", "ye", "sc", "tr"]) if (!a[k]) a[k] = C0[k]; if (!a.g) a.g = "0".repeat(a.vt.length); });
 const ARM = {}; DATA.arms.forEach(a => { ARM[a.id] = a; let s = 0; a.lead = a.vt.map((v, i) => (s += (a.ve[i] - v) * DT)); });
 const CLEAN = ARM.clean;
 $("seed").textContent = DATA.seed; $("scrub").max = T_END;
 
-const GROUPS = [
+const REC_GROUPS = [
   ["Healthy", ["clean"]], ["Position · IMU", ["pos_imu_bias"]], ["Position · GPS", ["pos_gps_bias"]],
   ["Position · LIDAR", ["pos_lidar_bias", "pos_lidar_drift"]], ["Position · IMU + GPS", ["pos_two_bias", "pos_two_drift"]],
   ["Speed", ["speed_frozen", "speed_bias", "speed_low", "speed_drift", "speed_unit"]],
   ["Lateral acceleration", ["lat_frozen", "lat_bias", "lat_sign"]], ["Speed + lateral accel.", ["both_frozen"]], ["IMU message stream", ["imu_dropout"]],
 ];
+function groupsOf(kind, prefix) { const g = []; for (const a of DATA.arms) if (a.kind === kind) { const name = prefix + a.group; let e = g.find(x => x[0] === name); if (!e) g.push(e = [name, []]); e[1].push(a.id); } return g; }
+const TABS = { design: groupsOf("design", ""), rec: REC_GROUPS.concat(groupsOf("feat", "Dormant features on · ")) };
+let GROUPS = TABS.design, tab = "design";
 const SHORT = { clean:"none", pos_imu_bias:"reads 1.0 m off", pos_gps_bias:"reads 1.0 m off", pos_lidar_bias:"reads 1.0 m off", pos_lidar_drift:"drifts 4 cm/s",
   pos_two_bias:"both read 1.0 m off", pos_two_drift:"both drift 4 cm/s", speed_frozen:"freezes", speed_bias:"reads 3 m/s high", speed_low:"reads 3 m/s low",
   speed_drift:"drifts low", speed_unit:"km/h instead of m/s", lat_frozen:"freezes", lat_bias:"reads 1 m/s² high", lat_sign:"sign flipped", both_frozen:"both freeze", imu_dropout:"stops sending" };
+for (const a of DATA.arms) if (a.short) SHORT[a.id] = a.short;
 const LAYERS = [["L9", "Arbitration"], ["L8", "Fail-safe"], ["L7", "Shield + physics"], ["L6", "Statistical gate"], ["L5", "Digital twin"],
                 ["L4", "Proposer"], ["L3", "Trust"], ["L2", "Estimation"], ["L1", "Sensing"]];
 const SENSORS = { imu:["IMU position", -1.55, 1.0, -0.5], gps:["GPS position", -0.25, 1.58, 0], lidar:["LIDAR position", 1.5, 1.0, 0.5],
@@ -188,6 +208,17 @@ const moving = [], SPAN = 312;
 for (let i = 0; i < 52; i++) for (const z of [-LANE, LANE]) { const d = box(2.4, 0.035, 0.12, mat(0xe6edf3)); d.position.set(-156 + i * 6, 0.02, z); d.userData.x0 = d.position.x; scene.add(d); moving.push(d); }
 for (let i = 0; i < 26; i++) for (const z of [-6.8, 6.8]) { const p = box(0.14, 1.1, 0.14, mat(0x57606a)); p.position.set(-156 + i * 12, 0.55, z); p.userData.x0 = p.position.x; scene.add(p); moving.push(p); }
 
+const tunnel = new THREE.Group(); scene.add(tunnel); const tunnelMat = mat(0x56606b, { transparent:true, opacity:0 }), nearMat = mat(0x56606b, { transparent:true, opacity:0, depthWrite:false }), ribMat = mat(0x6e7681, { transparent:true, opacity:0 });
+for (const z of [-5.6, 5.6]) { const w = box(320, 4.6, 0.3, z < 0 ? tunnelMat : nearMat); w.position.set(0, 2.3, z); tunnel.add(w); }
+const roof = box(320, 0.2, 11.5, nearMat); roof.position.y = 4.95; tunnel.add(roof);
+for (let i = 0; i < 27; i++) { const r = box(0.35, 0.3, 11.5, ribMat); r.position.set(-156 + i * 12, 4.75, 0); r.userData.x0 = r.position.x; tunnel.add(r); moving.push(r);
+  const lamp = box(0.5, 0.08, 0.5, new THREE.MeshBasicMaterial({ color:0xffd98a, transparent:true, opacity:0 })); lamp.position.set(-150 + i * 12, 4.55, 0); lamp.userData.x0 = lamp.position.x; tunnel.add(lamp); moving.push(lamp); r.userData.lamp = lamp; }
+const RAIN_N = 1400, rainPos = new Float32Array(RAIN_N * 3);
+for (let i = 0; i < RAIN_N; i++) { rainPos[i * 3] = (Math.random() - 0.5) * 70; rainPos[i * 3 + 1] = Math.random() * 16; rainPos[i * 3 + 2] = (Math.random() - 0.5) * 36; }
+const rainGeo = new THREE.BufferGeometry(); rainGeo.setAttribute("position", new THREE.BufferAttribute(rainPos, 3));
+const rain = new THREE.Points(rainGeo, new THREE.PointsMaterial({ color:0xcfe0ff, size:0.15, transparent:true, opacity:0 })); scene.add(rain);
+const hemi = scene.children.find(o => o.isHemisphereLight), BG = [new THREE.Color(0x0d1117), new THREE.Color(0x08090c), new THREE.Color(0x070b16)], bgNow = new THREE.Color(0x0d1117);
+let envMix = [1, 0, 0];
 function buildCar(ghost) {
   const g = new THREE.Group();
   const m = ghost ? new THREE.MeshBasicMaterial({ color:0x58a6ff, wireframe:true, transparent:true, opacity:0 }) : mat(0xdfe5ec, { metalness:0.35, roughness:0.4 });
@@ -236,36 +267,53 @@ const at = (arr, tt) => { const x = Math.min(arr.length - 1.001, Math.max(0, tt 
 const idx = tt => Math.min(arm.vt.length - 1, Math.max(0, Math.round(tt / DT)));
 const sec = tick => (tick / DATA.hz).toFixed(2) + " s";
 
-GROUPS.forEach(([name], gi) => { const b = document.createElement("button"); b.textContent = name; b.onclick = () => pick(gi, 0); $("sensors").appendChild(b); });
+function setTab(k, id) {
+  tab = k; GROUPS = TABS[k]; $("tabD").classList.toggle("on", k === "design"); $("tabR").classList.toggle("on", k === "rec");
+  $("tabNote").innerHTML = k === "design" ? "Designed behaviour. An illustration of the specification, <b>not a run of the code</b>."
+    : "Recorded runs of the ASTRA code. One run per case; the last three groups switch on parts that are normally off.";
+  $("sensors").innerHTML = "";
+  GROUPS.forEach(([name], gi) => { const b = document.createElement("button"); b.textContent = name; b.onclick = () => pick(gi, 0); $("sensors").appendChild(b); });
+  let gi = 0, di = 0; if (id) GROUPS.forEach((g, i) => { const j = g[1].indexOf(id); if (j >= 0) { gi = i; di = j; } });
+  pick(gi, di);
+}
+$("tabD").onclick = () => setTab("design"); $("tabR").onclick = () => setTab("rec");
 function pick(gi, di) {
-  group = gi; arm = ARM[GROUPS[gi][1][di]]; t = Math.max(0, T_ON - 5); playing = true; $("play").textContent = "Pause";
+  group = gi; arm = ARM[GROUPS[gi][1][di]]; T_ON = arm.on == null ? 1e9 : arm.on; T_OFF = arm.off == null ? 1e9 : arm.off;
+  const firstEv = Math.min(T_ON, ...arm.ev.map(e => e[0]).filter(x => x > 0.5), 1e9);
+  t = Math.max(0, (firstEv > 1e8 ? 5 : firstEv) - 5); playing = true; $("play").textContent = "Pause";
   [...$("sensors").children].forEach((b, i) => b.classList.toggle("on", i === gi));
   $("defects").innerHTML = "";
   GROUPS[gi][1].forEach((id, i) => { const b = document.createElement("button"); b.textContent = SHORT[id]; b.className = i === di ? "on" : ""; b.onclick = () => pick(gi, i); $("defects").appendChild(b); });
-  $("desc").innerHTML = `<b>${arm.desc}</b>` + (arm.id === "clean" ? "Nothing is wrong in this run. Use it as the reference." : `Starts at ${T_ON.toFixed(1)} s and never ends.`);
-  $("events").innerHTML = `<li data-t="${T_ON}"><span>${T_ON.toFixed(2)} s</span><span>${arm.id === "clean" ? "(no defect)" : "Defect starts"}</span></li>` +
-    arm.ev.map(([tick, text, same]) => `<li data-t="${tick / DATA.hz}"><span>${sec(tick)}</span><span>${text}${same ? " — same tick as in the healthy run, so not caused by the defect" : ""}</span></li>`).join("") +
-    (arm.ev.filter(e => !e[2]).length ? "" : `<li data-t="1e9"><span>—</span><span>${arm.id === "clean" ? "No layer raised anything else." : "No layer raised anything because of the defect."}</span></li>`);
-  /* fixed, round axis scales so the charts do not jump between defects */
+  $("desc").innerHTML = `<b>${arm.desc}</b>` + (arm.id === "clean" ? "Nothing is wrong in this run. Use it as the reference." : arm.on == null ? "" : arm.off == null ? `The defect starts at ${T_ON.toFixed(1)} s and never ends.` : `The defect lasts from ${T_ON.toFixed(1)} s to ${T_OFF.toFixed(1)} s.`);
+  const K = { design:["design", "TARGET BEHAVIOUR · illustration, not a run of the code"], rec:["rec", "RECORDED RUN of the ASTRA code"], feat:["feat", "RECORDED RUN · dormant features switched on"] }[arm.kind];
+  $("kind").className = "glass " + K[0]; $("kind").textContent = K[1];
+  const evs = arm.ev.slice(); if (arm.kind === "rec" && arm.on != null) evs.unshift([T_ON, "Defect starts", 0]);
+  $("events").innerHTML = evs.map(([tt, text, same]) => `<li data-t="${tt}"><span>${tt.toFixed(2)} s</span><span>${text}${same ? " — same tick as in the healthy run, so not caused by the defect" : ""}</span></li>`).join("") +
+    (arm.kind !== "rec" || arm.ev.filter(e => !e[2]).length ? "" : `<li data-t="1e9"><span>—</span><span>${arm.id === "clean" ? "No layer raised anything else." : "No layer raised anything because of the defect."}</span></li>`);
   const vReal = Math.max(...arm.vt) * 3.6, dMax = Math.max(...arm.dv.map(Math.abs));
   scale = { v: vReal > 62 ? Math.ceil(vReal / 20) * 20 : 70, d: dMax > 2.4 ? Math.ceil(dMax / 4) * 4 : 2.5 };
-  const early = arm.ev.some(e => !e[2] && e[1].startsWith("L8") && e[0] / DATA.hz < 40);
-  setZoom(early);
+  const span = evs.length ? [evs[0][0], evs[evs.length - 1][0]] : [0, 0];
+  setZoom(evs.length > 0 && span[1] - Math.max(0, span[0] - 5) < 45 && arm.kind === "rec" && arm.ev.some(e => !e[2] && e[1].startsWith("L8")), span[0]);
+  $("today").style.display = arm.today ? "" : "none";
   outcome();
 }
-function setZoom(z) { win = z ? [Math.max(0, T_ON - 5), Math.min(T_END, T_ON + 35)] : [0, T_END]; $("zoom").textContent = z ? "Show whole run" : "Zoom on the defect"; $("zoom").dataset.z = z ? 1 : 0; }
+function setZoom(z, from) { if (from != null) setZoom.from = from; const f = Math.max(0, (setZoom.from || 10) - 5); win = z ? [f, Math.min(T_END, f + 40)] : [0, T_END]; $("zoom").textContent = z ? "Show whole run" : "Zoom on the events"; $("zoom").dataset.z = z ? 1 : 0; }
 $("zoom").onclick = () => setZoom($("zoom").dataset.z !== "1");
+$("today").onclick = () => setTab("rec", arm.today);
 function outcome() {
-  const n = arm.vt.length, i0 = Math.round(T_ON / DT), L = [];
+  const n = arm.vt.length, i0 = Math.round(Math.min(T_ON, T_END) / DT), L = [];
   const add = (cls, s) => L.push(`<li class="${cls}">${s}</li>`);
+  if (arm.kind !== "rec") { for (const [cls, s] of arm.notes) add(cls, s);
+    if (arm.kind === "feat") { const md = Math.max(...arm.dv.map(Math.abs)); add(md > LANE ? "bad" : "", `Speed at the end ${(arm.vt[n - 1] * 3.6).toFixed(0)} km/h; at most ${md.toFixed(2)} m from the lane centre.`); }
+    $("outcome").innerHTML = L.join(""); return; }
   let firstMode = -1, maxDev = 0, maxGap = 0, tDev = 0;
   for (let i = i0; i < n; i++) { if (firstMode < 0 && arm.m[i] !== "0") firstMode = i;
     if (Math.abs(arm.dv[i]) > maxDev) { maxDev = Math.abs(arm.dv[i]); tDev = i * DT; } maxGap = Math.max(maxGap, Math.abs(arm.ve[i] - arm.vt[i])); }
-  const l1 = arm.ev.find(e => e[1].startsWith("L1")), fin = +arm.m[n - 1], vE = arm.vt[n - 1] * 3.6, vC = CLEAN.vt[n - 1] * 3.6;
+  const l1 = arm.ev.find(e => e[1].startsWith("L1")); if (l1) l1.tick = l1[0] * DATA.hz; const fin = +arm.m[n - 1], vE = arm.vt[n - 1] * 3.6, vC = CLEAN.vt[n - 1] * 3.6;
   if (arm.id === "clean") { add("good", `Stayed in NOMINAL for the whole run at about ${vC.toFixed(0)} km/h.`);
     add("good", `Largest distance from lane centre ${maxDev.toFixed(2)} m (lane edge is at ${LANE} m).`);
     add("", `The L7 physical gate blocked a command a few times even here; that is normal background.`); $("outcome").innerHTML = L.join(""); return; }
-  add(l1 ? "good" : "bad", l1 ? `L1 flagged a sensor ${(l1[0] / DATA.hz - T_ON).toFixed(2)} s after the defect began.` : `L1 never flagged any sensor.`);
+  add(l1 ? "good" : "bad", l1 ? `L1 flagged a sensor ${(l1[0] - T_ON).toFixed(2)} s after the defect began.` : `L1 never flagged any sensor.`);
   if (arm.id.startsWith("pos_two") && l1) add("warn", `L1 blamed LIDAR — the one honest source. Two sources that agree outvote the third.`);
   add(firstMode >= 0 ? "good" : "bad", firstMode >= 0 ? `Fail-safe left NOMINAL ${(firstMode * DT - T_ON).toFixed(1)} s after the defect began; mode at the end: ${MODES[fin]}.` : `Fail-safe stayed in NOMINAL for the whole run: the defect was not acted on.`);
   if (firstMode >= 0 && fin === 0) add("warn", `It returned to NOMINAL although the defect was still present.`);
@@ -275,7 +323,7 @@ function outcome() {
   add(maxDev > LANE ? "bad" : "good", maxDev > LANE ? `The car LEFT ITS LANE: ${maxDev.toFixed(1)} m from the lane centre at ${tDev.toFixed(0)} s (lane edge is at ${LANE} m).` : `Stayed in lane: at most ${maxDev.toFixed(2)} m from centre (edge at ${LANE} m).`);
   $("outcome").innerHTML = L.join("");
 }
-$("play").onclick = () => { playing = !playing; if (playing && t >= T_END) t = Math.max(0, T_ON - 5); $("play").textContent = playing ? "Pause" : "Play"; };
+$("play").onclick = () => { playing = !playing; if (playing && t >= T_END) t = 0; $("play").textContent = playing ? "Pause" : "Play"; };
 $("restart").onclick = () => pick(group, GROUPS[group][1].indexOf(arm.id));
 $("scrub").oninput = e => { t = +e.target.value; };
 const PAD = { l:38, r:8, t:6, b:26 };
@@ -291,13 +339,16 @@ function plot(ci, lo, hi, ticks, series, edges) {
   for (const v of ticks) { g.beginPath(); g.moveTo(x0, Y(v)); g.lineTo(x1, Y(v)); g.stroke(); g.fillText(String(v), x0 - 6 * k, Y(v)); }
   g.save(); g.beginPath(); g.rect(x0 - 1, 0, x1 - x0 + 2, H); g.clip(); const stepS = win[1] - win[0] > 60 ? 20 : 5;
   g.textAlign = "center"; for (let s = Math.ceil(win[0] / stepS) * stepS; s <= win[1]; s += stepS) { g.beginPath(); g.moveTo(X(s), y0); g.lineTo(X(s), y1); g.stroke(); g.fillText(s + " s", X(s), H - 6 * k); }
+  if (arm.env) { const sh = ["", "#8b949e22", "#58a6ff22"]; let s = 0; for (let i = 1; i <= arm.env.length; i++) if (i === arm.env.length || arm.env[i] !== arm.env[s]) {
+      if (arm.env[s] !== "0") { g.fillStyle = sh[+arm.env[s]]; g.fillRect(X(s * DT), y0, X(i * DT) - X(s * DT), y1 - y0); g.fillStyle = "#8b949e"; g.textAlign = "left"; g.fillText(ENVS[+arm.env[s]].toLowerCase(), X(s * DT) + 4 * k, y1 - 8 * k); } s = i; } }
   if (edges) { g.strokeStyle = "#f85149aa"; g.setLineDash([5 * k, 4 * k]); for (const e of edges) { g.beginPath(); g.moveTo(x0, Y(e)); g.lineTo(x1, Y(e)); g.stroke(); } }
   for (const [arr, col, dash, mul, w] of series) { g.strokeStyle = col; g.setLineDash(dash.map(d => d * k)); g.lineWidth = (w || 1.6) * k; g.beginPath();
     for (let i = 0; i < arr.length; i++) { const x = X(i * DT), y = Y(arr[i] * mul); i ? g.lineTo(x, y) : g.moveTo(x, y); } g.stroke(); }
   g.setLineDash([]); const my = y1 + 3 * k, w = (x1 - x0) * DT / (win[1] - win[0]);
   for (let i = 0; i < arm.m.length; i++) { g.fillStyle = MODE_CSS[+arm.m[i]]; g.fillRect(X(i * DT), my, w + 1, 4 * k); }
-  if (arm.id !== "clean") { g.strokeStyle = "#a371f7"; g.lineWidth = 1.5 * k; g.beginPath(); g.moveTo(X(T_ON), y0); g.lineTo(X(T_ON), y1); g.stroke();
-    g.fillStyle = "#a371f7"; g.textAlign = "left"; g.fillText("defect starts", X(T_ON) + 5 * k, y0 + 8 * k); }
+  if (arm.on != null) { g.strokeStyle = "#a371f7"; g.lineWidth = 1.5 * k; g.beginPath(); g.moveTo(X(T_ON), y0); g.lineTo(X(T_ON), y1); g.stroke();
+    g.fillStyle = "#a371f7"; g.textAlign = "left"; g.fillText("defect starts", X(T_ON) + 5 * k, y0 + 8 * k);
+    if (arm.off != null) { g.beginPath(); g.moveTo(X(T_OFF), y0); g.lineTo(X(T_OFF), y1); g.stroke(); g.fillText("defect ends", X(T_OFF) + 5 * k, y0 + 22 * k); } }
   g.strokeStyle = "#ffffff"; g.lineWidth = k; g.beginPath(); g.moveTo(X(t), y0); g.lineTo(X(t), y1 + 8 * k); g.stroke(); g.restore();
 }
 function drawCharts() {
@@ -314,8 +365,8 @@ function setLayer(id, s, text) { const p = plates[id]; p.material.color.setHex(C
 function frame(now) {
   const dtReal = Math.min(0.05, (now - last) / 1000); last = now; let dts = 0;
   if (playing) { dts = dtReal * +$("rate").value; t += dts; if (t >= T_END) { t = T_END; playing = false; $("play").textContent = "Replay"; } }
-  const i = idx(t), on = t >= T_ON && arm.id !== "clean", ease = Math.min(1, dtReal * 6);
-  const vt = at(arm.vt, t), ve = at(arm.ve, t), dv = at(arm.dv, t), ye = at(arm.ye, t), mode = +arm.m[i], orig = +arm.o[i], g = arm.g[i], h = arm.h[i], braking = arm.b[i] === "1";
+  const i = idx(t), on = t >= T_ON && t < T_OFF, ease = Math.min(1, dtReal * 6);
+  const vt = at(arm.vt, t), ve = at(arm.ve, t), dv = at(arm.dv, t), ye = at(arm.ye, t), mode = +arm.m[i], orig = +arm.o[i], g = +arm.g[i], h = +arm.h[i], braking = arm.b[i] === "1";
   const blink = Math.floor(now / 350) % 2 === 0;
 
   scroll += vt * dts; for (const m of moving) m.position.x = ((m.userData.x0 - scroll + SPAN / 2) % SPAN + SPAN) % SPAN - SPAN / 2;
@@ -329,6 +380,15 @@ function frame(now) {
   ghostA += ((apart ? 0.6 : 0) - ghostA) * ease; ghost.ghostMat.opacity = ghostA; ghost.visible = ghostA > 0.02;
   ghost.position.x += (lead - ghost.position.x) * ease; ghost.position.z = ye;
 
+  const env = arm.env ? +arm.env[i] : 0, arb = arm.arb ? +arm.arb[i] : 0, prof = arm.pn ? arm.pn[+arm.pf[i]] : null;
+  for (let j = 0; j < 3; j++) envMix[j] += ((env === j ? 1 : 0) - envMix[j]) * Math.min(1, dtReal * 2.5);
+  tunnelMat.opacity = envMix[1] * 0.95; nearMat.opacity = envMix[1] * 0.13; ribMat.opacity = envMix[1] * 0.85; tunnel.visible = envMix[1] > 0.02; tunnel.position.z = 0;
+  for (const r of tunnel.children) if (r.userData.lamp) r.userData.lamp.material.opacity = envMix[1];
+  rain.material.opacity = envMix[2] * 0.85; rain.visible = envMix[2] > 0.02;
+  if (rain.visible) { for (let j = 0; j < RAIN_N; j++) { rainPos[j * 3 + 1] -= dtReal * 22; rainPos[j * 3] -= dtReal * vt * 0.6; if (rainPos[j * 3 + 1] < 0) { rainPos[j * 3 + 1] = 16; rainPos[j * 3] = (Math.random() - 0.5) * 70; } } rainGeo.attributes.position.needsUpdate = true; rain.position.z = camZ; }
+  bgNow.setRGB(0, 0, 0); for (let j = 0; j < 3; j++) { bgNow.r += BG[j].r * envMix[j]; bgNow.g += BG[j].g * envMix[j]; bgNow.b += BG[j].b * envMix[j]; }
+  scene.background.copy(bgNow); scene.fog.color.copy(bgNow); scene.fog.near = 60 - 35 * envMix[2]; scene.fog.far = 150 - 80 * envMix[2];
+  hemi.intensity = 1.0 - 0.45 * envMix[1] - 0.4 * envMix[2];
   let callout = null;
   for (const k in SENSORS) { const bad = on && (arm.bad.includes(k) || (arm.bad.includes("stream") && k === "imu")), flagged = !!(h & (BIT[k] || 0));
     const s = bad ? (flagged ? "veto" : "blind") : flagged ? "alert" : "ok";
@@ -350,11 +410,12 @@ function frame(now) {
   setLayer("L6", g & 1 ? "veto" : "ok", (g & 1 ? "BLOCKS" : "No objection") + ` · score ${arm.sc[i].toFixed(2)}`);
   setLayer("L7", g & 6 ? "veto" : "ok", g & 6 ? "BLOCKS: " + [g & 2 ? "physics" : "", g & 4 ? "rules" : ""].filter(Boolean).join(" + ") : "No objection");
   setLayer("L8", mode === 0 ? (on && wrong ? "blind" : "ok") : mode === 3 ? "veto" : "alert", ["NOMINAL · no limit", "DEGRADED · cap 40 km/h", "LIMP · cap 20 km/h", "HALT · stopped until reset"][mode]);
-  setLayer("L9", orig === 0 ? "ok" : orig === 4 ? "veto" : "alert", ORIG[orig]);
+  setLayer("L9", arb === 5 ? "alert" : orig === 0 ? "ok" : orig === 4 ? "veto" : "alert", arb === 5 ? "Safe exploration: half speed, steering ±15°" : arb === 2 ? "Shadow-testing a new calibration" : arb === 3 ? "Switched calibration" : ORIG[orig]);
 
   $("hVt").textContent = (vt * 3.6).toFixed(0); $("hVe").textContent = (ve * 3.6).toFixed(0); $("hVe").style.color = gapV > 1 ? "var(--blind)" : "";
   $("hDv").textContent = dv.toFixed(2); $("hDv").style.color = Math.abs(dv) > LANE ? "var(--veto)" : "";
   $("hMode").textContent = MODES[mode]; $("hMode").style.color = MODE_CSS[mode];
+  $("hEnv").textContent = ENVS[env]; $("hCal").textContent = arb === 0 ? "search switched off" : arb === 5 ? "none fits · exploring" : arb === 2 ? prof + " · testing another" : prof; $("hCal").style.color = arb === 5 ? "var(--alert)" : arb === 2 ? "var(--accent)" : "";
   $("fault").style.visibility = on ? "visible" : "hidden"; if (on) $("fault").innerHTML = "<b>Defect active:</b> " + arm.desc;
   $("scrub").value = t; $("clock").textContent = t.toFixed(1) + " s";
   for (const li of $("events").children) li.classList.toggle("done", t >= +li.dataset.t);
@@ -364,7 +425,7 @@ function frame(now) {
   camera.lookAt(0, 1.9, camZ);
   renderer.render(scene, camera); drawCharts(); requestAnimationFrame(frame);
 }
-pick(0, 0); requestAnimationFrame(frame);
+setTab("design"); requestAnimationFrame(frame);
 </script>
 </body>
 </html>
