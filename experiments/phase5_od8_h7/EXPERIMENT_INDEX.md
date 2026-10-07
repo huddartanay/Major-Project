@@ -55,3 +55,29 @@ matched window:
 
 **E18's "P1 VALID" is withdrawn.** No policy currently has defensible run-level false-alarm behaviour
 on the window where detection decisions are made. E19 is blocked until E18-R2 resolves this.
+
+
+## Experiments from 18 September 2026 onward
+
+Status key: **C** confirmatory (pre-registered before results, held-out confirmed) · **E** exploratory ·
+**F** finding read from code. Every folder holds its own pre-registration, runner and decision.
+
+| folder | question | type | result | decision |
+|---|---|---|---|---|
+| `EXPLORATORY_DEESCALATION` | Does L8 step down while a fault persists? | E | `position_drift` steps down in 5/5 dev runs; speed faults stay NOMINAL 100 % | Evidence for G4; not a result |
+| `STEP1_MECHANISM` (Stage A) | Why is the gate silent? H1 σ / H2 departure / H3 threshold | **C** | All three rejected; σ, departure, quantile ratios 1.00 on dev and held-out | **H-none** |
+| `STEP1_MECHANISM/heldout_reconfirm` | Do R3c and E21's L1 numbers hold on held-out seeds? | **C** | Gate alarm 0.00 %; L1 30/30, 5 ticks, 0 false alarms | **CONFIRMED** |
+| `STEP2_MAGNITUDE_SWEEP` (C1) | Do value faults populate "L1 detects, gate quiet"? | C (dev only; `lateral_noise` arm crashed, L1 reconstructed) | Cell A empty on 3 of 4 faults | **WALK_AWAY_OR_SHIFT** |
+| `STEP5_SENSOR_LOSS_SWEEP` (C1b) | Does graded IMU loss populate it? | **C** | Cell A only at 100 % loss, dev and held-out | **NARROW** |
+| `STEP3_G2_MONITOR` (C2) | Does the G2 monitor pass its rule? | **E** (pre-registration not prior to results — see `REVIEW_NOTE.md`) | 1.000 / 5 ticks / 0 false alarms — **identical to L1-only** | Not a contribution yet |
+| `STEP4_OUTCOME_EXPERIMENT` (C3) | Does acting on G2 help? | **E** (see `REVIEW_NOTE.md`) | 0 ticks at 100 % loss; 1,181–1,640 at 25 % (censored; vs L8 counter, not L1-only) | Not a result |
+| `EXPLORATORY_MECHANISM_2026-10-06` | Is the silence caused by L8 stopping the car? | E | Silence persists with L8's integrity path off; score is 3.689 ± 0.009 | Led to STEP 6 |
+| `STEP6_MECHANISM_FROZEN_ESTIMATE` | H-indep / H-freeze / H-noise | **C** (held-out block `20270101+i`) | H-indep and H-freeze confirmed; H-noise refuted. Frozen sensor: L1 0/30, gate ≈0 %, speed estimate wrong by ≈12 m/s | **Final** |
+| `EXPLORATORY_SCORE_DIRECTION_2026-10-07` | Why does the score move down? | E | Score ≈ size of the proposal (corr 0.98–0.999); falls with lateral offset, which grows under the fault | Led to the finding below |
+| `FINDING_TWIN_CHANNEL_MISMATCH_2026-10-07` | What does the twin predict? | **F** | Twin models steer only; 99.96 % of the L6 score is throttle + brake | Affects every L6-score result |
+| `STEP7_EFFECT_SPACE_GATE` | Does G1 survive a correctly specified (lateral, effect-space) score? | **C** (calibration `20260901+i`, held-out `20270201+i`) | Threshold 9.19 frozen; dev run in progress | — |
+
+**Reading the older rows above in light of the twin finding:** every experiment that uses the L6 /
+OD-8 score (E17, E18 and its revisions, R3b, R3c, E21's OD-8 column, Phase 2, STEP 1–6) measured a
+score dominated by the size of the longitudinal command. The numbers stand; their interpretation as
+"proposer–twin physical disagreement" does not.

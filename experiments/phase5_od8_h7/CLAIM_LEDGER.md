@@ -93,3 +93,20 @@ Permanent record of what may and may not be said. Every experiment updates this.
   pre-registered primary reached rho = 0.895 largely because `median > threshold` and
   `alarm rate > 0.5` are the same statement. The confound was in the frozen definition, not in the
   data, and it was only visible because the identity was looked for after the number arrived.
+
+
+## Ledger update — 7 October 2026
+
+| claim | status | evidence | may be stated in a paper? |
+|---|---|---|---|
+| The shipped L6 score is suppressed under total IMU loss, on held-out seeds | **Established** | Stage A held-out (0.00 % vs ≈6 % clean); STEP 6 held-out | **Yes — as a statement about the shipped score** |
+| The suppression does not depend on L8 stopping the vehicle | **Established** | STEP 6, H-indep, dev and held-out | **Yes** |
+| A sensor that publishes a frozen value suppresses the score equally and is seen by no layer | **Established** | STEP 6, H-freeze; L1 0/30, speed estimate wrong by ≈12 m/s | **Yes** |
+| The suppression is caused by σ inflation | **Rejected** | Stage A, H1 | **No** |
+| The clean alarms are driven by measurement noise | **Rejected** | STEP 6, H-noise | **No** |
+| 99.96 % of the shipped L6 score comes from throttle and brake, which the twin does not model | **Established from code and dev runs** | `FINDING_TWIN_CHANNEL_MISMATCH_2026-10-07` | **Yes, with the code references** |
+| "Conformal safety gates go silent under sensor loss" as a general statement | **Not supported yet** | Depends on STEP 7 | **No, until STEP 7 is confirmed** |
+| The G2 monitor outperforms an L1-only trigger | **Rejected as stated** | Held-out latencies identical or G2 slower; `docs/REVIEW_TANAY_2026-10-06.md` | **No** |
+| Acting on G2 brings escalation forward by 1,181–1,640 ticks | **Exploratory only** | STEP 4; censored, compared with L8's counter | **No** |
+| The score moves down because the fault shifts the closed loop to a larger lateral offset | **Exploratory only** | `EXPLORATORY_SCORE_DIRECTION_2026-10-07` | **No, until pre-registered** |
+| The vehicle can step down a mode while a fault persists | **Exploratory only** | `EXPLORATORY_DEESCALATION`, 5/5 dev runs | **No, until pre-registered** |
