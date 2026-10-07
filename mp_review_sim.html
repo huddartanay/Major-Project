@@ -1,0 +1,331 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ASTRA in the car — 3D walkthrough</title>
+<style>
+  :root { --bg:#0d1117; --panel:#161b22; --line:#30363d; --text:#e6edf3; --dim:#8b949e;
+          --ok:#3fb950; --alert:#d29922; --veto:#f85149; --blind:#a371f7; --dormant:#6e7681; --accent:#58a6ff; }
+  * { box-sizing:border-box; }
+  html,body { margin:0; height:100%; background:var(--bg); color:var(--text);
+              font:14px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif; overflow:hidden; }
+  #wrap { display:flex; height:100%; }
+  #stage { position:relative; flex:1; min-width:0; }
+  #stage canvas { display:block; }
+  #labels { position:absolute; inset:0; pointer-events:none; overflow:hidden; }
+  .lbl { position:absolute; transform:translate(-100%,-50%); padding:1px 8px 1px 6px; white-space:nowrap;
+         font-size:12px; border-right:3px solid var(--ok); background:rgba(13,17,23,.72); border-radius:3px 0 0 3px; }
+  .tag { position:absolute; transform:translate(-50%,-140%); font-size:11px; color:var(--dim);
+         background:rgba(13,17,23,.6); padding:0 5px; border-radius:3px; white-space:nowrap; }
+  #hint { position:absolute; left:12px; bottom:10px; font-size:12px; color:var(--dim); }
+  #banner { position:absolute; left:12px; top:10px; right:12px; font-size:13px; color:var(--dim); }
+  #banner b { color:var(--text); font-size:15px; }
+  #panel { width:372px; max-width:46vw; background:var(--panel); border-left:1px solid var(--line);
+           padding:14px 14px 18px; overflow-y:auto; }
+  h1 { font-size:16px; margin:0 0 2px; } h2 { font-size:12px; letter-spacing:.06em; text-transform:uppercase;
+       color:var(--dim); margin:16px 0 6px; font-weight:600; }
+  .sub { color:var(--dim); font-size:12px; margin-bottom:8px; }
+  .btns { display:grid; grid-template-columns:1fr 1fr; gap:6px; }
+  button { font:inherit; color:var(--text); background:#21262d; border:1px solid var(--line);
+           border-radius:6px; padding:7px 8px; cursor:pointer; text-align:left; }
+  button:hover { border-color:var(--accent); } button.on { border-color:var(--accent); background:#1f2f47; }
+  .row { display:flex; gap:6px; align-items:center; margin-top:8px; }
+  .row button { text-align:center; flex:0 0 auto; }
+  input[type=range] { flex:1; accent-color:var(--accent); }
+  .kv { display:grid; grid-template-columns:1fr auto; gap:3px 10px; font-variant-numeric:tabular-nums; }
+  .kv > span:nth-child(odd) { color:var(--dim); }
+  .mode { display:inline-block; padding:1px 8px; border-radius:10px; font-weight:600; color:#0d1117; }
+  .bar { position:relative; height:10px; background:#21262d; border-radius:5px; margin:6px 0 2px; }
+  .bar i { position:absolute; left:0; top:0; bottom:0; border-radius:5px; background:var(--ok); }
+  .bar em { position:absolute; top:-3px; bottom:-3px; width:2px; background:var(--text); }
+  ul { list-style:none; margin:0; padding:0; } li { display:grid; grid-template-columns:10px 92px 1fr; gap:8px;
+       padding:4px 0; border-top:1px solid var(--line); font-size:12.5px; align-items:start; }
+  li i { width:10px; height:10px; border-radius:50%; margin-top:4px; background:var(--ok); }
+  li b { font-weight:600; } li span { color:var(--dim); }
+  .legend { display:flex; flex-wrap:wrap; gap:4px 12px; font-size:12px; color:var(--dim); }
+  .legend i { display:inline-block; width:9px; height:9px; border-radius:50%; margin-right:5px; }
+  .note { font-size:12px; color:var(--dim); border:1px solid var(--line); border-radius:6px; padding:8px 10px; margin-top:8px; }
+  .note b { color:var(--text); }
+  label.chk { display:flex; gap:7px; align-items:center; font-size:12.5px; margin-top:8px; color:var(--dim); cursor:pointer; }
+  @media (max-width:760px) { #wrap { flex-direction:column; } #panel { width:auto; max-width:none; height:48%;
+       border-left:0; border-top:1px solid var(--line); } }
+</style>
+</head>
+<body>
+<div id="wrap">
+  <div id="stage">
+    <div id="labels"></div>
+    <div id="banner"><b id="scnTitle"></b><br><span id="scnLine"></span></div>
+    <div id="hint">Drag to rotate · scroll to zoom · solid car = where the car really is · blue outline = where ASTRA believes it is</div>
+  </div>
+  <aside id="panel">
+    <h1>ASTRA in the car</h1>
+    <div class="sub">Nine governance layers around a learned controller. Pick a situation and watch which layer reacts.</div>
+
+    <h2>Situation</h2>
+    <div class="btns" id="scnBtns"></div>
+    <div class="row">
+      <button id="play">Pause</button><button id="restart">Restart</button>
+      <input id="scrub" type="range" min="0" max="24" step="0.05" value="0">
+      <span id="clock" style="width:44px;text-align:right;font-variant-numeric:tabular-nums">0.0 s</span>
+    </div>
+    <label class="chk"><input type="checkbox" id="dormant"> Show parts that are built but not connected</label>
+
+    <h2>Vehicle</h2>
+    <div class="kv">
+      <span>True speed</span><span id="vTrue"></span>
+      <span>Speed ASTRA believes</span><span id="vBel"></span>
+      <span>Driving mode (L8)</span><span><span class="mode" id="mode"></span></span>
+      <span>Who is driving (L9)</span><span id="origin"></span>
+    </div>
+    <h2>Statistical gate (L6) score</h2>
+    <div class="bar"><i id="scoreBar"></i><em id="thrMark"></em></div>
+    <div class="sub" id="scoreTxt"></div>
+
+    <h2>Layers</h2>
+    <ul id="layers"></ul>
+    <div class="legend" style="margin-top:8px">
+      <span><i style="background:var(--ok)"></i>working</span>
+      <span><i style="background:var(--alert)"></i>flagged a problem</span>
+      <span><i style="background:var(--veto)"></i>blocking / stopped</span>
+      <span><i style="background:var(--blind)"></i>says OK but is wrong</span>
+      <span><i style="background:var(--dormant)"></i>not connected</span>
+    </div>
+
+    <div class="note" id="evidence"></div>
+    <div class="note"><b>What is real here.</b> Which layer reacts, the final driving mode, and the speed gap are taken
+      from our recorded experiments (STEP 6 and STEP 7, held-out seeds, 30 runs each). The motion in between, the
+      timing, the size of the blue outline's offset and the score trace are an illustration, compressed in time.
+      This page does not run the ASTRA code.</div>
+  </aside>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+"use strict";
+const COL = { ok:0x3fb950, alert:0xd29922, veto:0xf85149, blind:0xa371f7, dormant:0x6e7681 };
+const CSS = { ok:"var(--ok)", alert:"var(--alert)", veto:"var(--veto)", blind:"var(--blind)", dormant:"var(--dormant)" };
+const MODE_COL = { NOMINAL:"#3fb950", DEGRADED:"#d29922", LIMP:"#db6d28", HALT:"#f85149" };
+const T_FAULT = 6, T_END = 24, V0 = 11.3, THR = 3.70;
+
+const LAYERS = [
+  ["L1", "Sensing", "Checks each sensor stream is arriving on time"],
+  ["L2", "Estimation", "Fuses sensors into position, speed, heading"],
+  ["L3", "Trust", "Scores how far readings are from what was expected"],
+  ["L4", "Proposer", "Learned controller proposes throttle, brake, steer"],
+  ["L5", "Digital twin", "Predicts what a sound command would be"],
+  ["L6", "Statistical gate", "Blocks proposals too far from the twin"],
+  ["L7", "Shield + physics", "Rule checks and physical-limit checks"],
+  ["L8", "Fail-safe", "Normal → 40 km/h → 20 km/h → stop"],
+  ["L9", "Arbitration", "Issues the command, or hands over to the fallback"],
+];
+const DORMANT = [
+  ["L3", "Trust has no authority: nothing acts on a low trust score"],
+  ["L9", "Cold path and safe exploration: coded, never switched on"],
+  ["FB2", "Learning steering response from the car: shadow only"],
+  ["FB3", "Online threshold update: shadow only"],
+];
+
+/* st(k): per-layer status; each scenario returns state at time t (seconds). */
+const ease = (t, t0, tau) => t < t0 ? 0 : 1 - Math.exp(-(t - t0) / tau);
+const SCN = {
+  clean: {
+    name: "Normal driving", line: "No fault. Every layer agrees and the learned controller drives.",
+    evidence: "<b>Measured.</b> 30 of 30 clean runs stayed in normal mode; the gate alarmed on about 5 % of ticks, as designed; believed and true speed differ by 0.01 m/s.",
+    at(t) { return { vTrue:V0, vBel:V0, mode:"NOMINAL", origin:"Learned controller", score:3.69, sensors:{}, lat:0,
+      st:{}, notes:{} }; }
+  },
+  loss: {
+    name: "Sensor stops sending", line: "At 6 s the inertial sensor goes silent. ASTRA notices and slows the car down.",
+    evidence: "<b>Measured.</b> L1 flagged the loss one tick after it began in 30 of 30 runs. L8 moved to the 20 km/h mode (83 % of ticks) or stop (17 %). The statistical gate did <i>not</i> help: its alarm rate fell below the clean rate. Believed speed stayed about 11.6 m/s away from true speed.",
+    at(t) {
+      const f = t >= T_FAULT, k = ease(t, T_FAULT + 1, 4);
+      const mode = !f ? "NOMINAL" : t < T_FAULT + 1.5 ? "DEGRADED" : "LIMP";
+      return { vTrue:V0 - (V0 - 1.2) * k, vBel:V0, mode, origin: f && t > T_FAULT + 1.5 ? "Fallback controller" : "Learned controller",
+        score: 3.69 - 0.32 * ease(t, T_FAULT, 2), sensors: f ? { imu:"veto", speed:"veto", lat:"veto" } : {}, lat:0,
+        st: f ? { L1:"alert", L2:"blind", L6:"blind", L8: mode === "LIMP" ? "veto" : "alert", L9:"alert" } : {},
+        notes: f ? { L1:"Stream is stale: flagged", L2:"Speed estimate frozen at the last value", L6:"Goes quiet instead of alarming",
+                     L8:"Escalates on L1's flag", L9:"Caps speed, fallback takes over" } : {} };
+    }
+  },
+  frozen: {
+    name: "Sensor freezes", line: "At 6 s speed and lateral-acceleration readings stop changing but keep arriving. Most layers see nothing wrong.",
+    evidence: "<b>Measured.</b> L1 flagged 0 of 30 runs: the frozen values arrive on time and in range. The shipped gate stayed near 0 % alarms. True speed fell to 0–2 m/s while ASTRA believed about 11.5 m/s. In roughly 20 of 30 runs the mode stayed normal for the whole run (shown here); in the other 8–10 L8 did reach stop, and we have not yet identified which check caused it.",
+    at(t) {
+      const f = t >= T_FAULT, k = ease(t, T_FAULT + 0.5, 4.5);
+      return { vTrue:V0 - (V0 - 1.0) * k, vBel:V0, mode:"NOMINAL", origin:"Learned controller",
+        score: 3.69 - 0.30 * ease(t, T_FAULT, 2), sensors: f ? { speed:"blind", lat:"blind" } : {}, lat:0,
+        st: f ? { L1:"blind", L2:"blind", L3:"blind", L5:"blind", L6:"blind", L7:"blind", L8:"blind", L9:"blind" } : {},
+        notes: f ? { L1:"On time and in range: looks healthy", L2:"Trusts the frozen speed", L3:"Readings match expectation exactly",
+                     L5:"Predicts from the wrong state", L6:"Score falls: quieter than normal", L7:"Checks pass on the wrong state",
+                     L8:"No evidence, stays in normal mode", L9:"Speed cap acts on believed speed" } : {} };
+    }
+  },
+  lie: {
+    name: "One sensor lies", line: "At 6 s one of three position sources reports a shifted position. The other two outvote it and the car is stopped.",
+    evidence: "<b>Measured.</b> The cross-check between position sources flagged the fault about 9 ticks (under half a second) after it began, in 30 of 30 runs, and L8 took every run to stop. Believed and true speed stayed together (0.01 m/s). Whether a full stop is the right response to one bad source out of three is an open design question.",
+    at(t) {
+      const f = t >= T_FAULT, d = t - T_FAULT;
+      const mode = !f || d < 0.5 ? "NOMINAL" : d < 1.5 ? "DEGRADED" : d < 3 ? "LIMP" : "HALT";
+      const v = d < 0.5 ? V0 : Math.max(0, V0 * Math.exp(-(d - 0.5) / 2.2) - (d > 6 ? 0.4 : 0));
+      const flagged = f && d >= 0.5;
+      return { vTrue:f ? v : V0, vBel:f ? v : V0, mode, origin: mode === "NOMINAL" ? "Learned controller" : "Fallback controller",
+        score:3.69, sensors: f ? { posA: flagged ? "alert" : "blind" } : {}, lat: f ? 1.1 * ease(t, T_FAULT, 0.4) * (flagged ? Math.exp(-(d - 0.5) / 1.5) : 1) : 0,
+        st: flagged ? { L1:"alert", L3:"alert", L8: mode === "HALT" ? "veto" : "alert", L9: mode === "HALT" ? "veto" : "alert" } : (f ? { L2:"blind" } : {}),
+        notes: flagged ? { L1:"Cross-check: one source disagrees with two", L3:"Readings far from expectation",
+                           L8:"Escalates step by step to stop", L9:"Fallback brings the car to rest" } : (f ? { L2:"Estimate pulled sideways briefly" } : {}) };
+    }
+  },
+};
+
+/* ---------- scene ---------- */
+const stage = document.getElementById("stage"), labelsEl = document.getElementById("labels");
+const renderer = new THREE.WebGLRenderer({ antialias:true });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+stage.insertBefore(renderer.domElement, labelsEl);
+const scene = new THREE.Scene(); scene.background = new THREE.Color(0x0d1117); scene.fog = new THREE.Fog(0x0d1117, 40, 110);
+const camera = new THREE.PerspectiveCamera(42, 1, 0.1, 300);
+scene.add(new THREE.HemisphereLight(0xcfd8e6, 0x1a1f27, 0.95));
+const sun = new THREE.DirectionalLight(0xffffff, 0.7); sun.position.set(8, 14, 6); scene.add(sun);
+
+const mat = (c, o = {}) => new THREE.MeshStandardMaterial(Object.assign({ color:c, roughness:0.75, metalness:0.05 }, o));
+const box = (w, h, d, m) => new THREE.Mesh(new THREE.BoxGeometry(w, h, d), m);
+
+const ground = box(400, 0.1, 400, mat(0x11161d)); ground.position.y = -0.06; scene.add(ground);
+const road = box(240, 0.02, 7, mat(0x22272e)); scene.add(road);
+for (const z of [-3.5, 3.5]) { const e = box(240, 0.03, 0.14, mat(0xc9d1d9)); e.position.set(0, 0.02, z); scene.add(e); }
+const dashes = [];
+for (let i = 0; i < 40; i++) { const d = box(2.2, 0.03, 0.12, mat(0xc9d1d9)); d.position.set(-120 + i * 6, 0.02, 0); scene.add(d); dashes.push(d); }
+const posts = [];
+for (let i = 0; i < 20; i++) for (const z of [-5.2, 5.2]) { const p = box(0.12, 1.1, 0.12, mat(0x3d444d)); p.position.set(-120 + i * 12, 0.55, z); scene.add(p); posts.push(p); }
+
+function buildCar(ghost) {
+  const g = new THREE.Group();
+  const m = ghost ? new THREE.MeshBasicMaterial({ color:0x58a6ff, wireframe:true, transparent:true, opacity:0.55 }) : mat(0xd0d7de, { metalness:0.3, roughness:0.45 });
+  const body = box(4.3, 0.62, 1.8, m); body.position.y = 0.66; g.add(body);
+  const cab = box(2.2, 0.56, 1.6, ghost ? m : mat(0x30363d, { metalness:0.4, roughness:0.3 })); cab.position.set(-0.25, 1.24, 0); g.add(cab);
+  g.wheels = [];
+  if (!ghost) for (const x of [-1.35, 1.35]) for (const z of [-0.92, 0.92]) {
+    const w = new THREE.Mesh(new THREE.CylinderGeometry(0.36, 0.36, 0.26, 20), mat(0x0b0e12));
+    w.rotation.x = Math.PI / 2; w.position.set(x, 0.36, z); g.add(w); g.wheels.push(w);
+    const hub = box(0.5, 0.08, 0.28, mat(0x8b949e)); hub.position.copy(w.position); g.add(hub); g.wheels.push(hub);
+  }
+  return g;
+}
+const car = buildCar(false); scene.add(car);
+const ghost = buildCar(true); scene.add(ghost);
+
+const SENSORS = { posA:["Position A", 1.5, 1.05, 0.55], posB:["Position B", -0.25, 1.62, 0], imu:["Position C / inertial", -1.6, 1.05, -0.5],
+                  speed:["Speed", 1.35, 0.5, 1.08], lat:["Lateral accel.", 0.2, 1.05, -0.95] };
+const sensorMesh = {}, sensorTag = {};
+for (const k in SENSORS) {
+  const [name, x, y, z] = SENSORS[k];
+  const s = new THREE.Mesh(new THREE.SphereGeometry(0.13, 16, 12), new THREE.MeshBasicMaterial({ color:COL.ok }));
+  s.position.set(x, y, z); car.add(s); sensorMesh[k] = s;
+  const el = document.createElement("div"); el.className = "tag"; el.textContent = name; labelsEl.appendChild(el); sensorTag[k] = el;
+}
+
+const stack = new THREE.Group(); scene.add(stack);
+const plates = {}, plateLbl = {};
+LAYERS.forEach(([id, name], i) => {
+  const m = new THREE.MeshStandardMaterial({ color:COL.ok, transparent:true, opacity:0.78, roughness:0.5, emissive:COL.ok, emissiveIntensity:0.25 });
+  const p = box(2.5, 0.2, 1.5, m); p.position.set(-0.25, 2.5 + i * 0.4, 0); stack.add(p); plates[id] = p;
+  const el = document.createElement("div"); el.className = "lbl"; el.textContent = id + " · " + name; labelsEl.appendChild(el); plateLbl[id] = el;
+});
+const wires = new THREE.Group(); scene.add(wires);
+for (const k in SENSORS) {
+  const [, x, y, z] = SENSORS[k];
+  const geo = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(x, y, z), new THREE.Vector3(-0.25 + x * 0.3, 2.4, z * 0.4)]);
+  const l = new THREE.Line(geo, new THREE.LineBasicMaterial({ color:0x58a6ff, transparent:true, opacity:0.45 })); wires.add(l); sensorMesh[k].wire = l;
+}
+const pulse = new THREE.Mesh(new THREE.SphereGeometry(0.11, 12, 10), new THREE.MeshBasicMaterial({ color:0xffffff })); stack.add(pulse);
+const cmd = new THREE.Mesh(new THREE.ConeGeometry(0.16, 0.5, 14), new THREE.MeshBasicMaterial({ color:0x58a6ff }));
+cmd.rotation.z = Math.PI; stack.add(cmd);
+
+/* ---------- camera orbit ---------- */
+const orbit = { az:-0.95, el:0.42, r:17, tx:0, ty:2.4 };
+function placeCamera() {
+  camera.position.set(orbit.tx + orbit.r * Math.cos(orbit.el) * Math.cos(orbit.az), orbit.ty + orbit.r * Math.sin(orbit.el),
+                      orbit.r * Math.cos(orbit.el) * Math.sin(orbit.az) * -1);
+  camera.lookAt(orbit.tx, orbit.ty, 0);
+}
+let drag = null;
+renderer.domElement.addEventListener("pointerdown", e => { drag = [e.clientX, e.clientY]; renderer.domElement.setPointerCapture(e.pointerId); });
+renderer.domElement.addEventListener("pointermove", e => { if (!drag) return;
+  orbit.az += (e.clientX - drag[0]) * 0.006; orbit.el = Math.min(1.35, Math.max(0.06, orbit.el + (e.clientY - drag[1]) * 0.005)); drag = [e.clientX, e.clientY]; });
+renderer.domElement.addEventListener("pointerup", () => { drag = null; });
+renderer.domElement.addEventListener("wheel", e => { e.preventDefault(); orbit.r = Math.min(45, Math.max(8, orbit.r * (1 + Math.sign(e.deltaY) * 0.08))); }, { passive:false });
+function resize() { const w = stage.clientWidth, h = stage.clientHeight; renderer.setSize(w, h); camera.aspect = w / h; camera.updateProjectionMatrix(); }
+addEventListener("resize", resize); resize();
+
+/* ---------- UI ---------- */
+const $ = id => document.getElementById(id);
+let scn = "clean", t = 0, playing = true, travelled = 0, ghostLead = 0, last = performance.now();
+for (const k in SCN) { const b = document.createElement("button"); b.textContent = SCN[k].name; b.dataset.k = k;
+  b.onclick = () => { scn = k; reset(); }; $("scnBtns").appendChild(b); }
+const rows = {};
+function buildRows() {
+  $("layers").innerHTML = "";
+  for (const [id, name, what] of LAYERS) { const li = document.createElement("li");
+    li.innerHTML = `<i></i><b>${id} ${name}</b><span></span>`; li.dataset.what = what; $("layers").appendChild(li); rows[id] = li; }
+  if ($("dormant").checked) for (const [id, what] of DORMANT) { const li = document.createElement("li");
+    li.innerHTML = `<i style="background:var(--dormant)"></i><b>${id} (off)</b><span>${what}</span>`; $("layers").appendChild(li); }
+}
+function reset() { t = 0; ghostLead = 0; playing = true; $("play").textContent = "Pause";
+  document.querySelectorAll("#scnBtns button").forEach(b => b.classList.toggle("on", b.dataset.k === scn));
+  $("scnTitle").textContent = SCN[scn].name; $("scnLine").textContent = SCN[scn].line; $("evidence").innerHTML = SCN[scn].evidence; }
+$("play").onclick = () => { playing = !playing; $("play").textContent = playing ? "Pause" : "Play"; };
+$("restart").onclick = reset;
+$("scrub").oninput = e => { t = +e.target.value; ghostLead = leadAt(t); };
+$("dormant").onchange = buildRows;
+$("thrMark").style.left = "80%";
+function leadAt(tt) { let s = 0; for (let x = 0; x < tt; x += 0.1) { const a = SCN[scn].at(x); s += (a.vBel - a.vTrue) * 0.1; } return s; }
+buildRows(); reset();
+
+const v3 = new THREE.Vector3();
+function project(obj, el, dx = 0) { obj.getWorldPosition(v3); v3.x += dx; v3.project(camera);
+  const on = v3.z < 1; el.style.display = on ? "" : "none";
+  el.style.left = ((v3.x * 0.5 + 0.5) * stage.clientWidth) + "px"; el.style.top = ((-v3.y * 0.5 + 0.5) * stage.clientHeight) + "px"; }
+
+function frame(now) {
+  const dt = Math.min(0.05, (now - last) / 1000); last = now;
+  if (playing) { t += dt; if (t >= T_END) { t = T_END; playing = false; $("play").textContent = "Play"; } }
+  const a = SCN[scn].at(t), jitter = Math.sin(now / 90) * 0.012 + Math.sin(now / 37) * 0.008;
+  if (playing) { travelled += a.vTrue * dt; ghostLead += (a.vBel - a.vTrue) * dt; }
+
+  for (const d of dashes) d.position.x = ((d.position.x - a.vTrue * dt * (playing ? 1 : 0) + 120) % 240 + 240) % 240 - 120;
+  for (const p of posts) p.position.x = ((p.position.x - a.vTrue * dt * (playing ? 1 : 0) + 120) % 240 + 240) % 240 - 120;
+  car.wheels.forEach((w, i) => { if (i % 2 === 0) w.rotation.y -= a.vTrue * dt * (playing ? 1 : 0) / 0.36; });
+  const lead = Math.min(9, ghostLead * 0.09);                       /* visual scale, not metres */
+  ghost.position.set(lead, 0, a.lat); ghost.visible = lead > 0.15 || Math.abs(a.lat) > 0.05;
+  stack.position.x = car.position.x;
+
+  for (const k in sensorMesh) { const s = a.sensors[k] || "ok"; let c = COL[s];
+    if (s === "veto" && Math.floor(now / 260) % 2) c = 0x3a1215;
+    sensorMesh[k].material.color.setHex(c); sensorMesh[k].wire.material.opacity = s === "veto" ? 0.08 : 0.45;
+    sensorMesh[k].wire.material.color.setHex(s === "ok" ? 0x58a6ff : c); project(sensorMesh[k], sensorTag[k]); }
+
+  for (const [id] of LAYERS) { const s = a.st[id] || "ok", p = plates[id];
+    p.material.color.setHex(COL[s]); p.material.emissive.setHex(COL[s]); p.material.emissiveIntensity = s === "ok" ? 0.22 : 0.55 + 0.25 * Math.sin(now / 180);
+    plateLbl[id].style.borderRightColor = CSS[s]; project(p, plateLbl[id], -1.45);
+    rows[id].firstChild.style.background = CSS[s]; rows[id].lastChild.textContent = a.notes[id] || rows[id].dataset.what; }
+
+  const cyc = (now / 900) % 1;                                        /* data pulse climbs the stack, command comes back down */
+  pulse.position.set(-0.25, 2.5 + cyc * 3.2, 0); pulse.visible = cyc < 0.92;
+  const issuing = a.mode !== "HALT"; cmd.visible = issuing;
+  cmd.position.set(1.25, 5.7 - ((now / 900 + 0.5) % 1) * 3.6, 0); cmd.material.color.setHex(a.origin.startsWith("Learned") ? 0x58a6ff : 0xdb6d28);
+
+  $("vTrue").textContent = (a.vTrue * 3.6).toFixed(0) + " km/h"; $("vBel").textContent = (a.vBel * 3.6).toFixed(0) + " km/h";
+  $("vBel").style.color = Math.abs(a.vBel - a.vTrue) > 1 ? "var(--blind)" : "";
+  $("mode").textContent = a.mode; $("mode").style.background = MODE_COL[a.mode]; $("origin").textContent = a.mode === "HALT" ? "Stopped" : a.origin;
+  const sc = a.score + jitter; $("scoreBar").style.width = Math.max(0, Math.min(100, 80 * (sc - 3.0) / (THR - 3.0))) + "%";
+  $("scoreBar").style.background = scn === "clean" || t < T_FAULT ? "var(--ok)" : (a.st.L6 === "blind" ? "var(--blind)" : "var(--ok)");
+  $("scoreTxt").textContent = `${sc.toFixed(2)} against a block threshold of ${THR.toFixed(2)}` + (a.st.L6 === "blind" ? " — moving away from the threshold during a fault" : "");
+  $("scrub").value = t; $("clock").textContent = t.toFixed(1) + " s";
+  placeCamera(); renderer.render(scene, camera); requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>

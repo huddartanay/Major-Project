@@ -135,7 +135,7 @@ cells are empty on purpose.
 | category | case | evidence | result |
 |---|---|---|---|
 | sensor loss | IMU dropout | Tanay's STEP 1–5; STEP 6 | L1 flags it; L8 escalates and stops. Shipped L6 gate goes quiet (G1) |
-| frozen sensor (replay-like) | speed and lateral acceleration stuck | STEP 6, dev + held-out | **L1 0/30. Shipped gate ≈ 0 %. Estimated vs true speed ≈ 12 m/s apart.** Nothing in the stack notices |
+| frozen sensor (replay-like) | speed and lateral acceleration stuck | STEP 6, dev + held-out | **L1 0/30. Shipped gate ≈ 0 %. Estimated vs true speed ≈ 12 m/s apart.** In about two thirds of runs the stack stays in NOMINAL throughout; in 8–10 of 30 L8 does reach HALT, cause not yet identified (corrected 7 Oct, see STEP 7 `POST_HOC_NOTE_2026-10-07.md`) |
 | frozen sensor, corrected score | same | STEP 7 | Not suppressed (median ≈ 5.2× clean), but ≈ 20 % of runs stay quiet. Detection **not established** |
 | lying, one of three position sources | `position_bias` | STEP 7 positive control | Corrected score detects it (11× dev, 17× held-out). Shipped-score behaviour on this arm not re-measured in STEP 7 |
 | lying, speed / lateral-acceleration bias | — | none | **untested** |
