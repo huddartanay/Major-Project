@@ -1,0 +1,37 @@
+{
+ "outcome": "G1-ARTEFACT",
+ "classes": {
+  "dropout": "UNCHANGED",
+  "dropout_noL8": "DETECTS",
+  "stuck": "DETECTS",
+  "position_bias": "DETECTS"
+ },
+ "ratios": {
+  "dropout": {
+   "median": 1.7575633883980022,
+   "lo": 0.5017934601267934,
+   "hi": 3.386612021857924,
+   "n": 30
+  },
+  "dropout_noL8": {
+   "median": 2.866912776873983,
+   "lo": 1.4801911256242797,
+   "hi": 7.843283582089552,
+   "n": 30
+  },
+  "stuck": {
+   "median": 5.234648686305732,
+   "lo": 2.1732954545454546,
+   "hi": 9.904323308270676,
+   "n": 30
+  },
+  "position_bias": {
+   "median": 11.001975659870396,
+   "lo": 7.56901915038398,
+   "hi": 17.56852879944483,
+   "n": 30
+  }
+ },
+ "p_cal_in_band": 30,
+ "p_sens": true
+}
