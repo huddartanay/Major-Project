@@ -165,3 +165,40 @@ Reason for the split: putting unproven parts beside the solid finding would let 
 - Whether the safe-exploration check (wiring item 4) goes into paper 1.
 - Go-ahead before any STEP 8 run.
 - Push of local commits (`a34a482` onward).
+
+---
+
+## 9 · Phases
+
+Goal: a system that detects faults, reacts to them, and returns to a better functional state, with
+stated limits against lying, manipulated and semantically wrong sensors.
+
+Each phase has an exit test. A phase is not done until its exit test is met or its failure is written up.
+
+### Paper 1 — "Calibration is not validity" (ITSC, 1 March 2027)
+
+| phase | dates | work | exit test |
+|---|---|---|---|
+| **P1 · Define** | 8–18 Oct 2026 | Threat model (one page). Pre-registration of the C1 sensitivity audit. Read SAVIOR, control invariants, PID-Piper, Mo & Sinopoli. Brief Tanay on STEP 6/7 and the twin mismatch | Threat model and audit pre-registration committed; Tanay has read both |
+| **P2 · Prove the monitor problem (C1)** | 19 Oct – 8 Nov | Run the audit on the shipped and corrected scores. Step 2b: audit a second, independently built monitor | Audit separates informative from uninformative scores on dev and held-out, on at least two monitors |
+| **P3 · Map the faults (C2, C3)** | 9 Nov – 13 Dec | Add the L1 frozen-value check as baseline. Pre-register and run STEP 8 (eight fault arms, four detectors, run-level metric, seeds `20270301+i`). Explain the ≈ 20 % quiet runs | Complete taxonomy table, dev and held-out, every cell filled including the negative ones |
+| **P4 · Repair the monitor** | 14 Dec – 10 Jan 2027 | Retrain the twin in effect space (a_long, a_lat) with an ADR; gate on the audit. Optional: safe-exploration check with the cold path on | Retrained gate passes the audit and detects frozen sensors in a pre-registered share of runs — or the failure is reported |
+| **P5 · Write and submit** | 11 Jan – 1 Mar | Paper, figures, artefact, internal review by all four authors and the guide. College report from the same material | Submitted to ITSC |
+
+### Paper 2 — the self-adapting system (journal, after March 2027)
+
+| phase | work | exit test |
+|---|---|---|
+| **P6 · Guarded learning** | Health guard (no learning while L1/L3 unhealthy or the audit fails). Wire FB2 estimator behind it | Learning improves the twin on clean runs and does not weaken the gate under any STEP 8 fault |
+| **P7 · Exploration and recovery** | Wire the L9 cold path: shadow execution, switch / rollback, bounded safe exploration. Test exploration as an active probe for frozen / replayed sensors | Exploration engages, keeps the car in lane, and raises frozen-sensor detection over the passive gate |
+| **P8 · Adaptive thresholds** | FB3, committed only through shadow execution | No slow-drift arm can move the threshold enough to hide itself |
+| **P9 · Generality and baselines** | Second controller or platform; CARLA or real data; SAVIOR / PID-Piper comparison | Main results hold on the second setting |
+| **P10 · Write and submit** | Journal paper (T-ITS / T-IV / TDSC) | Submitted |
+
+### Rules across all phases
+
+- Pre-registration is committed before any study seed is run; a held-out block is used once.
+- No learning loop is wired before P3 ends, so the system under test does not change midway.
+- STEP 8 and any other run needs Sushanth's go-ahead; pushes need a yes each time.
+- If P2 fails (the audit does not generalise), paper 1 becomes a case study and the venue drops to a
+  workshop; decide at the end of P2, not later.
