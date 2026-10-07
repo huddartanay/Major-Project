@@ -1,0 +1,37 @@
+{
+ "outcome": "MIXED / INCONCLUSIVE",
+ "classes": {
+  "dropout": "INCONCLUSIVE",
+  "dropout_noL8": "INCONCLUSIVE",
+  "stuck": "INCONCLUSIVE",
+  "position_bias": "DETECTS"
+ },
+ "ratios": {
+  "dropout": {
+   "median": 0.6848463819317394,
+   "lo": 0.10916442048517519,
+   "hi": 6.150966183574879,
+   "n": 30
+  },
+  "dropout_noL8": {
+   "median": 2.1549989839463524,
+   "lo": 0.610738255033557,
+   "hi": 9.242092840283242,
+   "n": 30
+  },
+  "stuck": {
+   "median": 5.197803961122318,
+   "lo": 0.91875,
+   "hi": 9.061279461279462,
+   "n": 30
+  },
+  "position_bias": {
+   "median": 17.223491102549993,
+   "lo": 11.545275225099786,
+   "hi": 18.29268292682927,
+   "n": 30
+  }
+ },
+ "p_cal_in_band": 30,
+ "p_sens": true
+}

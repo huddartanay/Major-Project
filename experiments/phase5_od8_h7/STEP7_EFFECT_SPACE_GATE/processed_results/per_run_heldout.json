@@ -1,0 +1,2722 @@
+{
+ "split": "heldout",
+ "git_head": "7f2c35bbeeb67c009be3374fd14ea2e0bd8fd6bd",
+ "tau": 9.18967188843625,
+ "runs": [
+  {
+   "arm": "clean",
+   "seed": 20270201,
+   "n_scored": 3000,
+   "alarm_rate": 0.05466666666666667,
+   "score_p50": 8.459888194893702,
+   "score_p95": 9.214530187278676,
+   "score_sd": 0.5224843603184571,
+   "steer_prop_mean": -3.3667031675577165e-07,
+   "steer_prop_sd": 0.0018455289456396464,
+   "steer_twin_mean": 0.013200901225209236,
+   "steer_twin_sd": 0.0015639436219144624,
+   "mean_abs_speed_gap": 0.008961877142629764,
+   "l1_first_unhealthy_tick": null,
+   "states": {
+    "NOMINAL": 3000
+   }
+  },
+  {
+   "arm": "dropout",
+   "seed": 20270201,
+   "n_scored": 3000,
+   "alarm_rate": 0.15533333333333332,
+   "score_p50": 8.42564787662771,
+   "score_p95": 9.563479442165862,
+   "score_sd": 0.7879808678691913,
+   "steer_prop_mean": 0.0010221554659462224,
+   "steer_prop_sd": 0.0012701495818322553,
+   "steer_twin_mean": 0.014127763902147612,
+   "steer_twin_sd": 0.0001129986625693392,
+   "mean_abs_speed_gap": 10.03744566597006,
+   "l1_first_unhealthy_tick": 201,
+   "states": {
+    "LIMP": 3000
+   }
+  },
+  {
+   "arm": "dropout_noL8",
+   "seed": 20270201,
+   "n_scored": 3000,
+   "alarm_rate": 0.516,
+   "score_p50": 9.221432593325263,
+   "score_p95": 10.182425324988333,
+   "score_sd": 0.8808086854256996,
+   "steer_prop_mean": -0.0001537177225497241,
+   "steer_prop_sd": 0.001399556298338276,
+   "steer_twin_mean": 0.01402060633401076,
+   "steer_twin_sd": 0.00012273009730182817,
+   "mean_abs_speed_gap": 9.64621783708695,
+   "l1_first_unhealthy_tick": 201,
+   "states": {
+    "NOMINAL": 3000
+   }
+  },
+  {
+   "arm": "stuck",
+   "seed": 20270201,
+   "n_scored": 3000,
+   "alarm_rate": 0.371,
+   "score_p50": 8.9451071734967,
+   "score_p95": 9.937874143595046,
+   "score_sd": 0.6501931267540509,
+   "steer_prop_mean": -9.444429787496725e-05,
+   "steer_prop_sd": 0.0009839884262299655,
+   "steer_twin_mean": 0.013898179883758226,
+   "steer_twin_sd": 8.881457833539457e-05,
+   "mean_abs_speed_gap": 8.856429184938888,
+   "l1_first_unhealthy_tick": null,
+   "states": {
+    "NOMINAL": 3000
+   }
+  },
+  {
+   "arm": "position_bias",
+   "seed": 20270201,
+   "n_scored": 3000,
+   "alarm_rate": 1.0,
+   "score_p50": 28.833041303729964,
+   "score_p95": 35.809035338955695,
+   "score_sd": 4.737362844541009,
+   "steer_prop_mean": 0.014845147488793979,
+   "steer_prop_sd": 0.011929785313026934,
+   "steer_twin_mean": -0.031937529258430006,
+   "steer_twin_sd": 0.00467332204859239,
+   "mean_abs_speed_gap": 0.013648073170691142,
+   "l1_first_unhealthy_tick": 209,
+   "states": {
+    "HALT": 3000
+   }
+  },
+  {
+   "arm": "clean",
+   "seed": 20270202,
+   "n_scored": 3000,
+   "alarm_rate": 0.04666666666666667,
+   "score_p50": 8.459085551494724,
+   "score_p95": 9.175518475986877,
+   "score_sd": 0.5124414011742066,
+   "steer_prop_mean": 7.606259585979084e-06,
+   "steer_prop_sd": 0.0017407355552044432,
+   "steer_twin_mean": 0.013202834144234657,
+   "steer_twin_sd": 0.0014804566448956052,
+   "mean_abs_speed_gap": 0.00885942128058917,
+   "l1_first_unhealthy_tick": null,
+   "states": {
+    "NOMINAL": 3000
+   }
+  },
+  {
+   "arm": "dropout",
+   "seed": 20270202,
+   "n_scored": 3000,
+   "alarm_rate": 0.8593333333333333,
+   "score_p50": 10.079335246434864,
+   "score_p95": 10.985283476063683,
+   "score_sd": 0.7438226097123513,
+   "steer_prop_mean": 0.0013026819835649803,
+   "steer_prop_sd": 0.0011754070457851832,
+   "steer_twin_mean": 0.016908138379454613,
+   "steer_twin_sd": 7.73476711908419e-05,
+   "mean_abs_speed_gap": 13.23419279215181,
+   "l1_first_unhealthy_tick": 201,
+   "states": {
+    "HALT": 3000
+   }
+  },
+  {
+   "arm": "dropout_noL8",
+   "seed": 20270202,
+   "n_scored": 3000,
+   "alarm_rate": 1.0,
+   "score_p50": 15.854980763227996,
+   "score_p95": 16.746044917627458,
+   "score_sd": 0.7297929779336664,
+   "steer_prop_mean": -0.007945569580886514,
+   "steer_prop_sd": 0.0011368684506454338,
+   "steer_twin_mean": 0.01671363586684068,
+   "steer_twin_sd": 1.1880590087735761e-05,
+   "mean_abs_speed_gap": 13.234192794747088,
+   "l1_first_unhealthy_tick": 201,
+   "states": {
+    "HALT": 3000
+   }
+  },
+  {
+   "arm": "stuck",
+   "seed": 20270202,
+   "n_scored": 3000,
+   "alarm_rate": 1.0,
+   "score_p50": 12.528771193910577,
+   "score_p95": 13.203976177365435,
+   "score_sd": 0.4322399809721908,
+   "steer_prop_mean": -0.004166596909131234,
+   "steer_prop_sd": 0.0006714933106201869,
+   "steer_twin_mean": 0.015438774814208349,
+   "steer_twin_sd": 5.40404425035434e-06,
+   "mean_abs_speed_gap": 13.209410501962576,
+   "l1_first_unhealthy_tick": null,
+   "states": {
+    "HALT": 3000
+   }
+  },
+  {
+   "arm": "position_bias",
+   "seed": 20270202,
+   "n_scored": 3000,
+   "alarm_rate": 0.7383333333333333,
+   "score_p50": 20.824954043640364,
+   "score_p95": 23.01556240559037,
+   "score_sd": 7.906968908815085,
+   "steer_prop_mean": -0.008312542570056394,
+   "steer_prop_sd": 0.006889883522363177,
+   "steer_twin_mean": -0.033117564151684445,
+   "steer_twin_sd": 0.00747870432340768,
+   "mean_abs_speed_gap": 0.018338663188955617,
+   "l1_first_unhealthy_tick": 209,
+   "states": {
+    "HALT": 3000
+   }
+  },
+  {
+   "arm": "clean",
+   "seed": 20270203,
+   "n_scored": 3000,
+   "alarm_rate": 0.046,
+   "score_p50": 8.462152163851018,
+   "score_p95": 9.170544674645345,
+   "score_sd": 0.49968939128278117,
+   "steer_prop_mean": 9.656627740090092e-06,
+   "steer_prop_sd": 0.0017544827782481058,
+   "steer_twin_mean": 0.013208103453119596,
+   "steer_twin_sd": 0.0014863604025713798,
+   "mean_abs_speed_gap": 0.008388468943809246,
+   "l1_first_unhealthy_tick": null,
+   "states": {
+    "NOMINAL": 3000
+   }
+  },
+  {
+   "arm": "dropout",
+   "seed": 20270203,
+   "n_scored": 3000,
+   "alarm_rate": 0.2796666666666667,
+   "score_p50": 8.708831235137325,
+   "score_p95": 9.944885710332702,
+   "score_sd": 0.7641184091194833,
+   "steer_prop_mean": 0.0011720564117810377,
+   "steer_prop_sd": 0.0011806358634961131,
+   "steer_twin_mean": 0.014791039829452832,
+   "steer_twin_sd": 0.00010815802972736219,
+   "mean_abs_speed_gap": 10.773391569244572,
+   "l1_first_unhealthy_tick": 201,
+   "states": {
+    "LIMP": 3000
+   }
+  },
+  {
+   "arm": "dropout_noL8",
+   "seed": 20270203,
+   "n_scored": 3000,
+   "alarm_rate": 0.6646666666666666,
+   "score_p50": 9.520373461320869,
+   "score_p95": 10.273496275955026,
+   "score_sd": 0.7896489953122189,
+   "steer_prop_mean": 4.758256208151579e-05,
+   "steer_prop_sd": 0.0012569334703609169,
+   "steer_twin_mean": 0.014688426186641058,
+   "steer_twin_sd": 0.00011090555053154258,
+   "mean_abs_speed_gap": 10.558041435009297,
+   "l1_first_unhealthy_tick": 201,
+   "states": {
+    "NOMINAL": 2998,
+    "DEGRADED": 2
+   }
+  },
+  {
+   "arm": "stuck",
+   "seed": 20270203,
+   "n_scored": 3000,
+   "alarm_rate": 1.0,
+   "score_p50": 10.729699628762642,
+   "score_p95": 11.471221963426098,
+   "score_sd": 0.4348438500750898,
+   "steer_prop_mean": -0.0019378428362930814,
+   "steer_prop_sd": 0.000680012164343068,
+   "steer_twin_mean": 0.014883967633048693,
+   "steer_twin_sd": 8.569248097308645e-06,
+   "mean_abs_speed_gap": 10.768734761545328,
+   "l1_first_unhealthy_tick": null,
+   "states": {
+    "HALT": 3000
+   }
+  },
+  {
+   "arm": "position_bias",
+   "seed": 20270203,
+   "n_scored": 3000,
+   "alarm_rate": 0.7903333333333333,
+   "score_p50": 20.479908696328835,
+   "score_p95": 22.57769923880601,
+   "score_sd": 7.216123214584931,
+   "steer_prop_mean": -0.008576434042692805,
+   "steer_prop_sd": 0.006405028479449682,
+   "steer_twin_mean": -0.033978232070803645,
+   "steer_twin_sd": 0.007990538994550295,
+   "mean_abs_speed_gap": 0.018716782648271868,
+   "l1_first_unhealthy_tick": 209,
+   "states": {
+    "HALT": 3000
+   }
+  },
+  {
+   "arm": "clean",
+   "seed": 20270204,
+   "n_scored": 3000,
+   "alarm_rate": 0.049666666666666665,
+   "score_p50": 8.47454457936089,
+   "score_p95": 9.188905978949379,
+   "score_sd": 0.5009438050629339,
+   "steer_prop_mean": 6.006991995188097e-06,
+   "steer_prop_sd": 0.001696908836656356,
+   "steer_twin_mean": 0.01320569010078907,
+   "steer_twin_sd": 0.0014529566141501056,
+   "mean_abs_speed_gap": 0.008332962611058951,
+   "l1_first_unhealthy_tick": null,
+   "states": {
+    "NOMINAL": 3000
+   }
+  },
+  {
+   "arm": "dropout",
+   "seed": 20270204,
+   "n_scored": 3000,
+   "alarm_rate": 0.016,
+   "score_p50": 8.576574728414686,
+   "score_p95": 9.022455257250359,
+   "score_sd": 0.6280414486110341,
+   "steer_prop_mean": 0.00012879458857545007,
+   "steer_prop_sd": 0.0010570781777430255,
+   "steer_twin_mean": 0.013238910307486852,
+   "steer_twin_sd": 0.00010329691430067869,
+   "mean_abs_speed_gap": 11.3774958867995,
+   "l1_first_unhealthy_tick": 201,
+   "states": {
+    "LIMP": 3000
+   }
+  },
+  {
+   "arm": "dropout_noL8",
+   "seed": 20270204,
+   "n_scored": 3000,
+   "alarm_rate": 0.030333333333333334,
+   "score_p50": 8.242524866947539,
+   "score_p95": 9.082647117202242,
+   "score_sd": 0.9258993530852521,
+   "steer_prop_mean": 0.0007964441507356242,
+   "steer_prop_sd": 0.0015655854046578831,
+   "steer_twin_mean": 0.013301253219445546,
+   "steer_twin_sd": 0.00014573299541879116,
+   "mean_abs_speed_gap": 8.786409652846531,
+   "l1_first_unhealthy_tick": 201,
+   "states": {
+    "NOMINAL": 3000
+   }
+  },
+  {
+   "arm": "stuck",
+   "seed": 20270204,
+   "n_scored": 3000,
+   "alarm_rate": 0.10266666666666667,
+   "score_p50": 8.673181792135184,
+   "score_p95": 9.333617958583588,
+   "score_sd": 0.6748633379818428,
+   "steer_prop_mean": -0.0004910031198523939,
+   "steer_prop_sd": 0.0011253330146469818,
+   "steer_twin_mean": 0.012842415233453116,
+   "steer_twin_sd": 0.00010944647227851633,
+   "mean_abs_speed_gap": 10.375042402701798,
+   "l1_first_unhealthy_tick": null,
+   "states": {
+    "NOMINAL": 3000
+   }
+  },
+  {
+   "arm": "position_bias",
+   "seed": 20270204,
+   "n_scored": 3000,
+   "alarm_rate": 1.0,
+   "score_p50": 31.469717582084023,
+   "score_p95": 35.76410515504754,
+   "score_sd": 5.40983557592914,
+   "steer_prop_mean": 0.01559059631661512,
+   "steer_prop_sd": 0.01382471193944716,
+   "steer_twin_mean": -0.03113132562985023,
+   "steer_twin_sd": 0.005571997730058109,
+   "mean_abs_speed_gap": 0.01298957223050769,
+   "l1_first_unhealthy_tick": 209,
+   "states": {
+    "HALT": 3000
+   }
+  },
+  {
+   "arm": "clean",
+   "seed": 20270205,
+   "n_scored": 3000,
+   "alarm_rate": 0.048666666666666664,
+   "score_p50": 8.479228227417156,
+   "score_p95": 9.185047282334729,
+   "score_sd": 0.5127720875100037,
+   "steer_prop_mean": 1.7883540131151675e-06,
+   "steer_prop_sd": 0.0018703397500635984,
+   "steer_twin_mean": 0.013196482559045156,
+   "steer_twin_sd": 0.0015969779191151161,
+   "mean_abs_speed_gap": 0.008479663014297457,
+   "l1_first_unhealthy_tick": null,
+   "states": {
+    "NOMINAL": 3000
+   }
+  },
+  {
+   "arm": "dropout",
+   "seed": 20270205,
+   "n_scored": 3000,
+   "alarm_rate": 0.0,
+   "score_p50": 6.80860860656303,
+   "score_p95": 7.270685221017336,
+   "score_sd": 0.3445054085316875,
+   "steer_prop_mean": 0.0002311505831312388,
+   "steer_prop_sd": 0.0005547137057788335,
+   "steer_twin_mean": 0.0108384071290493,
+   "steer_twin_sd": 3.081344048668989e-05,
+   "mean_abs_speed_gap": 11.544158922634992,
+   "l1_first_unhealthy_tick": 201,
+   "states": {
+    "LIMP": 3000
+   }
+  },
+  {
+   "arm": "dropout_noL8",
+   "seed": 20270205,
+   "n_scored": 3000,
+   "alarm_rate": 0.0,
+   "score_p50": 6.263241045612219,
+   "score_p95": 7.2933454339903525,
+   "score_sd": 0.5997196608253424,
+   "steer_prop_mean": 0.0010085474345833062,
+   "steer_prop_sd": 0.0009483488882620573,
+   "steer_twin_mean": 0.010846876800060272,
+   "steer_twin_sd": 3.140529950175082e-05,
+   "mean_abs_speed_gap": 11.54415882330535,
+   "l1_first_unhealthy_tick": 201,
+   "states": {
+    "HALT": 3000
+   }
+  },
+  {
+   "arm": "stuck",
+   "seed": 20270205,
+   "n_scored": 3000,
+   "alarm_rate": 0.0006666666666666666,
+   "score_p50": 6.388502939709179,
+   "score_p95": 7.249408255450953,
+   "score_sd": 0.5131272763676178,
+   "steer_prop_mean": 0.0012387848649329195,
+   "steer_prop_sd": 0.0008198880854774865,
+   "steer_twin_mean": 0.011267550642291705,
+   "steer_twin_sd": 3.782153123268395e-05,
+   "mean_abs_speed_gap": 11.496965906187189,
+   "l1_first_unhealthy_tick": null,
+   "states": {
+    "NOMINAL": 25,
+    "DEGRADED": 26,
+    "LIMP": 106,
+    "HALT": 2843
+   }
+  },
+  {
+   "arm": "position_bias",
+   "seed": 20270205,
+   "n_scored": 3000,
+   "alarm_rate": 0.09233333333333334,
+   "score_p50": 5.838114879240912,
+   "score_p95": 19.48872544859504,
+   "score_sd": 4.4723143384254485,
+   "steer_prop_mean": -0.02045351093169302,
+   "steer_prop_sd": 0.004423694718326279,
+   "steer_twin_mean": -0.017436252653598786,
+   "steer_twin_sd": 0.007307976299341743,
+   "mean_abs_speed_gap": 0.01191650456926462,
+   "l1_first_unhealthy_tick": 209,
+   "states": {
+    "HALT": 3000
+   }
+  },
+  {
+   "arm": "clean",
+   "seed": 20270206,
+   "n_scored": 3000,
+   "alarm_rate": 0.04033333333333333,
+   "score_p50": 8.479903566250497,
+   "score_p95": 9.149394716207398,
+   "score_sd": 0.5011029090154845,
+   "steer_prop_mean": 5.689557098473112e-06,
+   "steer_prop_sd": 0.0016389120835873085,
+   "steer_twin_mean": 0.013199778089920679,
+   "steer_twin_sd": 0.0013960978473409472,
+   "mean_abs_speed_gap": 0.008395871513373749,
+   "l1_first_unhealthy_tick": null,
+   "states": {
+    "NOMINAL": 3000
+   }
+  },
+  {
+   "arm": "dropout",
+   "seed": 20270206,
+   "n_scored": 3000,
+   "alarm_rate": 0.034,
+   "score_p50": 8.61195558257514,
+   "score_p95": 9.141711677362837,
+   "score_sd": 0.5612096073774622,
+   "steer_prop_mean": -0.000148846595431678,
+   "steer_prop_sd": 0.0009255934494350293,
+   "steer_twin_mean": 0.01312083218495051,
+   "steer_twin_sd": 9.338678153893527e-05,
+   "mean_abs_speed_gap": 12.189544777377133,
+   "l1_first_unhealthy_tick": 201,
+   "states": {
+    "LIMP": 3000
+   }
+  },
+  {
+   "arm": "dropout_noL8",
+   "seed": 20270206,
+   "n_scored": 3000,
+   "alarm_rate": 0.043,
+   "score_p50": 7.886657887824896,
+   "score_p95": 9.144228916972956,
+   "score_sd": 0.9430936526464408,
+   "steer_prop_mean": 0.0009962336695364987,
+   "steer_prop_sd": 0.0015869000932370962,
+   "steer_twin_mean": 0.013233992785215377,
+   "steer_twin_sd": 0.0001519520353913142,
+   "mean_abs_speed_gap": 10.662161789875292,
+   "l1_first_unhealthy_tick": 201,
+   "states": {
+    "NOMINAL": 3000
+   }
+  },
+  {
+   "arm": "stuck",
+   "seed": 20270206,
+   "n_scored": 3000,
+   "alarm_rate": 0.007,
+   "score_p50": 7.166233608220987,
+   "score_p95": 8.720577758432665,
+   "score_sd": 0.80145293490016,
+   "steer_prop_mean": 0.0010111458585209524,
+   "steer_prop_sd": 0.00135418601707472,
+   "steer_twin_mean": 0.012431238979101181,
+   "steer_twin_sd": 0.00012694709139177783,
+   "mean_abs_speed_gap": 11.665667244368292,
+   "l1_first_unhealthy_tick": null,
+   "states": {
+    "NOMINAL": 2992,
+    "DEGRADED": 8
+   }
+  },
+  {
+   "arm": "position_bias",
+   "seed": 20270206,
+   "n_scored": 3000,
+   "alarm_rate": 0.25866666666666666,
+   "score_p50": 6.132352616820402,
+   "score_p95": 20.895831753786542,
+   "score_sd": 6.508882109515245,
+   "steer_prop_mean": -0.017214839143368105,
+   "steer_prop_sd": 0.00626025668467278,
+   "steer_twin_mean": -0.02284778517484665,
+   "steer_twin_sd": 0.009617752186714464,
+   "mean_abs_speed_gap": 0.013740586256819223,
+   "l1_first_unhealthy_tick": 209,
+   "states": {
+    "HALT": 3000
+   }
+  },
+  {
+   "arm": "clean",
+   "seed": 20270207,
+   "n_scored": 3000,
+   "alarm_rate": 0.043333333333333335,
+   "score_p50": 8.472357647513205,
+   "score_p95": 9.165129768929699,
+   "score_sd": 0.5071149091756144,
+   "steer_prop_mean": 1.2305552256293594e-05,
+   "steer_prop_sd": 0.0017125625360055467,
+   "steer_twin_mean": 0.013209322765469551,
+   "steer_twin_sd": 0.0014588342579811466,
+   "mean_abs_speed_gap": 0.00872766247243042,
+   "l1_first_unhealthy_tick": null,
+   "states": {
+    "NOMINAL": 3000
+   }
+  },
+  {
+   "arm": "dropout",
+   "seed": 20270207,
+   "n_scored": 3000,
+   "alarm_rate": 0.0003333333333333333,
+   "score_p50": 6.362201013022772,
+   "score_p95": 7.489188043816734,
+   "score_sd": 0.671619718390776,
+   "steer_prop_mean": 0.0006917026518688848,
+   "steer_prop_sd": 0.00107260944190873,
+   "steer_twin_mean": 0.010698046013712883,
+   "steer_twin_sd": 5.074991690020653e-05,
+   "mean_abs_speed_gap": 12.259879108372276,
+   "l1_first_unhealthy_tick": 201,
+   "states": {
+    "HALT": 3000
+   }
+  },
+  {
+   "arm": "dropout_noL8",
+   "seed": 20270207,
+   "n_scored": 3000,
+   "alarm_rate": 0.0,
+   "score_p50": 5.66610811627719,
+   "score_p95": 7.2223020494423995,
+   "score_sd": 0.7907392929203235,
+   "steer_prop_mean": 0.0017160668928020944,
+   "steer_prop_sd": 0.0012436111987183776,
+   "steer_twin_mean": 0.010713066582878432,
+   "steer_twin_sd": 3.211195485908255e-05,
+   "mean_abs_speed_gap": 12.259879016954624,
+   "l1_first_unhealthy_tick": 201,
+   "states": {
+    "HALT": 3000
+   }
+  },
+  {
+   "arm": "stuck",
+   "seed": 20270207,
+   "n_scored": 3000,
+   "alarm_rate": 0.0,
+   "score_p50": 5.537088952802441,
+   "score_p95": 6.25305192118177,
+   "score_sd": 0.4523940506439236,
+   "steer_prop_mean": 0.0018344039196381346,
+   "steer_prop_sd": 0.0007048950076920124,
+   "steer_twin_mean": 0.010481129462520281,
+   "steer_twin_sd": 4.026536362581988e-06,
+   "mean_abs_speed_gap": 12.268171861154977,
+   "l1_first_unhealthy_tick": null,
+   "states": {
+    "HALT": 3000
+   }
+  },
+  {
+   "arm": "position_bias",
+   "seed": 20270207,
+   "n_scored": 3000,
+   "alarm_rate": 1.0,
+   "score_p50": 12.785471335687513,
+   "score_p95": 20.741488053340174,
+   "score_sd": 2.8584617974046145,
+   "steer_prop_mean": -0.030063316253945233,
+   "steer_prop_sd": 0.0023264905318757267,
+   "steer_twin_mean": -0.008270390830934048,
+   "steer_twin_sd": 0.002201806429816216,
+   "mean_abs_speed_gap": 0.006986784177886892,
+   "l1_first_unhealthy_tick": 209,
+   "states": {
+    "HALT": 3000
+   }
+  },
+  {
+   "arm": "clean",
+   "seed": 20270208,
+   "n_scored": 3000,
+   "alarm_rate": 0.055,
+   "score_p50": 8.46639217928562,
+   "score_p95": 9.222123250347598,
+   "score_sd": 0.5170173223692804,
+   "steer_prop_mean": 4.227804757344226e-06,
+   "steer_prop_sd": 0.0017867924908443714,
+   "steer_twin_mean": 0.01320660936832428,
+   "steer_twin_sd": 0.0015111427237897092,
+   "mean_abs_speed_gap": 0.008569471401374838,
+   "l1_first_unhealthy_tick": null,
+   "states": {
+    "NOMINAL": 3000
+   }
+  },
+  {
+   "arm": "dropout",
+   "seed": 20270208,
+   "n_scored": 3000,
+   "alarm_rate": 0.013333333333333334,
+   "score_p50": 8.268068915041125,
+   "score_p95": 8.961098619997843,
+   "score_sd": 0.6077826549634838,
+   "steer_prop_mean": -0.00026062926347367464,
+   "steer_prop_sd": 0.0010372239719808427,
+   "steer_twin_mean": 0.0124653210490942,
+   "steer_twin_sd": 0.00010238858469613245,
+   "mean_abs_speed_gap": 10.776846524502822,
+   "l1_first_unhealthy_tick": 201,
+   "states": {
+    "LIMP": 3000
+   }
+  },
+  {
+   "arm": "dropout_noL8",
+   "seed": 20270208,
+   "n_scored": 3000,
+   "alarm_rate": 0.065,
+   "score_p50": 8.233410246603379,
+   "score_p95": 9.246154069501937,
+   "score_sd": 0.7434017400653881,
+   "steer_prop_mean": -0.0003185991613039126,
+   "steer_prop_sd": 0.001253548971448354,
+   "steer_twin_mean": 0.01245879189670086,
+   "steer_twin_sd": 0.00012173752741981707,
+   "mean_abs_speed_gap": 10.179297280293655,
+   "l1_first_unhealthy_tick": 201,
+   "states": {
+    "NOMINAL": 3000
+   }
+  },
+  {
+   "arm": "stuck",
+   "seed": 20270208,
+   "n_scored": 3000,
+   "alarm_rate": 0.10633333333333334,
+   "score_p50": 8.690844705961984,
+   "score_p95": 9.370013085114948,
+   "score_sd": 0.6729719572508817,
+   "steer_prop_mean": -2.226818686661621e-05,
+   "steer_prop_sd": 0.0011091371549075072,
+   "steer_twin_mean": 0.013324689820408821,
+   "steer_twin_sd": 0.00010472870137110898,
+   "mean_abs_speed_gap": 9.559748405457102,
+   "l1_first_unhealthy_tick": null,
+   "states": {
+    "NOMINAL": 3000
+   }
+  },
+  {
+   "arm": "position_bias",
+   "seed": 20270208,
+   "n_scored": 3000,
+   "alarm_rate": 1.0,
+   "score_p50": 24.113961381417546,
+   "score_p95": 35.60409045257015,
+   "score_sd": 5.332602135687821,
+   "steer_prop_mean": 0.008979687238189702,
+   "steer_prop_sd": 0.013142572326585984,
+   "steer_twin_mean": -0.03349633933355411,
+   "steer_twin_sd": 0.0048772527383739534,
+   "mean_abs_speed_gap": 0.016068931724510557,
+   "l1_first_unhealthy_tick": 209,
+   "states": {
+    "HALT": 3000
+   }
+  },
+  {
+   "arm": "clean",
+   "seed": 20270209,
+   "n_scored": 3000,
+   "alarm_rate": 0.043666666666666666,
+   "score_p50": 8.467587592968192,
+   "score_p95": 9.152859155334651,
+   "score_sd": 0.4868270738098142,
+   "steer_prop_mean": 9.701961729054649e-06,
+   "steer_prop_sd": 0.0016209239668701348,
+   "steer_twin_mean": 0.01321031775077184,
+   "steer_twin_sd": 0.0013750709089924561,
+   "mean_abs_speed_gap": 0.008539656120246628,
+   "l1_first_unhealthy_tick": null,
+   "states": {
+    "NOMINAL": 3000
+   }
+  },
+  {
+   "arm": "dropout",
+   "seed": 20270209,
+   "n_scored": 3000,
+   "alarm_rate": 0.023,
+   "score_p50": 8.005326119194942,
+   "score_p95": 9.061112716816698,
+   "score_sd": 0.7318615538589939,
+   "steer_prop_mean": -0.0001476133583346382,
+   "steer_prop_sd": 0.0012386939564047231,
+   "steer_twin_mean": 0.012300572435061137,
+   "steer_twin_sd": 0.0001249101157775821,
+   "mean_abs_speed_gap": 12.101905102421842,
+   "l1_first_unhealthy_tick": 201,
+   "states": {
+    "LIMP": 3000
+   }
+  },
+  {
+   "arm": "dropout_noL8",
+   "seed": 20270209,
+   "n_scored": 3000,
+   "alarm_rate": 0.029333333333333333,
+   "score_p50": 7.977156711841327,
+   "score_p95": 9.093278238331994,
+   "score_sd": 0.7497313719715579,
+   "steer_prop_mean": -0.00013467789647014192,
+   "steer_prop_sd": 0.001267217355482477,
+   "steer_twin_mean": 0.01230173334479332,
+   "steer_twin_sd": 0.00012746607151073626,
+   "mean_abs_speed_gap": 11.623414172442741,
+   "l1_first_unhealthy_tick": 201,
+   "states": {
+    "NOMINAL": 3000
+   }
+  },
+  {
+   "arm": "stuck",
+   "seed": 20270209,
+   "n_scored": 3000,
+   "alarm_rate": 0.02666666666666667,
+   "score_p50": 8.302692336771212,
+   "score_p95": 9.086608430816334,
+   "score_sd": 0.7498371467269964,
+   "steer_prop_mean": 0.0002726156989034886,
+   "steer_prop_sd": 0.001264304793776751,
+   "steer_twin_mean": 0.012995381752649943,
+   "steer_twin_sd": 0.00012514777464966368,
+   "mean_abs_speed_gap": 11.052389708280899,
+   "l1_first_unhealthy_tick": null,
+   "states": {
+    "NOMINAL": 3000
+   }
+  },
+  {
+   "arm": "position_bias",
+   "seed": 20270209,
+   "n_scored": 3000,
+   "alarm_rate": 1.0,
+   "score_p50": 34.38470306014767,
+   "score_p95": 35.56266411866759,
+   "score_sd": 4.590217508204477,
+   "steer_prop_mean": 0.018141479614113148,
+   "steer_prop_sd": 0.011550463429073482,
+   "steer_twin_mean": -0.03066910413155953,
+   "steer_twin_sd": 0.004475735566748148,
+   "mean_abs_speed_gap": 0.01124268234456589,
+   "l1_first_unhealthy_tick": 209,
+   "states": {
+    "HALT": 3000
+   }
+  },
+  {
+   "arm": "clean",
+   "seed": 20270210,
+   "n_scored": 3000,
+   "alarm_rate": 0.049,
+   "score_p50": 8.471902265989522,
+   "score_p95": 9.185811704620333,
+   "score_sd": 0.5211132767774003,
+   "steer_prop_mean": 5.650086056751509e-06,
+   "steer_prop_sd": 0.0018060983822635582,
+   "steer_twin_mean": 0.013203043316801388,
+   "steer_twin_sd": 0.001538626710328892,
+   "mean_abs_speed_gap": 0.008751045864914712,
+   "l1_first_unhealthy_tick": null,
+   "states": {
+    "NOMINAL": 3000
+   }
+  },
+  {
+   "arm": "dropout",
+   "seed": 20270210,
+   "n_scored": 3000,
+   "alarm_rate": 0.0016666666666666668,
+   "score_p50": 8.529495982493344,
+   "score_p95": 8.858815051571822,
+   "score_sd": 0.5006674852122063,
+   "steer_prop_mean": -3.6261907235408825e-05,
+   "steer_prop_sd": 0.0008425112910396376,
+   "steer_twin_mean": 0.013053502077857654,
+   "steer_twin_sd": 8.875983111992701e-05,
+   "mean_abs_speed_gap": 13.963252828824663,
+   "l1_first_unhealthy_tick": 201,
+   "states": {
+    "LIMP": 3000
+   }
+  },
+  {
+   "arm": "dropout_noL8",
+   "seed": 20270210,
+   "n_scored": 3000,
+   "alarm_rate": 0.012666666666666666,
+   "score_p50": 8.601078329368184,
+   "score_p95": 8.965396933786485,
+   "score_sd": 0.4274468946757858,
+   "steer_prop_mean": -0.00033032708312384786,
+   "steer_prop_sd": 0.0007130725343131779,
+   "steer_twin_mean": 0.013021165564656257,
+   "steer_twin_sd": 7.181865391145447e-05,
+   "mean_abs_speed_gap": 12.289751205415998,
+   "l1_first_unhealthy_tick": 201,
+   "states": {
+    "NOMINAL": 3000
+   }
+  },
+  {
+   "arm": "stuck",
+   "seed": 20270210,
+   "n_scored": 3000,
+   "alarm_rate": 0.018666666666666668,
+   "score_p50": 8.110318925123062,
+   "score_p95": 8.99441999559816,
+   "score_sd": 0.7663874591071304,
+   "steer_prop_mean": 0.0003501057083485648,
+   "steer_prop_sd": 0.0012938535804629609,
+   "steer_twin_mean": 0.012808371230959893,
+   "steer_twin_sd": 0.00013260878076610104,
+   "mean_abs_speed_gap": 13.110237418022171,
+   "l1_first_unhealthy_tick": null,
+   "states": {
+    "NOMINAL": 3000
+   }
+  },
+  {
+   "arm": "position_bias",
+   "seed": 20270210,
+   "n_scored": 3000,
+   "alarm_rate": 1.0,
+   "score_p50": 25.85694769995074,
+   "score_p95": 35.692385093185315,
+   "score_sd": 5.53442424399197,
+   "steer_prop_mean": 0.011895713492374246,
+   "steer_prop_sd": 0.0130200753754219,
+   "steer_twin_mean": -0.032812757867077984,
+   "steer_twin_sd": 0.004466026163797475,
+   "mean_abs_speed_gap": 0.014426397294869138,
+   "l1_first_unhealthy_tick": 209,
+   "states": {
+    "HALT": 3000
+   }
+  },
+  {
+   "arm": "clean",
+   "seed": 20270211,
+   "n_scored": 3000,
+   "alarm_rate": 0.04933333333333333,
+   "score_p50": 8.472729448235249,
+   "score_p95": 9.186252511555647,
+   "score_sd": 0.509806060015311,
+   "steer_prop_mean": -1.7441273666918277e-07,
+   "steer_prop_sd": 0.0017673242584271504,
+   "steer_twin_mean": 0.013207176268100739,
+   "steer_twin_sd": 0.0014966921784735259,
+   "mean_abs_speed_gap": 0.008770677877911998,
+   "l1_first_unhealthy_tick": null,
+   "states": {
+    "NOMINAL": 3000
+   }
+  },
+  {
+   "arm": "dropout",
+   "seed": 20270211,
+   "n_scored": 3000,
+   "alarm_rate": 0.4573333333333333,
+   "score_p50": 9.103238928397852,
+   "score_p95": 10.144475476559057,
+   "score_sd": 0.7834976922433171,
+   "steer_prop_mean": 0.0014280957090668381,
+   "steer_prop_sd": 0.0012081581129973643,
+   "steer_twin_mean": 0.015541029453277589,
+   "steer_twin_sd": 0.00011189120417154075,
+   "mean_abs_speed_gap": 11.617191225873158,
+   "l1_first_unhealthy_tick": 201,
+   "states": {
+    "LIMP": 3000
+   }
+  },
+  {
+   "arm": "dropout_noL8",
+   "seed": 20270211,
+   "n_scored": 3000,
+   "alarm_rate": 1.0,
+   "score_p50": 13.160201252661125,
+   "score_p95": 14.148952031357952,
+   "score_sd": 0.7686122934068126,
+   "steer_prop_mean": -0.005046779354568571,
+   "steer_prop_sd": 0.0011989713966360361,
+   "steer_twin_mean": 0.01537076999247074,
+   "steer_twin_sd": 5.585970998830434e-06,
+   "mean_abs_speed_gap": 11.61719116153203,
+   "l1_first_unhealthy_tick": 201,
+   "states": {
+    "HALT": 3000
+   }
+  },
+  {
+   "arm": "stuck",
+   "seed": 20270211,
+   "n_scored": 3000,
+   "alarm_rate": 1.0,
+   "score_p50": 11.31194461614071,
+   "score_p95": 12.023387974941592,
+   "score_sd": 0.4419268032248148,
+   "steer_prop_mean": -0.0025253329321276398,
+   "steer_prop_sd": 0.0006887110156498613,
+   "steer_twin_mean": 0.015190553685029348,
+   "steer_twin_sd": 3.7872774170073466e-06,
+   "mean_abs_speed_gap": 11.617082460171888,
+   "l1_first_unhealthy_tick": null,
+   "states": {
+    "HALT": 3000
+   }
+  },
+  {
+   "arm": "position_bias",
+   "seed": 20270211,
+   "n_scored": 3000,
+   "alarm_rate": 0.15466666666666667,
+   "score_p50": 5.869649529290827,
+   "score_p95": 20.527088125885722,
+   "score_sd": 5.364678522120275,
+   "steer_prop_mean": -0.018657794590108096,
+   "steer_prop_sd": 0.00523215478036163,
+   "steer_twin_mean": -0.020645143367350103,
+   "steer_twin_sd": 0.008375301259585272,
+   "mean_abs_speed_gap": 0.013588204091559608,
+   "l1_first_unhealthy_tick": 209,
+   "states": {
+    "HALT": 3000
+   }
+  },
+  {
+   "arm": "clean",
+   "seed": 20270212,
+   "n_scored": 3000,
+   "alarm_rate": 0.048,
+   "score_p50": 8.472056935088311,
+   "score_p95": 9.184554720738024,
+   "score_sd": 0.5106587504134987,
+   "steer_prop_mean": -3.1842159417768318e-06,
+   "steer_prop_sd": 0.0017766729207155847,
+   "steer_twin_mean": 0.01319898741443952,
+   "steer_twin_sd": 0.0015151404894226956,
+   "mean_abs_speed_gap": 0.008620815502381144,
+   "l1_first_unhealthy_tick": null,
+   "states": {
+    "NOMINAL": 3000
+   }
+  },
+  {
+   "arm": "dropout",
+   "seed": 20270212,
+   "n_scored": 3000,
+   "alarm_rate": 0.4646666666666667,
+   "score_p50": 8.945655207762007,
+   "score_p95": 9.948850593235612,
+   "score_sd": 0.7045601907570359,
+   "steer_prop_mean": 0.0006146515559715529,
+   "steer_prop_sd": 0.0010133130582592163,
+   "steer_twin_mean": 0.014598280549049377,
+   "steer_twin_sd": 0.00010284499640138326,
+   "mean_abs_speed_gap": 12.781375944042292,
+   "l1_first_unhealthy_tick": 201,
+   "states": {
+    "LIMP": 3000
+   }
+  },
+  {
+   "arm": "dropout_noL8",
+   "seed": 20270212,
+   "n_scored": 3000,
+   "alarm_rate": 0.626,
+   "score_p50": 9.430269192230762,
+   "score_p95": 10.19352759199232,
+   "score_sd": 0.6663905038796575,
+   "steer_prop_mean": -2.8179765795357525e-05,
+   "steer_prop_sd": 0.0010252963796686541,
+   "steer_twin_mean": 0.014534128790100416,
+   "steer_twin_sd": 9.949322049785917e-05,
+   "mean_abs_speed_gap": 12.457506412427731,
+   "l1_first_unhealthy_tick": 201,
+   "states": {
+    "NOMINAL": 3000
+   }
+  },
+  {
+   "arm": "stuck",
+   "seed": 20270212,
+   "n_scored": 3000,
+   "alarm_rate": 0.37333333333333335,
+   "score_p50": 8.971625934364251,
+   "score_p95": 9.92338997722236,
+   "score_sd": 0.6159860982900839,
+   "steer_prop_mean": 1.7112994100898503e-07,
+   "steer_prop_sd": 0.0009184005822465593,
+   "steer_twin_mean": 0.014020062123735745,
+   "steer_twin_sd": 9.298122835299031e-05,
+   "mean_abs_speed_gap": 12.099377881817908,
+   "l1_first_unhealthy_tick": null,
+   "states": {
+    "NOMINAL": 3000
+   }
+  },
+  {
+   "arm": "position_bias",
+   "seed": 20270212,
+   "n_scored": 3000,
+   "alarm_rate": 0.4036666666666667,
+   "score_p50": 8.54459451237039,
+   "score_p95": 12.851488866793707,
+   "score_sd": 1.932067936435376,
+   "steer_prop_mean": -0.025446396658197045,
+   "steer_prop_sd": 0.0019317061952348735,
+   "steer_twin_mean": -0.011411790609359741,
+   "steer_twin_sd": 0.0011920164935862892,
+   "mean_abs_speed_gap": 0.006900365968213988,
+   "l1_first_unhealthy_tick": 209,
+   "states": {
+    "HALT": 3000
+   }
+  },
+  {
+   "arm": "clean",
+   "seed": 20270213,
+   "n_scored": 3000,
+   "alarm_rate": 0.05266666666666667,
+   "score_p50": 8.452057922964107,
+   "score_p95": 9.209887586023083,
+   "score_sd": 0.5374046349549311,
+   "steer_prop_mean": 1.4235856593586505e-05,
+   "steer_prop_sd": 0.0018398345781769313,
+   "steer_twin_mean": 0.0131996844013532,
+   "steer_twin_sd": 0.0015633006573364963,
+   "mean_abs_speed_gap": 0.00875304676042927,
+   "l1_first_unhealthy_tick": null,
+   "states": {
+    "NOMINAL": 3000
+   }
+  },
+  {
+   "arm": "dropout",
+   "seed": 20270213,
+   "n_scored": 3000,
+   "alarm_rate": 0.6266666666666667,
+   "score_p50": 9.429798641236808,
+   "score_p95": 10.213189752663254,
+   "score_sd": 0.7738245787554143,
+   "steer_prop_mean": 0.0011566671484615654,
+   "steer_prop_sd": 0.0012119926615304516,
+   "steer_twin_mean": 0.015650977984070776,
+   "steer_twin_sd": 0.0001142351410817958,
+   "mean_abs_speed_gap": 12.455179835174993,
+   "l1_first_unhealthy_tick": 201,
+   "states": {
+    "LIMP": 3000
+   }
+  },
+  {
+   "arm": "dropout_noL8",
+   "seed": 20270213,
+   "n_scored": 3000,
+   "alarm_rate": 0.9996666666666667,
+   "score_p50": 12.668088791227946,
+   "score_p95": 13.596145035397385,
+   "score_sd": 0.7948893691890162,
+   "steer_prop_mean": -0.004103465704014525,
+   "steer_prop_sd": 0.0012389340431388375,
+   "steer_twin_mean": 0.015516264930367469,
+   "steer_twin_sd": 8.150655125793434e-06,
+   "mean_abs_speed_gap": 12.455179803039007,
+   "l1_first_unhealthy_tick": 201,
+   "states": {
+    "HALT": 3000
+   }
+  },
+  {
+   "arm": "stuck",
+   "seed": 20270213,
+   "n_scored": 3000,
+   "alarm_rate": 0.5626666666666666,
+   "score_p50": 9.284219324877208,
+   "score_p95": 10.118611233681818,
+   "score_sd": 0.5571162142569864,
+   "steer_prop_mean": -7.934459834359586e-06,
+   "steer_prop_sd": 0.0008294328245021107,
+   "steer_twin_mean": 0.014509769355257352,
+   "steer_twin_sd": 8.115856354463533e-05,
+   "mean_abs_speed_gap": 12.095930988971826,
+   "l1_first_unhealthy_tick": null,
+   "states": {
+    "NOMINAL": 3000
+   }
+  },
+  {
+   "arm": "position_bias",
+   "seed": 20270213,
+   "n_scored": 3000,
+   "alarm_rate": 0.9093333333333333,
+   "score_p50": 21.942746293852945,
+   "score_p95": 23.93431143664234,
+   "score_sd": 5.049715716248349,
+   "steer_prop_mean": -0.004241951430216432,
+   "steer_prop_sd": 0.005905692862722031,
+   "steer_twin_mean": -0.0351930428793033,
+   "steer_twin_sd": 0.006289650255946746,
+   "mean_abs_speed_gap": 0.019821182934327934,
+   "l1_first_unhealthy_tick": 215,
+   "states": {
+    "HALT": 3000
+   }
+  },
+  {
+   "arm": "clean",
+   "seed": 20270214,
+   "n_scored": 3000,
+   "alarm_rate": 0.054,
+   "score_p50": 8.45337855912759,
+   "score_p95": 9.208903801311395,
+   "score_sd": 0.5052749204275911,
+   "steer_prop_mean": 1.9808928870285553e-06,
+   "steer_prop_sd": 0.0017474875204155221,
+   "steer_twin_mean": 0.013205309803287189,
+   "steer_twin_sd": 0.0014900563366795994,
+   "mean_abs_speed_gap": 0.00862081133457302,
+   "l1_first_unhealthy_tick": null,
+   "states": {
+    "NOMINAL": 3000
+   }
+  },
+  {
+   "arm": "dropout",
+   "seed": 20270214,
+   "n_scored": 3000,
+   "alarm_rate": 0.336,
+   "score_p50": 8.770410952824838,
+   "score_p95": 10.106706174557585,
+   "score_sd": 1.0023291726298205,
+   "steer_prop_mean": 0.0015678650681317473,
+   "steer_prop_sd": 0.0015905888635707253,
+   "steer_twin_mean": 0.015128730376561483,
+   "steer_twin_sd": 0.00014193896025898475,
+   "mean_abs_speed_gap": 10.803830254273729,
+   "l1_first_unhealthy_tick": 201,
+   "states": {
+    "LIMP": 3000
+   }
+  },
+  {
+   "arm": "dropout_noL8",
+   "seed": 20270214,
+   "n_scored": 3000,
+   "alarm_rate": 0.9916666666666667,
+   "score_p50": 11.555348271785144,
+   "score_p95": 12.549347538196148,
+   "score_sd": 0.7718869766136821,
+   "steer_prop_mean": -0.0030530654836135604,
+   "steer_prop_sd": 0.0012109581361136148,
+   "steer_twin_mean": 0.014905168821414311,
+   "steer_twin_sd": 2.0798546883158838e-05,
+   "mean_abs_speed_gap": 10.80383021758544,
+   "l1_first_unhealthy_tick": 201,
+   "states": {
+    "HALT": 3000
+   }
+  },
+  {
+   "arm": "stuck",
+   "seed": 20270214,
+   "n_scored": 3000,
+   "alarm_rate": 0.508,
+   "score_p50": 9.20752010774384,
+   "score_p95": 10.131514503382956,
+   "score_sd": 0.6237358141184456,
+   "steer_prop_mean": -3.884953415642182e-05,
+   "steer_prop_sd": 0.0009236390392204376,
+   "steer_twin_mean": 0.014342169091105462,
+   "steer_twin_sd": 8.546102591008857e-05,
+   "mean_abs_speed_gap": 10.364387615399854,
+   "l1_first_unhealthy_tick": null,
+   "states": {
+    "NOMINAL": 3000
+   }
+  },
+  {
+   "arm": "position_bias",
+   "seed": 20270214,
+   "n_scored": 3000,
+   "alarm_rate": 0.5883333333333334,
+   "score_p50": 18.395931145580736,
+   "score_p95": 22.340967472760425,
+   "score_sd": 7.456693746679299,
+   "steer_prop_mean": -0.01239355428214185,
+   "steer_prop_sd": 0.007969376119414187,
+   "steer_twin_mean": -0.029285810487965743,
+   "steer_twin_sd": 0.010691757886944531,
+   "mean_abs_speed_gap": 0.015540621241945293,
+   "l1_first_unhealthy_tick": 209,
+   "states": {
+    "HALT": 3000
+   }
+  },
+  {
+   "arm": "clean",
+   "seed": 20270215,
+   "n_scored": 3000,
+   "alarm_rate": 0.045,
+   "score_p50": 8.474809896356216,
+   "score_p95": 9.168513899102708,
+   "score_sd": 0.5053318291977719,
+   "steer_prop_mean": -4.0420481236651536e-06,
+   "steer_prop_sd": 0.0017654581911452105,
+   "steer_twin_mean": 0.013206007793545723,
+   "steer_twin_sd": 0.0014959610650981466,
+   "mean_abs_speed_gap": 0.008486155703088695,
+   "l1_first_unhealthy_tick": null,
+   "states": {
+    "NOMINAL": 3000
+   }
+  },
+  {
+   "arm": "dropout",
+   "seed": 20270215,
+   "n_scored": 3000,
+   "alarm_rate": 0.509,
+   "score_p50": 9.2099757771535,
+   "score_p95": 10.14839708185604,
+   "score_sd": 0.8347074546230748,
+   "steer_prop_mean": 0.0018403716823086143,
+   "steer_prop_sd": 0.0013094236162702673,
+   "steer_twin_mean": 0.016016960233449937,
+   "steer_twin_sd": 0.00011880960468167602,
+   "mean_abs_speed_gap": 11.419232356850477,
+   "l1_first_unhealthy_tick": 201,
+   "states": {
+    "LIMP": 3000
+   }
+  },
+  {
+   "arm": "dropout_noL8",
+   "seed": 20270215,
+   "n_scored": 3000,
+   "alarm_rate": 1.0,
+   "score_p50": 14.398562379537669,
+   "score_p95": 15.34017418059596,
+   "score_sd": 0.7433658871207195,
+   "steer_prop_mean": -0.006518032875920956,
+   "steer_prop_sd": 0.0011629914804011697,
+   "steer_twin_mean": 0.015859632834792137,
+   "steer_twin_sd": 1.2252398644463181e-05,
+   "mean_abs_speed_gap": 11.41923234748782,
+   "l1_first_unhealthy_tick": 201,
+   "states": {
+    "HALT": 3000
+   }
+  },
+  {
+   "arm": "stuck",
+   "seed": 20270215,
+   "n_scored": 3000,
+   "alarm_rate": 1.0,
+   "score_p50": 12.64740358369086,
+   "score_p95": 13.316215974249348,
+   "score_sd": 0.425670576538389,
+   "steer_prop_mean": -0.004203796714078635,
+   "steer_prop_sd": 0.0006633250877714071,
+   "steer_twin_mean": 0.015579588537414868,
+   "steer_twin_sd": 3.2677320976763786e-06,
+   "mean_abs_speed_gap": 11.395683222704724,
+   "l1_first_unhealthy_tick": null,
+   "states": {
+    "HALT": 3000
+   }
+  },
+  {
+   "arm": "position_bias",
+   "seed": 20270215,
+   "n_scored": 3000,
+   "alarm_rate": 0.6046666666666667,
+   "score_p50": 19.871579062606525,
+   "score_p95": 23.22458252533145,
+   "score_sd": 8.515764657232788,
+   "steer_prop_mean": -0.009866733336045097,
+   "steer_prop_sd": 0.0071557566908628766,
+   "steer_twin_mean": -0.03183251680930455,
+   "steer_twin_sd": 0.006997461603958752,
+   "mean_abs_speed_gap": 0.018311547798075773,
+   "l1_first_unhealthy_tick": 214,
+   "states": {
+    "HALT": 3000
+   }
+  },
+  {
+   "arm": "clean",
+   "seed": 20270216,
+   "n_scored": 3000,
+   "alarm_rate": 0.044333333333333336,
+   "score_p50": 8.464066193967845,
+   "score_p95": 9.170460201521285,
+   "score_sd": 0.4932886108928508,
+   "steer_prop_mean": -1.0642742272466421e-06,
+   "steer_prop_sd": 0.001663697719482142,
+   "steer_twin_mean": 0.013206921567519505,
+   "steer_twin_sd": 0.0014108696023081963,
+   "mean_abs_speed_gap": 0.008658606713635181,
+   "l1_first_unhealthy_tick": null,
+   "states": {
+    "NOMINAL": 3000
+   }
+  },
+  {
+   "arm": "dropout",
+   "seed": 20270216,
+   "n_scored": 3000,
+   "alarm_rate": 0.08066666666666666,
+   "score_p50": 7.58002476032873,
+   "score_p95": 9.3569251048132,
+   "score_sd": 1.1618655071123787,
+   "steer_prop_mean": 0.0007961022621408726,
+   "steer_prop_sd": 0.0019157276522328837,
+   "steer_twin_mean": 0.01270744344095389,
+   "steer_twin_sd": 0.00015981475995187436,
+   "mean_abs_speed_gap": 11.25465441590264,
+   "l1_first_unhealthy_tick": 201,
+   "states": {
+    "LIMP": 3000
+   }
+  },
+  {
+   "arm": "dropout_noL8",
+   "seed": 20270216,
+   "n_scored": 3000,
+   "alarm_rate": 0.06366666666666666,
+   "score_p50": 7.359770012527973,
+   "score_p95": 9.284506355035578,
+   "score_sd": 1.1466406348841147,
+   "steer_prop_mean": 0.001089103132680369,
+   "steer_prop_sd": 0.001892113804985555,
+   "steer_twin_mean": 0.012732794160644214,
+   "steer_twin_sd": 0.00015458133685337328,
+   "mean_abs_speed_gap": 11.055965496980061,
+   "l1_first_unhealthy_tick": 201,
+   "states": {
+    "NOMINAL": 2998,
+    "DEGRADED": 2
+   }
+  },
+  {
+   "arm": "stuck",
+   "seed": 20270216,
+   "n_scored": 3000,
+   "alarm_rate": 1.0,
+   "score_p50": 11.159960511821035,
+   "score_p95": 11.861693328081069,
+   "score_sd": 0.4304423940749282,
+   "steer_prop_mean": -0.002573364765305693,
+   "steer_prop_sd": 0.0006712739584236883,
+   "steer_twin_mean": 0.014900497024257978,
+   "steer_twin_sd": 3.878529628738952e-06,
+   "mean_abs_speed_gap": 11.214754327727725,
+   "l1_first_unhealthy_tick": null,
+   "states": {
+    "HALT": 3000
+   }
+  },
+  {
+   "arm": "position_bias",
+   "seed": 20270216,
+   "n_scored": 3000,
+   "alarm_rate": 0.6096666666666667,
+   "score_p50": 21.832504405329438,
+   "score_p95": 23.824416661273034,
+   "score_sd": 8.79917551124055,
+   "steer_prop_mean": -0.009392774774692953,
+   "steer_prop_sd": 0.00980406359673287,
+   "steer_twin_mean": -0.028531395480036737,
+   "steer_twin_sd": 0.010644796565895774,
+   "mean_abs_speed_gap": 0.017245530016692812,
+   "l1_first_unhealthy_tick": 209,
+   "states": {
+    "HALT": 3000
+   }
+  },
+  {
+   "arm": "clean",
+   "seed": 20270217,
+   "n_scored": 3000,
+   "alarm_rate": 0.04933333333333333,
+   "score_p50": 8.479788456746105,
+   "score_p95": 9.18919836303826,
+   "score_sd": 0.5235815927272908,
+   "steer_prop_mean": 3.7400237439821165e-06,
+   "steer_prop_sd": 0.0017686270287796226,
+   "steer_twin_mean": 0.013211535528302192,
+   "steer_twin_sd": 0.0014950942106680294,
+   "mean_abs_speed_gap": 0.008622386267369024,
+   "l1_first_unhealthy_tick": null,
+   "states": {
+    "NOMINAL": 3000
+   }
+  },
+  {
+   "arm": "dropout",
+   "seed": 20270217,
+   "n_scored": 3000,
+   "alarm_rate": 0.0033333333333333335,
+   "score_p50": 7.9338759846569005,
+   "score_p95": 8.889057024870151,
+   "score_sd": 0.776010544131934,
+   "steer_prop_mean": 0.0005021568862721324,
+   "steer_prop_sd": 0.0013196272778855161,
+   "steer_twin_mean": 0.012813824037710825,
+   "steer_twin_sd": 0.00012582211147361098,
+   "mean_abs_speed_gap": 10.959348465728594,
+   "l1_first_unhealthy_tick": 201,
+   "states": {
+    "LIMP": 3000
+   }
+  },
+  {
+   "arm": "dropout_noL8",
+   "seed": 20270217,
+   "n_scored": 3000,
+   "alarm_rate": 0.14066666666666666,
+   "score_p50": 8.58471850271158,
+   "score_p95": 9.519890120381154,
+   "score_sd": 0.7126730473402609,
+   "steer_prop_mean": -0.0005736735376218955,
+   "steer_prop_sd": 0.001185395404730343,
+   "steer_twin_mean": 0.012708073342839877,
+   "steer_twin_sd": 0.00011486191207961912,
+   "mean_abs_speed_gap": 9.561152503677341,
+   "l1_first_unhealthy_tick": 201,
+   "states": {
+    "NOMINAL": 3000
+   }
+  },
+  {
+   "arm": "stuck",
+   "seed": 20270217,
+   "n_scored": 3000,
+   "alarm_rate": 0.37433333333333335,
+   "score_p50": 9.057365560418592,
+   "score_p95": 9.766515354923794,
+   "score_sd": 0.6579836663125747,
+   "steer_prop_mean": -0.0015514818054313461,
+   "steer_prop_sd": 0.0010766333671350266,
+   "steer_twin_mean": 0.01243595477938652,
+   "steer_twin_sd": 0.00010438201161711767,
+   "mean_abs_speed_gap": 10.500559917280198,
+   "l1_first_unhealthy_tick": null,
+   "states": {
+    "NOMINAL": 3000
+   }
+  },
+  {
+   "arm": "position_bias",
+   "seed": 20270217,
+   "n_scored": 3000,
+   "alarm_rate": 1.0,
+   "score_p50": 29.78911882982314,
+   "score_p95": 35.51862506673029,
+   "score_sd": 4.21689091415747,
+   "steer_prop_mean": 0.015412384334951639,
+   "steer_prop_sd": 0.01013416851522944,
+   "steer_twin_mean": -0.03219634287059307,
+   "steer_twin_sd": 0.0036563648251891085,
+   "mean_abs_speed_gap": 0.012711717802778438,
+   "l1_first_unhealthy_tick": 209,
+   "states": {
+    "HALT": 3000
+   }
+  },
+  {
+   "arm": "clean",
+   "seed": 20270218,
+   "n_scored": 3000,
+   "alarm_rate": 0.04566666666666667,
+   "score_p50": 8.467566177246695,
+   "score_p95": 9.175162588336509,
+   "score_sd": 0.5132385754870492,
+   "steer_prop_mean": -2.095506565334896e-06,
+   "steer_prop_sd": 0.0017624311634972165,
+   "steer_twin_mean": 0.013198284318049749,
+   "steer_twin_sd": 0.0014970393201063576,
+   "mean_abs_speed_gap": 0.008714634309884168,
+   "l1_first_unhealthy_tick": null,
+   "states": {
+    "NOMINAL": 3000
+   }
+  },
+  {
+   "arm": "dropout",
+   "seed": 20270218,
+   "n_scored": 3000,
+   "alarm_rate": 0.362,
+   "score_p50": 8.846617013479497,
+   "score_p95": 9.572235497891903,
+   "score_sd": 0.5400746110050246,
+   "steer_prop_mean": 0.0002825464920994515,
+   "steer_prop_sd": 0.0007815521137028368,
+   "steer_twin_mean": 0.014077467933297158,
+   "steer_twin_sd": 7.908941241563165e-05,
+   "mean_abs_speed_gap": 12.365100477994007,
+   "l1_first_unhealthy_tick": 201,
+   "states": {
+    "LIMP": 3000
+   }
+  },
+  {
+   "arm": "dropout_noL8",
+   "seed": 20270218,
+   "n_scored": 3000,
+   "alarm_rate": 0.3433333333333333,
+   "score_p50": 8.935954778199958,
+   "score_p95": 9.90214260699346,
+   "score_sd": 0.5806054929889096,
+   "steer_prop_mean": 4.529123182874173e-05,
+   "steer_prop_sd": 0.0008523086705864425,
+   "steer_twin_mean": 0.014053368826707205,
+   "steer_twin_sd": 8.536251239249521e-05,
+   "mean_abs_speed_gap": 11.664429111835258,
+   "l1_first_unhealthy_tick": 201,
+   "states": {
+    "NOMINAL": 3000
+   }
+  },
+  {
+   "arm": "stuck",
+   "seed": 20270218,
+   "n_scored": 3000,
+   "alarm_rate": 0.048,
+   "score_p50": 8.473301426466293,
+   "score_p95": 9.183122246914841,
+   "score_sd": 0.7118932418606598,
+   "steer_prop_mean": -0.0001429086991508181,
+   "steer_prop_sd": 0.001190445938564753,
+   "steer_twin_mean": 0.012872933233777683,
+   "steer_twin_sd": 0.000118880749700579,
+   "mean_abs_speed_gap": 11.422797135626096,
+   "l1_first_unhealthy_tick": null,
+   "states": {
+    "NOMINAL": 2998,
+    "DEGRADED": 2
+   }
+  },
+  {
+   "arm": "position_bias",
+   "seed": 20270218,
+   "n_scored": 3000,
+   "alarm_rate": 0.821,
+   "score_p50": 20.395619390540897,
+   "score_p95": 22.668467692706145,
+   "score_sd": 6.663584183990766,
+   "steer_prop_mean": -0.013243139165065561,
+   "steer_prop_sd": 0.01063831904560782,
+   "steer_twin_mean": -0.026893156754473846,
+   "steer_twin_sd": 0.01266444172888114,
+   "mean_abs_speed_gap": 0.014641676807414636,
+   "l1_first_unhealthy_tick": 216,
+   "states": {
+    "HALT": 3000
+   }
+  },
+  {
+   "arm": "clean",
+   "seed": 20270219,
+   "n_scored": 3000,
+   "alarm_rate": 0.051666666666666666,
+   "score_p50": 8.482928388204808,
+   "score_p95": 9.198235797549984,
+   "score_sd": 0.5173230020930502,
+   "steer_prop_mean": 5.728814789714912e-06,
+   "steer_prop_sd": 0.0017772754473250702,
+   "steer_twin_mean": 0.01321676220993201,
+   "steer_twin_sd": 0.001505112618047087,
+   "mean_abs_speed_gap": 0.008887526887372169,
+   "l1_first_unhealthy_tick": null,
+   "states": {
+    "NOMINAL": 3000
+   }
+  },
+  {
+   "arm": "dropout",
+   "seed": 20270219,
+   "n_scored": 3000,
+   "alarm_rate": 0.44766666666666666,
+   "score_p50": 9.082788252756378,
+   "score_p95": 10.168433422771775,
+   "score_sd": 0.964690378016424,
+   "steer_prop_mean": 0.0003477857611918201,
+   "steer_prop_sd": 0.001539914553619847,
+   "steer_twin_mean": 0.014300778011480967,
+   "steer_twin_sd": 0.00013734259543722618,
+   "mean_abs_speed_gap": 10.680891105992076,
+   "l1_first_unhealthy_tick": 201,
+   "states": {
+    "HALT": 3000
+   }
+  },
+  {
+   "arm": "dropout_noL8",
+   "seed": 20270219,
+   "n_scored": 3000,
+   "alarm_rate": 0.4673333333333333,
+   "score_p50": 9.12956093232237,
+   "score_p95": 10.186612990881944,
+   "score_sd": 0.9473215969865142,
+   "steer_prop_mean": 0.0002579324084799737,
+   "steer_prop_sd": 0.0015116005914006924,
+   "steer_twin_mean": 0.014292677779992422,
+   "steer_twin_sd": 0.00013500399150590252,
+   "mean_abs_speed_gap": 10.49057700917556,
+   "l1_first_unhealthy_tick": 201,
+   "states": {
+    "NOMINAL": 3000
+   }
+  },
+  {
+   "arm": "stuck",
+   "seed": 20270219,
+   "n_scored": 3000,
+   "alarm_rate": 1.0,
+   "score_p50": 12.903789033350069,
+   "score_p95": 13.61327344850606,
+   "score_sd": 0.427065639802533,
+   "steer_prop_mean": -0.00455714903670984,
+   "steer_prop_sd": 0.0006661834358074881,
+   "steer_twin_mean": 0.015652198751767477,
+   "steer_twin_sd": 2.613434301823719e-06,
+   "mean_abs_speed_gap": 10.652036799207162,
+   "l1_first_unhealthy_tick": null,
+   "states": {
+    "HALT": 3000
+   }
+  },
+  {
+   "arm": "position_bias",
+   "seed": 20270219,
+   "n_scored": 3000,
+   "alarm_rate": 1.0,
+   "score_p50": 26.958991363899905,
+   "score_p95": 35.183997278221014,
+   "score_sd": 4.458096821510947,
+   "steer_prop_mean": 0.012575327812150741,
+   "steer_prop_sd": 0.010802149640037404,
+   "steer_twin_mean": -0.03293422512213389,
+   "steer_twin_sd": 0.003929476267846966,
+   "mean_abs_speed_gap": 0.014337683829404905,
+   "l1_first_unhealthy_tick": 209,
+   "states": {
+    "HALT": 3000
+   }
+  },
+  {
+   "arm": "clean",
+   "seed": 20270220,
+   "n_scored": 3000,
+   "alarm_rate": 0.05466666666666667,
+   "score_p50": 8.47093290714673,
+   "score_p95": 9.221723192769696,
+   "score_sd": 0.523456045002531,
+   "steer_prop_mean": 9.287424307937423e-06,
+   "steer_prop_sd": 0.0018103088465277976,
+   "steer_twin_mean": 0.0132126944065094,
+   "steer_twin_sd": 0.0015420052303649287,
+   "mean_abs_speed_gap": 0.008744899536342169,
+   "l1_first_unhealthy_tick": null,
+   "states": {
+    "NOMINAL": 3000
+   }
+  },
+  {
+   "arm": "dropout",
+   "seed": 20270220,
+   "n_scored": 3000,
+   "alarm_rate": 0.0033333333333333335,
+   "score_p50": 7.998727251257921,
+   "score_p95": 8.755143327969593,
+   "score_sd": 0.6637630925408448,
+   "steer_prop_mean": 0.00044038995436858385,
+   "steer_prop_sd": 0.0011410528049487767,
+   "steer_twin_mean": 0.012682434240976969,
+   "steer_twin_sd": 0.00011394481722522997,
+   "mean_abs_speed_gap": 11.221786410890369,
+   "l1_first_unhealthy_tick": 201,
+   "states": {
+    "LIMP": 3000
+   }
+  },
+  {
+   "arm": "dropout_noL8",
+   "seed": 20270220,
+   "n_scored": 3000,
+   "alarm_rate": 0.011,
+   "score_p50": 7.3907267355347255,
+   "score_p95": 8.726157743670719,
+   "score_sd": 0.7203506199567721,
+   "steer_prop_mean": 0.0009138628876923273,
+   "steer_prop_sd": 0.0012349222034352069,
+   "steer_twin_mean": 0.012728818501035372,
+   "steer_twin_sd": 0.00012115616854120153,
+   "mean_abs_speed_gap": 10.601608233001956,
+   "l1_first_unhealthy_tick": 201,
+   "states": {
+    "NOMINAL": 3000
+   }
+  },
+  {
+   "arm": "stuck",
+   "seed": 20270220,
+   "n_scored": 3000,
+   "alarm_rate": 0.37866666666666665,
+   "score_p50": 9.068044272038183,
+   "score_p95": 9.734285586244654,
+   "score_sd": 0.6621586427793125,
+   "steer_prop_mean": -0.0018646904724106813,
+   "steer_prop_sd": 0.0010968037564830654,
+   "steer_twin_mean": 0.012123938803871472,
+   "steer_twin_sd": 0.00010806807347645576,
+   "mean_abs_speed_gap": 10.830104057860634,
+   "l1_first_unhealthy_tick": null,
+   "states": {
+    "NOMINAL": 3000
+   }
+  },
+  {
+   "arm": "position_bias",
+   "seed": 20270220,
+   "n_scored": 3000,
+   "alarm_rate": 1.0,
+   "score_p50": 34.34885433195853,
+   "score_p95": 35.087249376387035,
+   "score_sd": 0.9062334818666996,
+   "steer_prop_mean": 0.029112496649535993,
+   "steer_prop_sd": 0.0029968162118735407,
+   "steer_twin_mean": -0.024510879814624787,
+   "steer_twin_sd": 0.0020815511753544025,
+   "mean_abs_speed_gap": 0.007007066360330139,
+   "l1_first_unhealthy_tick": 209,
+   "states": {
+    "HALT": 3000
+   }
+  },
+  {
+   "arm": "clean",
+   "seed": 20270221,
+   "n_scored": 3000,
+   "alarm_rate": 0.05333333333333334,
+   "score_p50": 8.463490646450774,
+   "score_p95": 9.20600881216844,
+   "score_sd": 0.5129470876018506,
+   "steer_prop_mean": -5.307422873253623e-06,
+   "steer_prop_sd": 0.0017685522919977,
+   "steer_twin_mean": 0.013197270423173904,
+   "steer_twin_sd": 0.0015053113441632665,
+   "mean_abs_speed_gap": 0.008605337008214892,
+   "l1_first_unhealthy_tick": null,
+   "states": {
+    "NOMINAL": 3000
+   }
+  },
+  {
+   "arm": "dropout",
+   "seed": 20270221,
+   "n_scored": 3000,
+   "alarm_rate": 0.3923333333333333,
+   "score_p50": 8.955885378992127,
+   "score_p95": 10.05219096803332,
+   "score_sd": 0.9445501066467936,
+   "steer_prop_mean": 0.00039945327816531064,
+   "steer_prop_sd": 0.0015049910215439723,
+   "steer_twin_mean": 0.014167028392354647,
+   "steer_twin_sd": 0.0001486921619932784,
+   "mean_abs_speed_gap": 12.960697375486982,
+   "l1_first_unhealthy_tick": 201,
+   "states": {
+    "LIMP": 3000
+   }
+  },
+  {
+   "arm": "dropout_noL8",
+   "seed": 20270221,
+   "n_scored": 3000,
+   "alarm_rate": 0.4086666666666667,
+   "score_p50": 8.988754644914314,
+   "score_p95": 10.075856827599557,
+   "score_sd": 0.9377440898358128,
+   "steer_prop_mean": 0.00033508953684940933,
+   "steer_prop_sd": 0.0014942818341063013,
+   "steer_twin_mean": 0.014160407771666845,
+   "steer_twin_sd": 0.0001475380045792914,
+   "mean_abs_speed_gap": 12.635957058308678,
+   "l1_first_unhealthy_tick": 201,
+   "states": {
+    "NOMINAL": 3000
+   }
+  },
+  {
+   "arm": "stuck",
+   "seed": 20270221,
+   "n_scored": 3000,
+   "alarm_rate": 0.049,
+   "score_p50": 8.45165801410736,
+   "score_p95": 9.186183505341623,
+   "score_sd": 0.7004214504995978,
+   "steer_prop_mean": 0.0002948341593146324,
+   "steer_prop_sd": 0.001170378758769465,
+   "steer_twin_mean": 0.013278048689166705,
+   "steer_twin_sd": 0.00011936639162915476,
+   "mean_abs_speed_gap": 11.613028919834765,
+   "l1_first_unhealthy_tick": null,
+   "states": {
+    "NOMINAL": 3000
+   }
+  },
+  {
+   "arm": "position_bias",
+   "seed": 20270221,
+   "n_scored": 3000,
+   "alarm_rate": 0.20133333333333334,
+   "score_p50": 7.299189397733554,
+   "score_p95": 23.24716480887316,
+   "score_sd": 6.210866751026627,
+   "steer_prop_mean": -0.019080873977315303,
+   "steer_prop_sd": 0.00868607854092258,
+   "steer_twin_mean": -0.01780583466589451,
+   "steer_twin_sd": 0.009754574728153269,
+   "mean_abs_speed_gap": 0.0100531616799557,
+   "l1_first_unhealthy_tick": 209,
+   "states": {
+    "HALT": 3000
+   }
+  },
+  {
+   "arm": "clean",
+   "seed": 20270222,
+   "n_scored": 3000,
+   "alarm_rate": 0.04733333333333333,
+   "score_p50": 8.470685585306335,
+   "score_p95": 9.181124635996609,
+   "score_sd": 0.5070567807718407,
+   "steer_prop_mean": -4.611457542826732e-06,
+   "steer_prop_sd": 0.0017686477218802205,
+   "steer_twin_mean": 0.013199598585565886,
+   "steer_twin_sd": 0.0014937741358597544,
+   "mean_abs_speed_gap": 0.008545029226454604,
+   "l1_first_unhealthy_tick": null,
+   "states": {
+    "NOMINAL": 3000
+   }
+  },
+  {
+   "arm": "dropout",
+   "seed": 20270222,
+   "n_scored": 3000,
+   "alarm_rate": 0.0006666666666666666,
+   "score_p50": 7.063495401871256,
+   "score_p95": 8.351312419765495,
+   "score_sd": 0.6391563649936266,
+   "steer_prop_mean": 0.00018881223556430388,
+   "steer_prop_sd": 0.001066060336441473,
+   "steer_twin_mean": 0.011329584737618765,
+   "steer_twin_sd": 8.977755273925327e-05,
+   "mean_abs_speed_gap": 11.19983944729016,
+   "l1_first_unhealthy_tick": 201,
+   "states": {
+    "LIMP": 3000
+   }
+  },
+  {
+   "arm": "dropout_noL8",
+   "seed": 20270222,
+   "n_scored": 3000,
+   "alarm_rate": 0.0026666666666666666,
+   "score_p50": 6.902354738086737,
+   "score_p95": 8.215682490732208,
+   "score_sd": 0.6760674060719902,
+   "steer_prop_mean": 0.0004496036021737382,
+   "steer_prop_sd": 0.0011157270355747946,
+   "steer_twin_mean": 0.011344576388597488,
+   "steer_twin_sd": 8.50927690776339e-05,
+   "mean_abs_speed_gap": 11.126940464160088,
+   "l1_first_unhealthy_tick": 201,
+   "states": {
+    "DEGRADED": 497,
+    "NOMINAL": 2503
+   }
+  },
+  {
+   "arm": "stuck",
+   "seed": 20270222,
+   "n_scored": 3000,
+   "alarm_rate": 0.017333333333333333,
+   "score_p50": 7.387533264771313,
+   "score_p95": 8.92447773606803,
+   "score_sd": 0.8564283548416969,
+   "steer_prop_mean": 0.0008408333862122769,
+   "steer_prop_sd": 0.0014460894859702816,
+   "steer_twin_mean": 0.012556055843830108,
+   "steer_twin_sd": 0.00013135196024944442,
+   "mean_abs_speed_gap": 10.603253049459935,
+   "l1_first_unhealthy_tick": null,
+   "states": {
+    "NOMINAL": 2998,
+    "DEGRADED": 2
+   }
+  },
+  {
+   "arm": "position_bias",
+   "seed": 20270222,
+   "n_scored": 3000,
+   "alarm_rate": 1.0,
+   "score_p50": 34.42018296202047,
+   "score_p95": 35.350002433933696,
+   "score_sd": 2.8456323317745778,
+   "steer_prop_mean": 0.02165245327198257,
+   "steer_prop_sd": 0.007129617907262441,
+   "steer_twin_mean": -0.029976498877008755,
+   "steer_twin_sd": 0.0028460250369830376,
+   "mean_abs_speed_gap": 0.009667292570745539,
+   "l1_first_unhealthy_tick": 209,
+   "states": {
+    "HALT": 3000
+   }
+  },
+  {
+   "arm": "clean",
+   "seed": 20270223,
+   "n_scored": 3000,
+   "alarm_rate": 0.04533333333333334,
+   "score_p50": 8.465217437725524,
+   "score_p95": 9.172104453035791,
+   "score_sd": 0.5080528742921323,
+   "steer_prop_mean": 5.6500885402783755e-06,
+   "steer_prop_sd": 0.0017011391024593994,
+   "steer_twin_mean": 0.013208057398597399,
+   "steer_twin_sd": 0.0014424895733439426,
+   "mean_abs_speed_gap": 0.008687341869791669,
+   "l1_first_unhealthy_tick": null,
+   "states": {
+    "NOMINAL": 3000
+   }
+  },
+  {
+   "arm": "dropout",
+   "seed": 20270223,
+   "n_scored": 3000,
+   "alarm_rate": 0.7223333333333334,
+   "score_p50": 9.64787166240049,
+   "score_p95": 10.415517905564512,
+   "score_sd": 0.7663829500878319,
+   "steer_prop_mean": 0.0016209993612331648,
+   "steer_prop_sd": 0.0012110969733889435,
+   "steer_twin_mean": 0.016456387892365455,
+   "steer_twin_sd": 9.967495587178124e-05,
+   "mean_abs_speed_gap": 11.450590050341312,
+   "l1_first_unhealthy_tick": 201,
+   "states": {
+    "HALT": 3000
+   }
+  },
+  {
+   "arm": "dropout_noL8",
+   "seed": 20270223,
+   "n_scored": 3000,
+   "alarm_rate": 1.0,
+   "score_p50": 14.639355399231272,
+   "score_p95": 15.58327771869748,
+   "score_sd": 0.7448324836964827,
+   "steer_prop_mean": -0.006432808830946063,
+   "steer_prop_sd": 0.001177234159697703,
+   "steer_twin_mean": 0.01632805360853672,
+   "steer_twin_sd": 4.40622983926117e-05,
+   "mean_abs_speed_gap": 11.450590055424664,
+   "l1_first_unhealthy_tick": 201,
+   "states": {
+    "HALT": 3000
+   }
+  },
+  {
+   "arm": "stuck",
+   "seed": 20270223,
+   "n_scored": 3000,
+   "alarm_rate": 1.0,
+   "score_p50": 15.54519878105652,
+   "score_p95": 16.18751100078355,
+   "score_sd": 0.3962071988889955,
+   "steer_prop_mean": -0.007543383645514647,
+   "steer_prop_sd": 0.0006178995573049883,
+   "steer_twin_mean": 0.016787626470128696,
+   "steer_twin_sd": 2.6976003439592825e-06,
+   "mean_abs_speed_gap": 11.43906531275249,
+   "l1_first_unhealthy_tick": null,
+   "states": {
+    "HALT": 3000
+   }
+  },
+  {
+   "arm": "position_bias",
+   "seed": 20270223,
+   "n_scored": 3000,
+   "alarm_rate": 1.0,
+   "score_p50": 28.268979751168008,
+   "score_p95": 35.98382807909655,
+   "score_sd": 5.3254237279139085,
+   "steer_prop_mean": 0.015013199554756284,
+   "steer_prop_sd": 0.013063228523307014,
+   "steer_twin_mean": -0.03186631524562836,
+   "steer_twin_sd": 0.004809006877185158,
+   "mean_abs_speed_gap": 0.013360888546774361,
+   "l1_first_unhealthy_tick": 209,
+   "states": {
+    "HALT": 3000
+   }
+  },
+  {
+   "arm": "clean",
+   "seed": 20270224,
+   "n_scored": 3000,
+   "alarm_rate": 0.055,
+   "score_p50": 8.468284496241886,
+   "score_p95": 9.212500452777194,
+   "score_sd": 0.5186202789138536,
+   "steer_prop_mean": 7.796370501940449e-06,
+   "steer_prop_sd": 0.001857657270546918,
+   "steer_twin_mean": 0.013208283285299938,
+   "steer_twin_sd": 0.0015754005340552482,
+   "mean_abs_speed_gap": 0.008732080596114081,
+   "l1_first_unhealthy_tick": null,
+   "states": {
+    "NOMINAL": 3000
+   }
+  },
+  {
+   "arm": "dropout",
+   "seed": 20270224,
+   "n_scored": 3000,
+   "alarm_rate": 0.0026666666666666666,
+   "score_p50": 8.623610642892837,
+   "score_p95": 8.931103819818755,
+   "score_sd": 0.33640061552559986,
+   "steer_prop_mean": 0.0005362373907895138,
+   "steer_prop_sd": 0.000555988569282222,
+   "steer_twin_mean": 0.013924086744586627,
+   "steer_twin_sd": 5.3641443618808995e-05,
+   "mean_abs_speed_gap": 11.44175503765336,
+   "l1_first_unhealthy_tick": 201,
+   "states": {
+    "LIMP": 3000
+   }
+  },
+  {
+   "arm": "dropout_noL8",
+   "seed": 20270224,
+   "n_scored": 3000,
+   "alarm_rate": 0.365,
+   "score_p50": 8.903681137034667,
+   "score_p95": 10.047742149312343,
+   "score_sd": 0.8796136797607822,
+   "steer_prop_mean": 0.00012746699802422274,
+   "steer_prop_sd": 0.001401181273420748,
+   "steer_twin_mean": 0.013884005650877952,
+   "steer_twin_sd": 0.0001343995579310423,
+   "mean_abs_speed_gap": 10.847008591652811,
+   "l1_first_unhealthy_tick": 201,
+   "states": {
+    "NOMINAL": 3000
+   }
+  },
+  {
+   "arm": "stuck",
+   "seed": 20270224,
+   "n_scored": 3000,
+   "alarm_rate": 0.47933333333333333,
+   "score_p50": 9.129792043652134,
+   "score_p95": 10.127424100558157,
+   "score_sd": 0.6487374014768178,
+   "steer_prop_mean": 4.271538489653419e-05,
+   "steer_prop_sd": 0.0009586036643127023,
+   "steer_twin_mean": 0.014350289766987165,
+   "steer_twin_sd": 9.155811761915374e-05,
+   "mean_abs_speed_gap": 10.999032274022806,
+   "l1_first_unhealthy_tick": null,
+   "states": {
+    "NOMINAL": 3000
+   }
+  },
+  {
+   "arm": "position_bias",
+   "seed": 20270224,
+   "n_scored": 3000,
+   "alarm_rate": 0.28733333333333333,
+   "score_p50": 6.556163798391065,
+   "score_p95": 20.94023011394176,
+   "score_sd": 6.87029574954863,
+   "steer_prop_mean": -0.01723866359796375,
+   "steer_prop_sd": 0.006918250613372679,
+   "steer_twin_mean": -0.022390278118352095,
+   "steer_twin_sd": 0.010643377105942667,
+   "mean_abs_speed_gap": 0.013193064988666533,
+   "l1_first_unhealthy_tick": 209,
+   "states": {
+    "HALT": 3000
+   }
+  },
+  {
+   "arm": "clean",
+   "seed": 20270225,
+   "n_scored": 3000,
+   "alarm_rate": 0.044333333333333336,
+   "score_p50": 8.4620388389901,
+   "score_p95": 9.161418156678852,
+   "score_sd": 0.5024430925777241,
+   "steer_prop_mean": 2.269358607009053e-06,
+   "steer_prop_sd": 0.0017795138794942159,
+   "steer_twin_mean": 0.013198596368233362,
+   "steer_twin_sd": 0.001520339726538928,
+   "mean_abs_speed_gap": 0.00860970312616935,
+   "l1_first_unhealthy_tick": null,
+   "states": {
+    "NOMINAL": 3000
+   }
+  },
+  {
+   "arm": "dropout",
+   "seed": 20270225,
+   "n_scored": 3000,
+   "alarm_rate": 0.006333333333333333,
+   "score_p50": 8.536224088361386,
+   "score_p95": 8.94919772504266,
+   "score_sd": 0.24471312462681766,
+   "steer_prop_mean": -6.161744345445186e-05,
+   "steer_prop_sd": 0.0003884252609419344,
+   "steer_twin_mean": 0.01333392866452535,
+   "steer_twin_sd": 3.943690646284217e-05,
+   "mean_abs_speed_gap": 12.936740881779311,
+   "l1_first_unhealthy_tick": 201,
+   "states": {
+    "LIMP": 3000
+   }
+  },
+  {
+   "arm": "dropout_noL8",
+   "seed": 20270225,
+   "n_scored": 3000,
+   "alarm_rate": 0.06466666666666666,
+   "score_p50": 8.574082622534254,
+   "score_p95": 9.258717662065168,
+   "score_sd": 0.44363525222796485,
+   "steer_prop_mean": -7.981185816849271e-05,
+   "steer_prop_sd": 0.0007031465975616507,
+   "steer_twin_mean": 0.013332179541389147,
+   "steer_twin_sd": 7.17297539824064e-05,
+   "mean_abs_speed_gap": 10.366112170849897,
+   "l1_first_unhealthy_tick": 201,
+   "states": {
+    "NOMINAL": 3000
+   }
+  },
+  {
+   "arm": "stuck",
+   "seed": 20270225,
+   "n_scored": 3000,
+   "alarm_rate": 0.16,
+   "score_p50": 8.756113727853567,
+   "score_p95": 9.479795427945895,
+   "score_sd": 0.5527378801947697,
+   "steer_prop_mean": -0.00013942742250704516,
+   "steer_prop_sd": 0.0008680265568998466,
+   "steer_twin_mean": 0.013466481854518255,
+   "steer_twin_sd": 8.853034952497296e-05,
+   "mean_abs_speed_gap": 11.723197529707894,
+   "l1_first_unhealthy_tick": null,
+   "states": {
+    "NOMINAL": 3000
+   }
+  },
+  {
+   "arm": "position_bias",
+   "seed": 20270225,
+   "n_scored": 3000,
+   "alarm_rate": 0.5406666666666666,
+   "score_p50": 18.356771308880365,
+   "score_p95": 22.40143297804295,
+   "score_sd": 7.84479892013978,
+   "steer_prop_mean": -0.013101302166702225,
+   "steer_prop_sd": 0.008968681006021585,
+   "steer_twin_mean": -0.02710022741307815,
+   "steer_twin_sd": 0.011575706232646315,
+   "mean_abs_speed_gap": 0.015069986387525937,
+   "l1_first_unhealthy_tick": 209,
+   "states": {
+    "HALT": 3000
+   }
+  },
+  {
+   "arm": "clean",
+   "seed": 20270226,
+   "n_scored": 3000,
+   "alarm_rate": 0.048666666666666664,
+   "score_p50": 8.47250934220865,
+   "score_p95": 9.184546541122996,
+   "score_sd": 0.5184938354830272,
+   "steer_prop_mean": 5.760940024629235e-06,
+   "steer_prop_sd": 0.00177827216236047,
+   "steer_twin_mean": 0.01320640039940675,
+   "steer_twin_sd": 0.0015133970557982227,
+   "mean_abs_speed_gap": 0.00863796568022228,
+   "l1_first_unhealthy_tick": null,
+   "states": {
+    "NOMINAL": 3000
+   }
+  },
+  {
+   "arm": "dropout",
+   "seed": 20270226,
+   "n_scored": 3000,
+   "alarm_rate": 0.295,
+   "score_p50": 8.78842499525268,
+   "score_p95": 9.927079132706877,
+   "score_sd": 0.7539468055091442,
+   "steer_prop_mean": 0.0008026590448571369,
+   "steer_prop_sd": 0.001173349497945106,
+   "steer_twin_mean": 0.014482863237460454,
+   "steer_twin_sd": 0.00011562526086201483,
+   "mean_abs_speed_gap": 12.394414461534677,
+   "l1_first_unhealthy_tick": 201,
+   "states": {
+    "LIMP": 3000
+   }
+  },
+  {
+   "arm": "dropout_noL8",
+   "seed": 20270226,
+   "n_scored": 3000,
+   "alarm_rate": 0.582,
+   "score_p50": 9.355162620669917,
+   "score_p95": 10.203337479685164,
+   "score_sd": 0.837030650946416,
+   "steer_prop_mean": 3.0092084198258818e-05,
+   "steer_prop_sd": 0.0013306890434900743,
+   "steer_twin_mean": 0.014405723070104917,
+   "steer_twin_sd": 0.00012871766640213907,
+   "mean_abs_speed_gap": 12.088370178338403,
+   "l1_first_unhealthy_tick": 201,
+   "states": {
+    "NOMINAL": 3000
+   }
+  },
+  {
+   "arm": "stuck",
+   "seed": 20270226,
+   "n_scored": 3000,
+   "alarm_rate": 0.5116666666666667,
+   "score_p50": 9.21069855775724,
+   "score_p95": 10.133824724350127,
+   "score_sd": 0.6000471628126802,
+   "steer_prop_mean": 7.285679151148845e-05,
+   "steer_prop_sd": 0.0008861270534726367,
+   "steer_twin_mean": 0.014487557222445806,
+   "steer_twin_sd": 8.693757652949766e-05,
+   "mean_abs_speed_gap": 12.011759217564196,
+   "l1_first_unhealthy_tick": null,
+   "states": {
+    "NOMINAL": 3000
+   }
+  },
+  {
+   "arm": "position_bias",
+   "seed": 20270226,
+   "n_scored": 3000,
+   "alarm_rate": 0.051333333333333335,
+   "score_p50": 7.313485581661101,
+   "score_p95": 9.196021501160413,
+   "score_sd": 1.0643591084379749,
+   "steer_prop_mean": -0.023776020993789036,
+   "steer_prop_sd": 0.0009118136565355181,
+   "steer_twin_mean": -0.0122312729905049,
+   "steer_twin_sd": 0.0008697944026111826,
+   "mean_abs_speed_gap": 0.007384073852061157,
+   "l1_first_unhealthy_tick": 209,
+   "states": {
+    "HALT": 3000
+   }
+  },
+  {
+   "arm": "clean",
+   "seed": 20270227,
+   "n_scored": 3000,
+   "alarm_rate": 0.05633333333333333,
+   "score_p50": 8.46754833081204,
+   "score_p95": 9.209001956702043,
+   "score_sd": 0.5252389782681998,
+   "steer_prop_mean": 2.8364775547136863e-07,
+   "steer_prop_sd": 0.001849183674783547,
+   "steer_twin_mean": 0.013199488987525303,
+   "steer_twin_sd": 0.001564458376593261,
+   "mean_abs_speed_gap": 0.00877697843612578,
+   "l1_first_unhealthy_tick": null,
+   "states": {
+    "NOMINAL": 3000
+   }
+  },
+  {
+   "arm": "dropout",
+   "seed": 20270227,
+   "n_scored": 3000,
+   "alarm_rate": 0.0,
+   "score_p50": 6.563159898226476,
+   "score_p95": 7.287904056061587,
+   "score_sd": 0.3522603147746212,
+   "steer_prop_mean": 0.0009984684394827733,
+   "steer_prop_sd": 0.0005745709565636621,
+   "steer_twin_mean": 0.011393481731414795,
+   "steer_twin_sd": 3.875536046331291e-05,
+   "mean_abs_speed_gap": 12.101075767182738,
+   "l1_first_unhealthy_tick": 201,
+   "states": {
+    "HALT": 3000
+   }
+  },
+  {
+   "arm": "dropout_noL8",
+   "seed": 20270227,
+   "n_scored": 3000,
+   "alarm_rate": 0.0016666666666666668,
+   "score_p50": 6.85061152902558,
+   "score_p95": 8.162306481618888,
+   "score_sd": 0.6178376925133892,
+   "steer_prop_mean": 0.0004699556933483109,
+   "steer_prop_sd": 0.0010296919932815164,
+   "steer_twin_mean": 0.011346100628376007,
+   "steer_twin_sd": 8.860194105293148e-05,
+   "mean_abs_speed_gap": 12.009601759129863,
+   "l1_first_unhealthy_tick": 201,
+   "states": {
+    "NOMINAL": 2810,
+    "DEGRADED": 190
+   }
+  },
+  {
+   "arm": "stuck",
+   "seed": 20270227,
+   "n_scored": 3000,
+   "alarm_rate": 0.07566666666666666,
+   "score_p50": 8.631326846360066,
+   "score_p95": 9.277379976232208,
+   "score_sd": 0.6736161943448848,
+   "steer_prop_mean": -0.0007239975382496292,
+   "steer_prop_sd": 0.0011231788534792626,
+   "steer_twin_mean": 0.012547511105736096,
+   "steer_twin_sd": 0.0001108362531022188,
+   "mean_abs_speed_gap": 11.482765195755974,
+   "l1_first_unhealthy_tick": null,
+   "states": {
+    "NOMINAL": 2998,
+    "DEGRADED": 2
+   }
+  },
+  {
+   "arm": "position_bias",
+   "seed": 20270227,
+   "n_scored": 3000,
+   "alarm_rate": 0.057,
+   "score_p50": 6.5994211764900905,
+   "score_p95": 9.261170505779663,
+   "score_sd": 1.5599259705732764,
+   "steer_prop_mean": -0.02324233167308072,
+   "steer_prop_sd": 0.0014324165078349106,
+   "steer_twin_mean": -0.012882177713016668,
+   "steer_twin_sd": 0.001667408530336994,
+   "mean_abs_speed_gap": 0.009049749917911647,
+   "l1_first_unhealthy_tick": 214,
+   "states": {
+    "HALT": 3000
+   }
+  },
+  {
+   "arm": "clean",
+   "seed": 20270228,
+   "n_scored": 3000,
+   "alarm_rate": 0.053,
+   "score_p50": 8.463625089591085,
+   "score_p95": 9.20072567262695,
+   "score_sd": 0.5185588588961151,
+   "steer_prop_mean": 3.738339835156997e-06,
+   "steer_prop_sd": 0.0017496691034187433,
+   "steer_twin_mean": 0.013201031188170115,
+   "steer_twin_sd": 0.0014933585240799285,
+   "mean_abs_speed_gap": 0.008672126599303538,
+   "l1_first_unhealthy_tick": null,
+   "states": {
+    "NOMINAL": 3000
+   }
+  },
+  {
+   "arm": "dropout",
+   "seed": 20270228,
+   "n_scored": 3000,
+   "alarm_rate": 0.004,
+   "score_p50": 8.579585273221264,
+   "score_p95": 8.931529754726052,
+   "score_sd": 0.5418484848041623,
+   "steer_prop_mean": -0.00026848923853443316,
+   "steer_prop_sd": 0.0009124792743600714,
+   "steer_twin_mean": 0.012873881260553995,
+   "steer_twin_sd": 9.46248384118797e-05,
+   "mean_abs_speed_gap": 13.019228614852734,
+   "l1_first_unhealthy_tick": 201,
+   "states": {
+    "LIMP": 3000
+   }
+  },
+  {
+   "arm": "dropout_noL8",
+   "seed": 20270228,
+   "n_scored": 3000,
+   "alarm_rate": 0.019,
+   "score_p50": 8.659624450602674,
+   "score_p95": 9.054740349877893,
+   "score_sd": 0.4740816752617063,
+   "steer_prop_mean": -0.0005997030419530347,
+   "steer_prop_sd": 0.0007965757434408062,
+   "steer_twin_mean": 0.01283807098865509,
+   "steer_twin_sd": 8.006535054774989e-05,
+   "mean_abs_speed_gap": 11.699725473117624,
+   "l1_first_unhealthy_tick": 201,
+   "states": {
+    "NOMINAL": 3000
+   }
+  },
+  {
+   "arm": "stuck",
+   "seed": 20270228,
+   "n_scored": 3000,
+   "alarm_rate": 0.013,
+   "score_p50": 7.826551690759503,
+   "score_p95": 8.953432386546812,
+   "score_sd": 0.8210211699132407,
+   "steer_prop_mean": 0.0005332936925891166,
+   "steer_prop_sd": 0.0013905263609635635,
+   "steer_twin_mean": 0.012670364449421564,
+   "steer_twin_sd": 0.00013821838537408522,
+   "mean_abs_speed_gap": 12.241422173337805,
+   "l1_first_unhealthy_tick": null,
+   "states": {
+    "NOMINAL": 3000
+   }
+  },
+  {
+   "arm": "position_bias",
+   "seed": 20270228,
+   "n_scored": 3000,
+   "alarm_rate": 1.0,
+   "score_p50": 25.78884481295408,
+   "score_p95": 36.040663024687355,
+   "score_sd": 5.463540014218439,
+   "steer_prop_mean": 0.012424656927896042,
+   "steer_prop_sd": 0.013348534189611893,
+   "steer_twin_mean": -0.03259979089349508,
+   "steer_twin_sd": 0.004902915426334643,
+   "mean_abs_speed_gap": 0.014885465743896464,
+   "l1_first_unhealthy_tick": 209,
+   "states": {
+    "HALT": 3000
+   }
+  },
+  {
+   "arm": "clean",
+   "seed": 20270229,
+   "n_scored": 3000,
+   "alarm_rate": 0.04666666666666667,
+   "score_p50": 8.468188422934476,
+   "score_p95": 9.17552769664467,
+   "score_sd": 0.5042752484309055,
+   "steer_prop_mean": 7.487473155682286e-06,
+   "steer_prop_sd": 0.0017193185841916053,
+   "steer_twin_mean": 0.01321579944094022,
+   "steer_twin_sd": 0.001457427777651617,
+   "mean_abs_speed_gap": 0.00847772931517456,
+   "l1_first_unhealthy_tick": null,
+   "states": {
+    "NOMINAL": 3000
+   }
+  },
+  {
+   "arm": "dropout",
+   "seed": 20270229,
+   "n_scored": 3000,
+   "alarm_rate": 0.02033333333333333,
+   "score_p50": 7.180794811701944,
+   "score_p95": 8.933664783192937,
+   "score_sd": 0.8548795183027604,
+   "steer_prop_mean": 0.0009690294876539459,
+   "steer_prop_sd": 0.0014238840382078493,
+   "steer_twin_mean": 0.012360362753272057,
+   "steer_twin_sd": 0.0001198013875275572,
+   "mean_abs_speed_gap": 10.750227312808084,
+   "l1_first_unhealthy_tick": 201,
+   "states": {
+    "LIMP": 3000
+   }
+  },
+  {
+   "arm": "dropout_noL8",
+   "seed": 20270229,
+   "n_scored": 3000,
+   "alarm_rate": 0.019333333333333334,
+   "score_p50": 7.653446925897426,
+   "score_p95": 9.049051203949544,
+   "score_sd": 0.8363272461902235,
+   "steer_prop_mean": 0.00020355616133504857,
+   "steer_prop_sd": 0.0014134057114950605,
+   "steer_twin_mean": 0.012295682693521182,
+   "steer_twin_sd": 0.0001309980048364198,
+   "mean_abs_speed_gap": 10.357098746120824,
+   "l1_first_unhealthy_tick": 201,
+   "states": {
+    "NOMINAL": 3000
+   }
+  },
+  {
+   "arm": "stuck",
+   "seed": 20270229,
+   "n_scored": 3000,
+   "alarm_rate": 0.0,
+   "score_p50": 6.397656970929111,
+   "score_p95": 7.210290804032883,
+   "score_sd": 0.47740990347066165,
+   "steer_prop_mean": 0.0012755491086281837,
+   "steer_prop_sd": 0.0007550753031660259,
+   "steer_twin_mean": 0.011306216607491175,
+   "steer_twin_sd": 2.4075682206916052e-05,
+   "mean_abs_speed_gap": 10.71335814054704,
+   "l1_first_unhealthy_tick": null,
+   "states": {
+    "NOMINAL": 4,
+    "DEGRADED": 32,
+    "LIMP": 100,
+    "HALT": 2864
+   }
+  },
+  {
+   "arm": "position_bias",
+   "seed": 20270229,
+   "n_scored": 3000,
+   "alarm_rate": 0.8103333333333333,
+   "score_p50": 20.84924705666256,
+   "score_p95": 22.900880621563225,
+   "score_sd": 6.7622259702278065,
+   "steer_prop_mean": -0.011811230985214933,
+   "steer_prop_sd": 0.010655915345803143,
+   "steer_twin_mean": -0.027999619506299495,
+   "steer_twin_sd": 0.012291815830011318,
+   "mean_abs_speed_gap": 0.015410285088731835,
+   "l1_first_unhealthy_tick": 209,
+   "states": {
+    "HALT": 3000
+   }
+  },
+  {
+   "arm": "clean",
+   "seed": 20270230,
+   "n_scored": 3000,
+   "alarm_rate": 0.060333333333333336,
+   "score_p50": 8.472300836363647,
+   "score_p95": 9.231106401953017,
+   "score_sd": 0.5340967334144798,
+   "steer_prop_mean": 3.4476203533510365e-07,
+   "steer_prop_sd": 0.0018542166364403033,
+   "steer_twin_mean": 0.013201535537838935,
+   "steer_twin_sd": 0.001578158982934119,
+   "mean_abs_speed_gap": 0.008898567782797798,
+   "l1_first_unhealthy_tick": null,
+   "states": {
+    "NOMINAL": 3000
+   }
+  },
+  {
+   "arm": "dropout",
+   "seed": 20270230,
+   "n_scored": 3000,
+   "alarm_rate": 0.0003333333333333333,
+   "score_p50": 7.4610114978892526,
+   "score_p95": 8.679551779548468,
+   "score_sd": 0.7473549765594136,
+   "steer_prop_mean": 0.0003969938057707623,
+   "steer_prop_sd": 0.0012745030587480654,
+   "steer_twin_mean": 0.012150680656234423,
+   "steer_twin_sd": 0.00012893392280392019,
+   "mean_abs_speed_gap": 13.639210419318838,
+   "l1_first_unhealthy_tick": 201,
+   "states": {
+    "LIMP": 3000
+   }
+  },
+  {
+   "arm": "dropout_noL8",
+   "seed": 20270230,
+   "n_scored": 3000,
+   "alarm_rate": 0.001,
+   "score_p50": 8.091586414978078,
+   "score_p95": 8.679031258536652,
+   "score_sd": 0.6685586345052573,
+   "steer_prop_mean": -0.00028270703577436507,
+   "steer_prop_sd": 0.0011488840084648998,
+   "steer_twin_mean": 0.01208003701766332,
+   "steer_twin_sd": 0.00012054107529426114,
+   "mean_abs_speed_gap": 13.050204756296274,
+   "l1_first_unhealthy_tick": 201,
+   "states": {
+    "NOMINAL": 3000
+   }
+  },
+  {
+   "arm": "stuck",
+   "seed": 20270230,
+   "n_scored": 3000,
+   "alarm_rate": 0.016,
+   "score_p50": 7.864001244138651,
+   "score_p95": 8.928367961384025,
+   "score_sd": 0.7885417460133936,
+   "steer_prop_mean": -0.00029866040389363963,
+   "steer_prop_sd": 0.001336808924060976,
+   "steer_twin_mean": 0.011901978850364685,
+   "steer_twin_sd": 0.00013746388238208843,
+   "mean_abs_speed_gap": 13.268436889964944,
+   "l1_first_unhealthy_tick": null,
+   "states": {
+    "DEGRADED": 4,
+    "NOMINAL": 2996
+   }
+  },
+  {
+   "arm": "position_bias",
+   "seed": 20270230,
+   "n_scored": 3000,
+   "alarm_rate": 0.576,
+   "score_p50": 19.850638056172716,
+   "score_p95": 23.034343695989385,
+   "score_sd": 8.65157677869703,
+   "steer_prop_mean": -0.011163972818525507,
+   "steer_prop_sd": 0.0085533479081569,
+   "steer_twin_mean": -0.028697711646556854,
+   "steer_twin_sd": 0.010504876578083962,
+   "mean_abs_speed_gap": 0.017316720091284522,
+   "l1_first_unhealthy_tick": 209,
+   "states": {
+    "HALT": 3000
+   }
+  }
+ ]
+}

@@ -105,7 +105,9 @@ Permanent record of what may and may not be said. Every experiment updates this.
 | The suppression is caused by σ inflation | **Rejected** | Stage A, H1 | **No** |
 | The clean alarms are driven by measurement noise | **Rejected** | STEP 6, H-noise | **No** |
 | 99.96 % of the shipped L6 score comes from throttle and brake, which the twin does not model | **Established from code and dev runs** | `FINDING_TWIN_CHANNEL_MISMATCH_2026-10-07` | **Yes, with the code references** |
-| "Conformal safety gates go silent under sensor loss" as a general statement | **Not supported yet** | Depends on STEP 7 | **No, until STEP 7 is confirmed** |
+| "Conformal safety gates go silent under sensor loss" as a general statement | **Rejected** | STEP 7: a score restricted to the modelled channel is not suppressed, dev and held-out | **No** |
+| A lateral, effect-space score passes calibration and detects the positive control | **Established** | STEP 7, P-cal 30/30 and P-sens on dev and held-out | **Yes** |
+| The corrected gate reliably detects sensor loss | **Not established** | STEP 7: dev DETECTS, held-out inconclusive; ≈20 % of runs stay quiet | **No** |
 | The G2 monitor outperforms an L1-only trigger | **Rejected as stated** | Held-out latencies identical or G2 slower; `docs/REVIEW_TANAY_2026-10-06.md` | **No** |
 | Acting on G2 brings escalation forward by 1,181–1,640 ticks | **Exploratory only** | STEP 4; censored, compared with L8's counter | **No** |
 | The score moves down because the fault shifts the closed loop to a larger lateral offset | **Exploratory only** | `EXPLORATORY_SCORE_DIRECTION_2026-10-07` | **No, until pre-registered** |

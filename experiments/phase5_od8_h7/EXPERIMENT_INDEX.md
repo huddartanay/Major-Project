@@ -75,7 +75,7 @@ Status key: **C** confirmatory (pre-registered before results, held-out confirme
 | `STEP6_MECHANISM_FROZEN_ESTIMATE` | H-indep / H-freeze / H-noise | **C** (held-out block `20270101+i`) | H-indep and H-freeze confirmed; H-noise refuted. Frozen sensor: L1 0/30, gate ≈0 %, speed estimate wrong by ≈12 m/s | **Final** |
 | `EXPLORATORY_SCORE_DIRECTION_2026-10-07` | Why does the score move down? | E | Score ≈ size of the proposal (corr 0.98–0.999); falls with lateral offset, which grows under the fault | Led to the finding below |
 | `FINDING_TWIN_CHANNEL_MISMATCH_2026-10-07` | What does the twin predict? | **F** | Twin models steer only; 99.96 % of the L6 score is throttle + brake | Affects every L6-score result |
-| `STEP7_EFFECT_SPACE_GATE` | Does G1 survive a correctly specified (lateral, effect-space) score? | **C** (calibration `20260901+i`, held-out `20270201+i`) | Threshold 9.19 frozen; dev run in progress | — |
+| `STEP7_EFFECT_SPACE_GATE` | Does G1 survive a correctly specified (lateral, effect-space) score? | **C** (calibration `20260901+i`, held-out `20270201+i`) | Valid on both splits (calibration 30/30; positive control detected). **Not suppressed** under sensor loss on either split. Dev G1-ARTEFACT; held-out MIXED — detection not confirmed; response is split across runs (≈55–65 % alarm > 2×, ≈20 % quiet) | **No outcome confirmed; G1-SILENT rejected** |
 
 **Reading the older rows above in light of the twin finding:** every experiment that uses the L6 /
 OD-8 score (E17, E18 and its revisions, R3b, R3c, E21's OD-8 column, Phase 2, STEP 1–6) measured a
