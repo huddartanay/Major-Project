@@ -4,8 +4,8 @@
 Guide: Dr. Chaitra R. · BMS College of Engineering.
 
 > **3D walkthrough:** open [`mp_review_sim.html`](mp_review_sim.html) in a browser (needs internet once, to
-> load the 3D library). It shows the car, its sensors, the nine ASTRA layers stacked above it, and how each
-> layer reacts in four situations. Section 4 explains what you are looking at and what is real in it.
+> load the 3D library). It replays 17 recorded runs of the ASTRA code — one per sensor defect — showing the car, its sensors and
+> the nine layers, and exactly when each layer reacted. Section 4 explains it and tabulates every run.
 
 ---
 
@@ -60,37 +60,79 @@ inflated uncertainty; that sensor noise on a frozen channel would restore detect
 **The central result is F4:** *calibration is not validity.* A safety monitor can meet its statistical
 guarantee and still be uninformative.
 
-## 4 · The 3D walkthrough
+## 4 · The 3D replay: how the car reacts to each sensor defect
 
-File: [`mp_review_sim.html`](mp_review_sim.html). Drag to rotate, scroll to zoom.
+File: [`mp_review_sim.html`](mp_review_sim.html). Open it in a browser. Drag to rotate, scroll to zoom.
 
-**What you see**
+**This is a replay of real runs of the ASTRA code**, not an animation we drew. For each defect the pipeline was
+run once in its simulator for 120 s (2,400 ticks at 20 per second) with the defect switched on at 10.0 s, and
+what it recorded is played back.
 
-- The **solid car** is where the vehicle really is. The **blue outline** is where ASTRA believes it is.
-  When they separate, the system's picture of the world is wrong.
-- **Five dots on the car** are the sensors: three position sources, speed, lateral acceleration.
-- **Nine plates above the car** are the layers, L1 at the bottom to L9 at the top. A white pulse climbs the
-  stack each cycle (sensor data going up); an arrow comes back down (the command going to the wheels —
-  blue from the learned controller, orange from the fallback).
-- Plate colour: green working · amber flagged a problem · red blocking or stopped ·
-  **purple says OK but is wrong** · grey not connected.
+### How to use it
 
-**The four situations**
+1. Pick a sensor, then a defect. There are 17 runs: 16 defects across the sensors, plus a healthy reference.
+2. Watch the car. Playback is 8× by default; the slider and the chart at the bottom let you jump anywhere.
 
-| situation | what happens | which finding |
-|---|---|---|
-| Normal driving | All green; learned controller drives | baseline |
-| Sensor stops sending | L1 turns amber at once, L8 steps down to 20 km/h, the fallback takes over. L6 turns purple: it goes quiet when it should be loudest | F1, F2 |
-| Sensor freezes | Sensors still look healthy. Every layer except the proposer turns purple. The solid car slows to a crawl; the blue outline keeps going at 41 km/h. Mode stays NOMINAL | F3, F7 |
-| One sensor lies | One of three position sources shifts. The cross-check catches it in under half a second and the car is brought to a stop | F5 |
+### What you see
 
-Tick "Show parts that are built but not connected" to list the dormant components.
+| on screen | meaning |
+|---|---|
+| Solid car | The real car: its real speed (road markings), real sideways position, brake lights, hazard lights when stopped |
+| Blue outline car | Where ASTRA *believes* the car is. If it separates from the solid car, ASTRA's picture is wrong |
+| Glow under the car | Driving mode: green NOMINAL, amber DEGRADED (40 km/h cap), orange LIMP (20 km/h cap), red HALT |
+| Five dots on the car | IMU, GPS and LIDAR position sources; speed; lateral acceleration. The defective one pulses and is labelled "DEFECT, flagged by L1" or "DEFECT, not flagged" |
+| Nine plates above the car | Layers L1–L9. Green no objection, amber flagging or limiting, red blocking, purple "no objection, but its picture is wrong" |
+| Top cards | Real speed, believed speed, real distance from lane centre, mode, where the command came from |
+| Bottom chart | Real speed (white), believed speed (blue dashes), healthy run (green dots); sideways position with the lane edges; mode strip |
+| Right panel | Exact defect, a timed list of what each layer did, the result of the run, and each layer's live status |
 
-**What is real and what is not.** Which layer reacts, the final driving mode, and the size of the speed gap
-come from STEP 6 and STEP 7 held-out results. The motion between start and end, the timing (compressed),
-how far the blue outline is drawn from the car, and the wiggle on the score bar are an illustration. The
-page is an explainer; it does not execute ASTRA. A replay driven by a recorded run is possible and would
-be the honest next version.
+Purple is the page's own judgement, made by comparing ASTRA's estimate with the simulator's ground truth, which
+ASTRA never sees. Everything else is recorded output.
+
+### What each defect did (one run each, seed 20260731)
+
+| sensor | exact defect | L1 flags it | fail-safe leaves NOMINAL | final mode | real speed at end | worst speed belief error | worst distance from lane centre |
+|---|---|---|---|---|---|---|---|
+| — | none (healthy reference) | — | never | NOMINAL | 40 km/h | 0 km/h | 0.24 m |
+| Position · IMU | reads 1.0 m to the side; GPS, LIDAR honest | IMU, after 0.45 s | 0.65 s | HALT at 2.40 s | 0 | 2 km/h | 0.47 m |
+| Position · GPS | reads 1.0 m to the side; IMU, LIDAR honest | GPS, after 0.80 s | 1.00 s | HALT at 3.75 s | 0 | 2 km/h | 0.42 m |
+| Position · LIDAR | reads 1.0 m to the side; IMU, GPS honest | LIDAR, after 0.45 s | 0.65 s | HALT at 2.40 s | 0 | 2 km/h | 0.57 m |
+| Position · LIDAR | drifts sideways 4 cm/s | LIDAR, after 16.40 s (0.66 m of drift) | 16.60 s | HALT at 21.90 s | 0 | 2 km/h | 0.46 m |
+| Position · IMU + GPS | both read 1.0 m to the side; only LIDAR honest | **LIDAR** (the honest one), after 0.45 s | 0.65 s | HALT at 2.40 s | 0 | 2 km/h | 0.95 m |
+| Position · IMU + GPS | both drift sideways 4 cm/s | **LIDAR** (the honest one), after 15.65 s | 17.95 s | HALT at 22.40 s | 0 | 2 km/h | 0.48 m |
+| Speed | freezes | never | **never** | NOMINAL | **53 km/h** | 15 km/h | 0.24 m |
+| Speed | reads 3.0 m/s too high | never | **never** | NOMINAL | 29 km/h | 11 km/h | 0.23 m |
+| Speed | reads 3.0 m/s too low | never | **never** | NOMINAL | **51 km/h** | 11 km/h | 0.30 m |
+| Speed | drifts to 5.0 m/s too low | never | **never** | NOMINAL | **55 km/h** | 18 km/h | 0.26 m |
+| Speed | reported in km/h instead of m/s | never | 0.45 s, then back to NOMINAL | NOMINAL | 4 km/h | 100 km/h | 0.56 m |
+| Lateral acceleration | freezes | never | **never** | NOMINAL | 21 km/h | 0 | 0.50 m |
+| Lateral acceleration | reads 1.0 m/s² too high | never | 0.65 s | HALT at 5.15 s | 0 | 2 km/h | **10.91 m — left the lane** |
+| Lateral acceleration | sign flipped | never | **never** | NOMINAL | 4 km/h | 0 | 0.74 m |
+| Speed + lateral acceleration | both freeze (STEP 6 arm) | never | **never** | NOMINAL | 0 km/h | 38 km/h | 0.38 m |
+| IMU message stream | stops sending (STEP 6 arm) | IMU, after 0.05 s | 0.25 s | LIMP | 0 km/h | 38 km/h | 0.25 m |
+
+Times are measured from the moment the defect starts (10.0 s into the run). Lane edge is 1.75 m from centre.
+
+**What these single runs suggest — to be tested, not yet claimed:**
+
+1. **Position defects are the well-covered case.** Any one of the three sources lying by 1.0 m is flagged within
+   0.45–0.80 s and the car is stopped within 2.4–3.75 s. A slow drift is caught too, but only after 16 s.
+2. **When two position sources agree on a lie, L1 blames the honest third one.** The car is still stopped, but for
+   the wrong reason, and it moved 0.95 m off centre first.
+3. **Every speed defect went unnoticed.** With a frozen or under-reading speed sensor the car ended 11–15 km/h
+   *faster* than the healthy run while the fail-safe stayed in NOMINAL. Speed has a single source and nothing to
+   cross-check it against.
+4. **A lateral-acceleration reading 1.0 m/s² too high put the car 10.9 m off the lane centre** before the fail-safe
+   stopped it at 5.15 s. L1 never flagged it. This is the most serious outcome in the set.
+5. **A wrong unit was noticed and then forgotten.** The gates blocked at once and the fail-safe went to DEGRADED
+   after 0.45 s, then returned to NOMINAL with the defect still present, the car crawling at 4 km/h.
+6. **Freezing both speed and lateral acceleration stops the car without any layer knowing**; freezing speed alone
+   speeds it up. The same kind of defect has opposite effects depending on which channels it hits.
+
+**How far to trust this table.** It is one run per defect, not pre-registered, so it shows what *can* happen, not
+how often. Item 1 and the two STEP 6 rows agree with our 30-run studies. Items 2–6 are new and are exactly
+what the STEP 8 study (phase P3) will measure properly. Details:
+`experiments/phase5_od8_h7/EXPLORATORY_SENSOR_DEFECT_TRACES_2026-10-07/`.
 
 ## 5 · Literature position
 
