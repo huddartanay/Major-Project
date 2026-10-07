@@ -202,3 +202,44 @@ Each phase has an exit test. A phase is not done until its exit test is met or i
 - STEP 8 and any other run needs Sushanth's go-ahead; pushes need a yes each time.
 - If P2 fails (the audit does not generalise), paper 1 becomes a case study and the venue drops to a
   workshop; decide at the end of P2, not later.
+
+---
+
+## 10 · Component status, layer by layer (read from code, 7 October)
+
+Source: `src/astra/runtime/pipeline.py::GovernancePipeline.tick` and the layer modules; behaviour column
+from STEP 6 / STEP 7 and the twin-mismatch finding. "Wired" = its output changes what the vehicle does.
+
+| layer | wired | status | what is wrong or missing |
+|---|---|---|---|
+| L1 sensing | yes | works for what it checks | Freshness only. No frozen-value check: stuck sensor 0/30 detected |
+| L1 integrity (`ResidualMonitor`) | yes, when redundant sensing is supplied | works for position | Merged worst-of with L1. Speed and lateral acceleration have one source each, so nothing to compare |
+| L2 UKF | yes | works | Trusts a frozen speed: estimate ≈ 12 m/s from truth, no flag raised |
+| FB1 re-anchor | yes | works | — |
+| L3 trust | **partly** | computed every tick | Trust index is only an input to the proposer's observation and picks the twin head / quantile. `arbiter.issue` discards it (`del trust`); L8 never reads it. A low trust score triggers nothing |
+| L4 proposer (PPO) | yes | works | — |
+| L5 twin | yes | **mis-specified** | Trained on `(0, 0, a_lat/120)`; plant effectiveness is 140. Predicts ≈ 0 for throttle and brake |
+| L6 statistical gate | yes | **mis-specified** | Distance over (throttle, brake, steer) against a twin that models steer only: 99.96 % of the score is unmodelled channels |
+| L6 MMD shift detector | yes | untested by us | Fed from innovation, adjusts effective epsilon; never isolated in an experiment |
+| L7a shield | yes | works | — |
+| L7b physical gate | yes | works, **inherits twin error** | Compares proposal with the twin's lateral acceleration; uses the same 120 |
+| L8 failsafe | yes | works | Escalation, de-escalation, HALT-until-reset all exercised. Only reacts to gate verdicts and frame health |
+| L9 arbiter (issue, fallback, speed caps) | yes | works | Speed caps act on *estimated* speed, so a frozen speed sensor defeats them |
+| L9 cold path (knowledge base, shadow execution, switch / rollback) | **no** | coded, dormant | Harness passes `cold_path=None` |
+| L9 safe exploration | **no** | coded, unreachable | Needs the cold path |
+| FB2 control-effectiveness estimator | **no** | shadow only | Would correct 120 → 140 |
+| FB3 trust recalibration | **no** | shadow only | `TrustModule.recalibrate` exists, never called live |
+| FB4 simulator sync | no | enum only | Prototype-only |
+
+### Three groups
+
+- **Correct and wired:** L1 freshness, position integrity, L2, FB1, L4, L7a, L8, L9 hot path.
+- **Wired but wrong (fix, don't wire):** L5 twin target, L6 score, L7b's dependence on the twin,
+  twin 120 vs plant 140.
+- **Built but not connected:** L3 trust has no authority; L9 cold path and safe exploration; FB2; FB3.
+- **Not built:** frozen-value check; any cross-check for speed and lateral acceleration; active probe.
+
+### Common root
+
+Every safety layer downstream of L2 reads the same state estimate. A fault that L1 does not flag
+(frozen, lying single-source channel) is therefore invisible to L6, L7b, L8 and L9's speed cap at once.
