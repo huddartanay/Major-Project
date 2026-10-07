@@ -36,13 +36,13 @@ for a in d["arms"]:
         else:
             ev.append([v, MNAME[k[5:]], 0])
     ev.sort()
-    keep = range(0, len(rows), 2)
+    keep = range(len(rows))
     def col(i): return [r2(rows[j][i]) for j in keep]
     def ormask(i, table):
         res = []
         for j in keep:
             m = 0
-            for r in rows[j:j + 2]:
+            for r in rows[j:j + 1]:
                 for x in r[i]: m |= table[x]
             res.append(m)
         return res
@@ -51,7 +51,7 @@ for a in d["arms"]:
                      m="".join(str(MODE[rows[j][5]]) for j in keep), o="".join(str(ORIG[rows[j][6]]) for j in keep),
                      g=ormask(7, GATE), h=ormask(8, MOD),
                      b="".join("1" if (rows[j][13] or 0) > (rows[j][12] or 0) else "0" for j in keep)))
-data = dict(seed=d["seed"], onset=d["onset"], ticks=d["ticks"], hz=d["hz"], step=d["every"] * 2, arms=arms)
+data = dict(seed=d["seed"], onset=d["onset"], ticks=d["ticks"], hz=d["hz"], step=d["every"], arms=arms)
 html = (HERE / "sim_template.html").read_text(encoding="utf-8").replace("/*__DATA__*/null", json.dumps(data, separators=(",", ":")))
 (ROOT / "mp_review_sim.html").write_text(html, encoding="utf-8", newline="\n")
 print("wrote", ROOT / "mp_review_sim.html", len(html) // 1024, "KB")
