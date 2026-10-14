@@ -1,0 +1,567 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ASTRA — runtime safety supervision for a learned driver</title>
+<meta name="description" content="ASTRA is a nine-layer runtime supervisor around a learned self-driving controller. Its central result: calibration is not validity — a monitor can pass every statistical check while being almost blind to what it claims to monitor.">
+<style>
+  /* Mona Sans — SIL Open Font License, github/mona-sans. Bundled under web/fonts/. */
+  @font-face { font-family:"Mona Sans"; src:url("web/fonts/MonaSansVF.woff2") format("woff2");
+               font-weight:200 900; font-stretch:75% 125%; font-display:swap; }
+  @font-face { font-family:"Mona Sans Mono"; src:url("web/fonts/MonaSansMonoVF.woff2") format("woff2");
+               font-weight:200 900; font-display:swap; }
+
+  :root {
+    /* Arctic Engineering palette */
+    --bg:#eef4f9; --white:#ffffff; --panel:#ffffff; --glacier:#e9f1f8; --ice:#dce9f4;
+    --navy:#0e2a47; --text:#16324f; --dim:#5a6b7d; --faint:#8a9cad;
+    --line:#cfdae6; --line2:#e4ecf3;
+    --cyan:#0a97b0; --cyan-soft:#e2f4f8; --blue:#1f6feb;
+    --ok:#1a7f37; --alert:#9a6700; --limp:#bc4c00; --veto:#cf222e; --blind:#6639ba;
+    --sans:"Mona Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+    --mono:"Mona Sans Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+    --maxw:1140px; --shadow:0 1px 2px rgba(14,42,71,.06),0 8px 24px rgba(14,42,71,.06);
+  }
+  * { box-sizing:border-box; }
+  html { scroll-behavior:smooth; scroll-padding-top:72px; }
+  @media (prefers-reduced-motion:reduce){ html { scroll-behavior:auto; } }
+  body { margin:0; background:var(--bg); color:var(--text); font-family:var(--sans);
+         font-size:16px; line-height:1.62; -webkit-font-smoothing:antialiased; letter-spacing:-0.003em; }
+  a { color:var(--blue); text-decoration:none; } a:hover { text-decoration:underline; }
+  h1,h2,h3 { color:var(--navy); font-weight:660; letter-spacing:-0.022em; line-height:1.14; margin:0; }
+  .mono { font-family:var(--mono); font-variant-numeric:tabular-nums; }
+  .wrap { max-width:var(--maxw); margin:0 auto; padding:0 26px; }
+
+  /* nav */
+  header.nav { position:sticky; top:0; z-index:50; background:rgba(238,244,249,.82);
+    backdrop-filter:blur(14px); border-bottom:1px solid var(--line); }
+  .nav .wrap { display:flex; align-items:center; gap:30px; height:60px; }
+  .brand { display:flex; align-items:center; gap:11px; color:var(--navy); font-weight:820;
+    letter-spacing:.16em; font-size:16px; margin-right:auto; }
+  .brand .mk { width:24px; height:24px; border-radius:7px; position:relative;
+    background:linear-gradient(135deg,var(--cyan),var(--blue)); box-shadow:0 3px 10px rgba(10,151,176,.35); }
+  .brand .mk::after { content:""; position:absolute; inset:5px; border-radius:3px; border:1.5px solid rgba(255,255,255,.85); }
+  .nav nav { display:flex; gap:24px; }
+  .nav nav a { color:var(--dim); font-size:14px; font-weight:560; }
+  .nav nav a:hover { color:var(--navy); text-decoration:none; }
+  .cta { display:inline-flex; align-items:center; gap:8px; background:var(--navy); color:#fff;
+    font-weight:660; padding:9px 17px; border-radius:9px; font-size:14px; border:1px solid var(--navy);
+    transition:transform .14s,box-shadow .14s,background .14s; }
+  .cta:hover { text-decoration:none; transform:translateY(-1px); box-shadow:0 8px 20px rgba(14,42,71,.22); }
+  .cta.accent { background:var(--cyan); border-color:var(--cyan); box-shadow:0 6px 18px rgba(10,151,176,.3); }
+  .cta.ghost { background:transparent; color:var(--navy); border-color:var(--line); box-shadow:none; }
+  .cta.ghost:hover { border-color:var(--cyan); background:var(--white); }
+  @media (max-width:860px){ .nav nav { display:none; } }
+
+  /* hero */
+  .hero { position:relative; overflow:hidden; }
+  .hero::before { content:""; position:absolute; inset:-30% -10% auto -10%; height:700px; pointer-events:none;
+    background:radial-gradient(52% 60% at 20% 8%,rgba(10,151,176,.14),transparent 70%),
+               radial-gradient(48% 56% at 86% 0%,rgba(31,111,235,.12),transparent 72%); }
+  .hero .wrap { position:relative; padding:78px 26px 56px; }
+  .eyebrow { display:inline-flex; align-items:center; gap:9px; font-size:12px; letter-spacing:.15em;
+    text-transform:uppercase; color:var(--dim); font-weight:640; border:1px solid var(--line);
+    border-radius:999px; padding:6px 14px; background:var(--white); box-shadow:var(--shadow); }
+  .eyebrow i { width:7px; height:7px; border-radius:50%; background:var(--ok); box-shadow:0 0 0 3px rgba(26,127,55,.16); }
+  h1.title { font-size:clamp(36px,5.6vw,64px); font-weight:820; margin:24px 0 0; max-width:17ch; letter-spacing:-0.035em; line-height:1.04; }
+  .title .grad { background:linear-gradient(100deg,var(--cyan),var(--blue)); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .lede { font-size:19px; color:var(--text); max-width:66ch; margin:24px 0 0; }
+  .claim { margin:32px 0 0; padding:20px 24px; border-left:4px solid var(--cyan); background:var(--white);
+    border-radius:0 12px 12px 0; max-width:74ch; box-shadow:var(--shadow); }
+  .claim b { font-size:20px; color:var(--navy); letter-spacing:-0.015em; }
+  .claim span { color:var(--dim); font-size:15px; display:block; margin-top:6px; }
+  .herobtns { display:flex; flex-wrap:wrap; gap:13px; margin-top:34px; }
+  .cta.lg { font-size:15.5px; padding:13px 24px; }
+  .kpis { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-top:56px; }
+  .kpi { background:var(--white); border:1px solid var(--line); border-radius:14px; padding:18px 20px; box-shadow:var(--shadow); }
+  .kpi b { font-size:30px; font-weight:780; font-family:var(--mono); color:var(--navy); display:block; letter-spacing:-0.02em; }
+  .kpi small { color:var(--dim); font-size:12.5px; line-height:1.4; display:block; margin-top:3px; }
+  @media (max-width:720px){ .kpis { grid-template-columns:repeat(2,1fr); } }
+
+  section { padding:66px 0; }
+  section + section { border-top:1px solid var(--line2); }
+  .sec-head { display:flex; align-items:baseline; gap:14px; flex-wrap:wrap; margin-bottom:8px; }
+  .sec-head h2 { font-size:clamp(24px,3.1vw,32px); }
+  .sec-no { font-family:var(--mono); color:var(--cyan); font-size:14px; font-weight:680; }
+  .sec-sub { color:var(--dim); font-size:16px; max-width:78ch; margin:8px 0 36px; }
+
+  /* reveal */
+  .reveal { opacity:0; transform:translateY(16px); transition:opacity .6s ease,transform .6s ease; }
+  .reveal.in { opacity:1; transform:none; }
+  @media (prefers-reduced-motion:reduce){ .reveal { opacity:1; transform:none; transition:none; } }
+
+  /* problem cards */
+  .grid { display:grid; gap:18px; } .g3 { grid-template-columns:repeat(3,1fr); } .g2 { grid-template-columns:repeat(2,1fr); }
+  @media (max-width:880px){ .g3,.g2 { grid-template-columns:1fr; } }
+  .card { background:var(--white); border:1px solid var(--line); border-radius:14px; padding:20px 22px; box-shadow:var(--shadow); }
+  .card h3 { font-size:16px; margin-bottom:4px; }
+  .card p { color:var(--dim); font-size:14px; margin:8px 0 0; }
+  .card .tag { font-family:var(--mono); font-size:11px; color:var(--cyan); letter-spacing:.06em; font-weight:620; }
+  .card.flag { border-color:var(--blind); box-shadow:0 0 0 1px rgba(102,57,186,.2),var(--shadow); }
+  .card.flag .tag { color:var(--blind); }
+
+  /* interactive architecture */
+  .arch { display:grid; grid-template-columns:1fr 1.15fr; gap:22px; align-items:start; }
+  @media (max-width:900px){ .arch { grid-template-columns:1fr; } }
+  .layers { display:flex; flex-direction:column; gap:7px; }
+  .layer { display:grid; grid-template-columns:48px 1fr auto; gap:14px; align-items:center;
+    background:var(--white); border:1px solid var(--line); border-radius:12px; padding:13px 16px;
+    cursor:pointer; text-align:left; font:inherit; color:var(--text); transition:border-color .15s,transform .15s,box-shadow .15s; box-shadow:var(--shadow); }
+  .layer:hover { border-color:var(--cyan); transform:translateX(3px); }
+  .layer[aria-selected="true"] { border-color:var(--cyan); box-shadow:0 0 0 2px var(--cyan-soft),var(--shadow); background:var(--white); }
+  .layer .lid { font-family:var(--mono); font-weight:760; font-size:15px; color:var(--navy); display:flex; align-items:center; gap:9px; }
+  .layer .dot { width:9px; height:9px; border-radius:50%; flex:0 0 auto; }
+  .layer .lname { font-weight:620; font-size:14.5px; color:var(--navy); }
+  .layer .ljob { color:var(--dim); font-size:12.5px; }
+  .layer .pill { font-size:11px; font-weight:620; padding:3px 9px; border-radius:999px; white-space:nowrap; border:1px solid; }
+  .d-ok{background:var(--ok)} .d-part{background:var(--alert)} .d-bad{background:var(--veto)} .d-off{background:var(--faint)}
+  .pl-ok{color:var(--ok);border-color:rgba(26,127,55,.35);background:rgba(26,127,55,.08)}
+  .pl-part{color:var(--alert);border-color:rgba(154,103,0,.35);background:rgba(154,103,0,.08)}
+  .pl-bad{color:var(--veto);border-color:rgba(207,34,46,.35);background:rgba(207,34,46,.08)}
+  .pl-off{color:var(--faint);border-color:var(--line);background:var(--glacier)}
+  .detail { position:sticky; top:84px; background:var(--white); border:1px solid var(--line); border-radius:16px;
+    padding:24px 26px; box-shadow:var(--shadow); min-height:300px; }
+  .detail .dh { display:flex; align-items:center; gap:12px; }
+  .detail .dnum { font-family:var(--mono); font-weight:800; font-size:26px; color:var(--cyan); }
+  .detail h3 { font-size:21px; }
+  .detail .dstate { margin-left:auto; }
+  .detail p.dpurpose { font-size:15px; color:var(--text); margin:14px 0 0; }
+  .io { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:18px; }
+  .io h4 { font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:var(--faint); margin:0 0 6px; font-weight:660; }
+  .io ul { list-style:none; margin:0; padding:0; } .io li { font-size:13px; color:var(--text); padding:2px 0 2px 14px; position:relative; }
+  .io li::before { content:""; position:absolute; left:0; top:9px; width:5px; height:5px; border-radius:50%; background:var(--cyan); }
+  .limit { margin-top:18px; border-top:1px solid var(--line2); padding-top:14px; }
+  .limit h4 { font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:var(--faint); margin:0 0 5px; font-weight:660; }
+  .limit p { font-size:13.5px; color:var(--text); margin:0; }
+  .fb { margin-top:18px; color:var(--dim); font-size:13.5px; border:1px dashed var(--line); border-radius:11px; padding:13px 16px; background:var(--glacier); }
+
+  /* safety state machine */
+  .fsm { display:flex; align-items:stretch; gap:0; flex-wrap:wrap; margin-top:4px; }
+  .fnode { flex:1; min-width:150px; background:var(--white); border:1px solid var(--line); border-radius:13px;
+    padding:16px 18px; box-shadow:var(--shadow); position:relative; }
+  .fnode + .fnode { margin-left:34px; }
+  .fnode + .fnode::before { content:"→"; position:absolute; left:-27px; top:50%; transform:translateY(-50%);
+    color:var(--faint); font-size:20px; font-weight:700; }
+  .fnode .fbadge { display:inline-flex; align-items:center; gap:7px; font-weight:720; font-size:15px; color:var(--navy); }
+  .fnode .fbadge i { width:10px; height:10px; border-radius:50%; }
+  .fnode .fcap { font-family:var(--mono); font-size:12.5px; color:var(--dim); margin-top:6px; }
+  .fnode .ftrig { font-size:12.5px; color:var(--dim); margin-top:8px; }
+  @media (max-width:860px){ .fnode + .fnode { margin-left:0; margin-top:28px; } .fnode + .fnode::before { left:50%; top:-24px; transform:translateX(-50%) rotate(90deg); } }
+
+  /* sensors */
+  .sensor .hd { display:flex; align-items:center; gap:11px; }
+  .sensor .ic { width:34px; height:34px; border-radius:9px; background:var(--cyan-soft); border:1px solid rgba(10,151,176,.25);
+    display:grid; place-items:center; font-size:15px; color:var(--cyan); }
+  .kv { margin-top:14px; display:grid; grid-template-columns:auto 1fr; gap:5px 14px; font-size:13px; }
+  .kv dt { color:var(--faint); } .kv dd { margin:0; color:var(--text); }
+  .pill { display:inline-block; font-size:11px; font-weight:620; padding:2px 8px; border-radius:999px; border:1px solid var(--line); }
+  .pill.red { color:var(--veto); border-color:rgba(207,34,46,.4); background:rgba(207,34,46,.07); }
+  .pill.green { color:var(--ok); border-color:rgba(26,127,55,.4); background:rgba(26,127,55,.07); }
+
+  /* findings */
+  .finding { display:grid; grid-template-columns:48px 1fr 136px; gap:16px; align-items:start;
+    background:var(--white); border:1px solid var(--line); border-radius:13px; padding:17px 20px; box-shadow:var(--shadow); }
+  .finding .fid { font-family:var(--mono); font-weight:760; font-size:18px; color:var(--cyan); }
+  .finding p { margin:0; font-size:14.5px; color:var(--text); }
+  .finding .ev { color:var(--faint); font-size:12px; margin-top:7px; font-family:var(--mono); }
+  .finding .conf { text-align:right; }
+  .tier { display:inline-block; font-size:10.5px; font-weight:700; letter-spacing:.05em; text-transform:uppercase; padding:4px 10px; border-radius:999px; }
+  .tier.c { color:var(--ok); background:rgba(26,127,55,.1); border:1px solid rgba(26,127,55,.3); }
+  .tier.e { color:var(--alert); background:rgba(154,103,0,.1); border:1px solid rgba(154,103,0,.3); }
+  .tier.f { color:var(--blue); background:rgba(31,111,235,.1); border:1px solid rgba(31,111,235,.3); }
+  .finding .conf small { display:block; color:var(--faint); font-size:11.5px; margin-top:6px; }
+  .finding.central { border-color:var(--cyan); box-shadow:0 0 0 2px var(--cyan-soft),var(--shadow); }
+  @media (max-width:760px){ .finding { grid-template-columns:38px 1fr; } .finding .conf { grid-column:2; text-align:left; } }
+
+  .tbl { width:100%; border-collapse:collapse; font-size:13.5px; background:var(--white); border:1px solid var(--line); border-radius:13px; overflow:hidden; box-shadow:var(--shadow); }
+  .tbl th,.tbl td { text-align:left; padding:11px 14px; border-bottom:1px solid var(--line2); vertical-align:top; }
+  .tbl th { color:var(--dim); font-weight:640; font-size:11.5px; text-transform:uppercase; letter-spacing:.05em; background:var(--glacier); }
+  .tbl tbody tr:last-child td { border-bottom:none; }
+  .tbl tbody tr:hover { background:var(--glacier); }
+  .tbl td.num { font-family:var(--mono); text-align:right; }
+  .s-ok{color:var(--ok)} .s-part{color:var(--alert)} .s-bad{color:var(--veto)} .s-off{color:var(--faint)}
+
+  .claims2 { display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+  @media (max-width:760px){ .claims2 { grid-template-columns:1fr; } }
+  .claimbox { border:1px solid var(--line); border-radius:14px; padding:20px 22px; background:var(--white); box-shadow:var(--shadow); }
+  .claimbox h3 { font-size:15px; }
+  .claimbox ul { list-style:none; margin:14px 0 0; padding:0; }
+  .claimbox li { position:relative; padding:5px 0 5px 26px; font-size:14px; color:var(--text); }
+  .claimbox li::before { position:absolute; left:0; top:5px; font-weight:800; font-size:14px; }
+  .claimbox.do li::before { content:"✓"; color:var(--ok); }
+  .claimbox.dont li::before { content:"✕"; color:var(--veto); }
+
+  .plan { display:grid; gap:11px; }
+  .phase { display:grid; grid-template-columns:118px 148px 1fr; gap:16px; align-items:baseline;
+    padding:13px 17px; border:1px solid var(--line); border-radius:12px; background:var(--white); box-shadow:var(--shadow); }
+  .phase b { font-family:var(--mono); font-size:13.5px; color:var(--navy); }
+  .phase .when { color:var(--dim); font-size:13px; } .phase .out { font-size:14px; color:var(--text); }
+  .phase.now { border-color:var(--cyan); box-shadow:0 0 0 2px var(--cyan-soft),var(--shadow); }
+  @media (max-width:760px){ .phase { grid-template-columns:1fr; gap:3px; } }
+
+  .launch-band { background:linear-gradient(120deg,var(--cyan-soft),#eaf1fb); border:1px solid var(--line);
+    border-radius:18px; padding:38px 34px; display:flex; gap:26px; align-items:center; flex-wrap:wrap; box-shadow:var(--shadow); }
+  .launch-band h2 { font-size:26px; } .launch-band p { color:var(--dim); margin:7px 0 0; max-width:58ch; font-size:15px; }
+  .launch-band .cta { margin-left:auto; }
+  @media (max-width:760px){ .launch-band .cta { margin-left:0; } }
+
+  .foot { padding:44px 0 64px; color:var(--dim); font-size:13.5px; border-top:1px solid var(--line2); }
+  .foot a { color:var(--dim); } .foot a:hover { color:var(--navy); }
+  .disclaim { margin-top:14px; font-size:12.5px; color:var(--faint); max-width:94ch; line-height:1.55; }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="wrap">
+    <div class="brand"><span class="mk"></span> ASTRA</div>
+    <nav>
+      <a href="#problem">Problem</a>
+      <a href="#architecture">Architecture</a>
+      <a href="#safety">Safety states</a>
+      <a href="#sensors">Sensors</a>
+      <a href="#findings">Findings</a>
+      <a href="#research">Research</a>
+    </nav>
+    <a class="cta accent" href="mp_review_sim.html">Launch live demo →</a>
+  </div>
+</header>
+
+<div class="hero"><div class="wrap">
+  <span class="eyebrow"><i></i> Major Project · BMS College of Engineering · Oct 2026</span>
+  <h1 class="title">Runtime safety supervision for a driver that <span class="grad">can't be trusted on its own</span>.</h1>
+  <p class="lede">A learned self-driving controller gives a confident command even when its inputs are wrong.
+    ASTRA is a nine-layer supervisor built around such a controller: it watches the sensors, estimates the car's
+    state, checks every proposed command against an independent model and fixed rules, and — when something is
+    wrong — steps the car down through reduced-speed modes to a stop instead of failing abruptly.</p>
+  <div class="claim">
+    <b>Central result — calibration is not validity.</b>
+    <span>A safety monitor can meet its statistical guarantee and still be almost blind to the behaviour it is
+      meant to watch. We measured exactly that in our own gate, and built a method to find such defects.</span>
+  </div>
+  <div class="herobtns">
+    <a class="cta lg accent" href="mp_review_sim.html">Launch live 3D demo →</a>
+    <a class="cta lg ghost" href="#findings">See what we established</a>
+  </div>
+  <div class="kpis">
+    <div class="kpi"><b>9</b><small>supervisor layers, L1 sensing → L9 arbitration</small></div>
+    <div class="kpi"><b>3,076</b><small>automated tests (historical baseline)</small></div>
+    <div class="kpi"><b>35</b><small>demo runs — 11 expected, 17 recorded, 7 dormant</small></div>
+    <div class="kpi"><b>~95</b><small>papers reviewed; no ingredient claimed as new</small></div>
+  </div>
+</div></div>
+
+<section id="problem"><div class="wrap reveal">
+  <div class="sec-head"><span class="sec-no">01</span><h2>The problem a monitor is supposed to solve</h2></div>
+  <p class="sec-sub">A monitor that passes every calibration check looks trustworthy on paper. The question
+    nobody in the ~95 papers we reviewed asks directly: does the calibrated monitor actually <em>depend</em> on
+    the quantity it claims to monitor? Ours did not — and it still passed.</p>
+  <div class="grid g3">
+    <div class="card"><span class="tag">WHY A LEARNED DRIVER NEEDS A SUPERVISOR</span>
+      <h3>Confident when wrong</h3>
+      <p>The PPO controller emits a command every tick regardless of whether its inputs are healthy. Nothing in
+      the learned policy knows when a sensor has failed.</p></div>
+    <div class="card"><span class="tag">THE STANDARD DEFENCE</span>
+      <h3>A calibrated statistical gate</h3>
+      <p>A conformal gate blocks commands that stray too far from an independent prediction, with a tuned
+      threshold. It passed every calibration check we gave it.</p></div>
+    <div class="card flag"><span class="tag">WHAT WE FOUND</span>
+      <h3>Calibrated, yet blind</h3>
+      <p>Our gate's score is ≈87% throttle, 13% brake, 0.04% steering — but the twin it compares against models
+      <em>only</em> steering. It was almost blind to what it claims to monitor, and nothing flagged that.</p></div>
+  </div>
+</div></section>
+
+<section id="architecture"><div class="wrap reveal">
+  <div class="sec-head"><span class="sec-no">02</span><h2>The nine layers — select one to inspect it</h2></div>
+  <p class="sec-sub">Every command flows up from sensing to arbitration. The dot and badge show each layer's state
+    in the code <em>as it runs today</em>, not as designed. Click a layer for its purpose, inputs, outputs, and limits.</p>
+  <div class="arch">
+    <div class="layers" id="layers" role="listbox" aria-label="ASTRA layers"></div>
+    <div class="detail" id="detail" aria-live="polite"></div>
+  </div>
+  <div class="fb"><b class="mono" style="color:var(--navy)">Feedback loops.</b>
+    FB1 (command back to the estimator) is live. FB2 (learn the steering response) and FB3 (update thresholds
+    online) run only in <em>shadow</em> — they compute what they would do and change nothing.</div>
+</div></section>
+
+<section id="safety"><div class="wrap reveal">
+  <div class="sec-head"><span class="sec-no">03</span><h2>Fail-safe state machine</h2></div>
+  <p class="sec-sub">L8 steps the car down through reduced-speed modes. Speed caps are read from the dev
+    configuration; HALT latches until reset. Not every designed transition is proven on every fault — the live
+    demo shows which faults actually trigger a transition and which do not.</p>
+  <div class="fsm">
+    <div class="fnode"><span class="fbadge"><i style="background:var(--ok)"></i>NOMINAL</span>
+      <div class="fcap">no speed cap</div><div class="ftrig">Default. Learned controller drives.</div></div>
+    <div class="fnode"><span class="fbadge"><i style="background:var(--alert)"></i>DEGRADED</span>
+      <div class="fcap">cap 40 km/h</div><div class="ftrig">OOD / integrity counter crosses its first threshold.</div></div>
+    <div class="fnode"><span class="fbadge"><i style="background:var(--limp)"></i>LIMP</span>
+      <div class="fcap">cap 20 km/h</div><div class="ftrig">Counter crosses the second threshold; no lane changes.</div></div>
+    <div class="fnode"><span class="fbadge"><i style="background:var(--veto)"></i>HALT</span>
+      <div class="fcap">full stop</div><div class="ftrig">Controlled stop; latched until a manual reset.</div></div>
+  </div>
+</div></section>
+
+<section id="sensors"><div class="wrap reveal">
+  <div class="sec-head"><span class="sec-no">04</span><h2>Sensor inventory</h2></div>
+  <p class="sec-sub">Position has three independent sources and can be cross-checked. Speed and lateral
+    acceleration have a single source each — nothing to cross-check them against, which is where the worst
+    measured outcomes come from.</p>
+  <div class="grid g3">
+    <div class="card sensor"><div class="hd"><span class="ic">◎</span><h3>IMU position</h3></div>
+      <dl class="kv"><dt>Measures</dt><dd>Lateral / longitudinal position</dd><dt>Consumed by</dt><dd>L1 cross-check, L2 UKF</dd>
+        <dt>Redundancy</dt><dd><span class="pill green">1 of 3 position sources</span></dd>
+        <dt>Detected</dt><dd>1.0 m lie flagged ~0.45 s</dd><dt>Blind to</dt><dd><span class="pill red">frozen value</span></dd></dl></div>
+    <div class="card sensor"><div class="hd"><span class="ic">✦</span><h3>GPS position</h3></div>
+      <dl class="kv"><dt>Measures</dt><dd>Lateral / longitudinal position</dd><dt>Consumed by</dt><dd>L1 cross-check, L2 UKF</dd>
+        <dt>Redundancy</dt><dd><span class="pill green">1 of 3 position sources</span></dd>
+        <dt>Detected</dt><dd>1.0 m lie flagged ~0.80 s</dd><dt>Blind to</dt><dd><span class="pill red">2 colluding sources</span></dd></dl></div>
+    <div class="card sensor"><div class="hd"><span class="ic">⊹</span><h3>LIDAR position</h3></div>
+      <dl class="kv"><dt>Measures</dt><dd>Lateral / longitudinal position</dd><dt>Consumed by</dt><dd>L1 cross-check, L2 UKF</dd>
+        <dt>Redundancy</dt><dd><span class="pill green">1 of 3 position sources</span></dd>
+        <dt>Detected</dt><dd>1.0 m lie ~0.45 s · drift ~16 s</dd><dt>Blind to</dt><dd><span class="pill red">frozen value</span></dd></dl></div>
+    <div class="card sensor"><div class="hd"><span class="ic">➤</span><h3>Speed</h3></div>
+      <dl class="kv"><dt>Measures</dt><dd>Longitudinal speed</dd><dt>Consumed by</dt><dd>L2 UKF, L8 speed caps</dd>
+        <dt>Redundancy</dt><dd><span class="pill red">single source — no cross-check</span></dd>
+        <dt>Detected</dt><dd><span class="pill red">none of 5 defects noticed</span></dd><dt>Worst seen</dt><dd>ended 15 km/h fast, NOMINAL</dd></dl></div>
+    <div class="card sensor"><div class="hd"><span class="ic">↻</span><h3>Lateral acceleration</h3></div>
+      <dl class="kv"><dt>Measures</dt><dd>Sideways acceleration</dd><dt>Consumed by</dt><dd>L2 UKF, heading estimate</dd>
+        <dt>Redundancy</dt><dd><span class="pill red">single source — no cross-check</span></dd>
+        <dt>Detected</dt><dd><span class="pill red">never flagged by L1</span></dd><dt>Worst seen</dt><dd>+1 m/s² bias → 10.9 m off lane</dd></dl></div>
+    <div class="card sensor" style="border-style:dashed"><div class="hd"><span class="ic">⌬</span><h3>Surroundings</h3></div>
+      <p>Open road, tunnel, and rain-at-night are modelled as context for the calibration / exploration logic.
+        The demo shows the car driving through them; the sensor model's response to them is limited.</p></div>
+  </div>
+</div></section>
+
+<section id="findings"><div class="wrap reveal">
+  <div class="sec-head"><span class="sec-no">05</span><h2>What we have established</h2>
+    <span class="sec-no" style="margin-left:auto"><span class="tier c">confirmed</span> &nbsp;<span class="tier e">exploratory</span> &nbsp;<span class="tier f">from code</span></span></div>
+  <p class="sec-sub">Every item points at a committed experiment. From STEP 6 on, the hypothesis and decision rule
+    were registered <em>before</em> the runs and each held-out seed block was used once. Guesses the experiments
+    refuted are reported too — that discipline is the point.</p>
+  <div class="layers" style="gap:12px">
+    <div class="finding"><span class="fid">F1</span>
+      <div><p>A <b>flagged</b> sensor loss is handled: L1 notices within one tick and L8 slows or stops the car.</p>
+        <div class="ev">STEP 1–5, STEP 6 · 30/30 runs, two seed blocks</div></div>
+      <div class="conf"><span class="tier c">confirmed</span><small>high confidence</small></div></div>
+    <div class="finding"><span class="fid">F2</span>
+      <div><p>During that same loss the statistical gate goes <b>quieter</b>, not louder — and not because the car stopped.</p>
+        <div class="ev">STEP 6 · H-indep confirmed</div></div>
+      <div class="conf"><span class="tier c">confirmed</span><small>high confidence</small></div></div>
+    <div class="finding"><span class="fid">F3</span>
+      <div><p>A sensor that <b>freezes</b> is never flagged by L1 (0/30) and silences the gate. The car slows to
+        0–2 m/s while ASTRA still believes ≈11.5 m/s — an unannounced failure.</p>
+        <div class="ev">STEP 6 · H-freeze confirmed</div></div>
+      <div class="conf"><span class="tier c">confirmed</span><small>high confidence</small></div></div>
+    <div class="finding central"><span class="fid">F4</span>
+      <div><p><b>Calibration is not validity.</b> The gate's score is ≈87% throttle, 13% brake, 0.04% steering,
+        but the twin models only steering. It passed every calibration check while being almost blind to what it
+        claims to monitor. <b>This is the central result.</b></p>
+        <div class="ev">FINDING_TWIN_CHANNEL_MISMATCH_2026-10-07 · read from code and measured</div></div>
+      <div class="conf"><span class="tier f">from code</span><small>high confidence</small></div></div>
+    <div class="finding"><span class="fid">F5</span>
+      <div><p>A score restricted to steering <b>is</b> a valid instrument — calibrated, and it detects a lying
+        position source at 11–17× the clean alarm rate; it is not suppressed by sensor loss.</p>
+        <div class="ev">STEP 7 · both splits</div></div>
+      <div class="conf"><span class="tier c">confirmed</span><small>high confidence</small></div></div>
+    <div class="finding"><span class="fid">F6</span>
+      <div><p>That corrected score does <b>not</b> reliably detect sensor loss: the outcome differed between dev
+        and held-out. The inconclusiveness is the finding — the earlier "gate goes silent" (G1) is rejected.</p>
+        <div class="ev">STEP 7 · dev G1-ARTEFACT, held-out MIXED</div></div>
+      <div class="conf"><span class="tier c">confirmed</span><small>reported as inconclusive</small></div></div>
+    <div class="finding"><span class="fid">F7</span>
+      <div><p>In about a third of frozen-sensor runs L8 still reaches HALT; we have not identified which check causes it.</p>
+        <div class="ev">STEP 7 · POST_HOC_NOTE_2026-10-07</div></div>
+      <div class="conf"><span class="tier e">exploratory</span><small>observation only</small></div></div>
+  </div>
+  <p class="sec-sub" style="margin-top:22px">Refuted guesses we report: that the gate's silence came from inflated
+    uncertainty; that sensor noise on a frozen channel would restore detection.</p>
+</div></section>
+
+<section id="today"><div class="wrap reveal">
+  <div class="sec-head"><span class="sec-no">06</span><h2>What the code does today, by defect</h2></div>
+  <p class="sec-sub">17 recorded runs, one per defect, seed 20260731, 120 s at 20 ticks/s — exploratory single
+    runs (they show what <em>can</em> happen, not how often). The live demo replays all of them. Lane edge is 1.75 m.</p>
+  <div style="overflow-x:auto"><table class="tbl">
+    <thead><tr><th>Sensor / defect</th><th>L1 flags it</th><th>Leaves NOMINAL</th><th>Final mode</th><th class="num">End speed</th><th>Worst outcome</th></tr></thead>
+    <tbody>
+      <tr><td>Position · any one source lies 1.0 m</td><td class="s-ok">yes, 0.45–0.80 s</td><td>0.65–1.0 s</td><td>HALT 2.4–3.75 s</td><td class="num">0</td><td>Stopped in lane</td></tr>
+      <tr><td>Position · slow drift 4 cm/s</td><td class="s-ok">yes, after 16 s</td><td>16.6 s</td><td>HALT 21.9 s</td><td class="num">0</td><td>Caught late</td></tr>
+      <tr><td>Position · two sources collude</td><td class="s-part">blames the honest one</td><td>0.65 s</td><td>HALT 2.4 s</td><td class="num">0</td><td>Right stop, wrong reason; 0.95 m off</td></tr>
+      <tr><td>Speed · freeze / bias / drift / unit</td><td class="s-bad">never (5 of 5)</td><td class="s-bad">never</td><td>NOMINAL</td><td class="num">29–55 km/h</td><td>Up to 15 km/h belief error, unannounced</td></tr>
+      <tr><td>Lateral accel · +1 m/s² bias</td><td class="s-bad">never</td><td>0.65 s</td><td>HALT 5.15 s</td><td class="num">0</td><td class="s-bad">left the lane by 10.9 m</td></tr>
+      <tr><td>IMU message stream stops</td><td class="s-ok">yes, 0.05 s</td><td>0.25 s</td><td>LIMP</td><td class="num">0</td><td>Graded response works</td></tr>
+    </tbody>
+  </table></div>
+  <p class="sec-sub" style="margin-top:20px"><b style="color:var(--navy)">In one line:</b> position defects are the
+    well-covered case; every speed defect went unnoticed; a single bad lateral-acceleration reading produced the
+    most dangerous outcome in the set; and a frozen sensor fails without any layer knowing.</p>
+</div></section>
+
+<section id="research"><div class="wrap reveal">
+  <div class="sec-head"><span class="sec-no">07</span><h2>Dataset, methodology, and what we claim</h2></div>
+  <p class="sec-sub">There is no external dataset. ASTRA runs in our own simulator with generated sensor streams;
+    every number here comes from recorded runs of the pipeline, not from measured hardware.</p>
+  <div class="grid g2" style="margin-bottom:26px">
+    <div class="card"><span class="tag">SIMULATION &amp; DATA PROVENANCE</span><h3>Own simulator, generated streams</h3>
+      <p>120 s per run at 20 Hz. Faults are injected at the sensor boundary with known ground truth. Pre-registered
+      studies use dev and held-out seed blocks (e.g. 20260731 dev; 20270101 / 20270201 held-out), each used once.
+      No real-vehicle data, no third-party dataset.</p></div>
+    <div class="card"><span class="tag">METHODOLOGY</span><h3>Pre-registered, held-out, reported in full</h3>
+      <p>From STEP 6 on, hypotheses and decision rules were committed before runs. Refuted hypotheses are written up
+      the same way as confirmed ones. Single exploratory runs are labelled as such and never quoted as rates.</p></div>
+  </div>
+  <div class="claims2">
+    <div class="claimbox do"><h3>What we claim</h3><ul>
+        <li>An audit of whether a calibrated monitor actually depends on the quantity it monitors.</li>
+        <li>A measured defect in our own monitor (F4) that every standard calibration check passed anyway.</li>
+        <li>Announced / flagged faults are handled: detect, slow, stop (F1).</li>
+        <li>One bad position source out of three is tolerated and excluded (measured).</li></ul></div>
+    <div class="claimbox dont"><h3>What we never claim</h3><ul>
+        <li>"First" of anything, or resilience to all attacks.</li>
+        <li>Every sensor fault is detected — speed and lateral-accel defects are not.</li>
+        <li>Runtime learning or safe exploration is operational — both are shadow / off.</li>
+        <li>Real-vehicle validation, certification, or robustness to a fully-controlled input.</li></ul></div>
+  </div>
+  <p class="sec-sub" style="margin-top:24px"><b style="color:var(--navy)">Literature position.</b> ~95 papers
+    reviewed across conformal safety gates, runtime monitors, and sensor attacks. Each individual ingredient —
+    layered resilient architectures, tolerating a minority of bad sensors, staged degradation, online recalibration —
+    is already published; we claim none as new. What we did not find in the literature is a check of whether a
+    calibrated monitor is actually <em>informative</em> about what it monitors.</p>
+</div></section>
+
+<section id="plan"><div class="wrap reveal">
+  <div class="sec-head"><span class="sec-no">08</span><h2>What is not done, and the plan</h2></div>
+  <div class="grid g2">
+    <div>
+      <h3 style="font-size:16px;margin-bottom:12px">Known gaps</h3>
+      <div class="layers" style="gap:9px">
+        <div class="card" style="padding:13px 16px"><b style="color:var(--navy)">Twin &amp; gate mis-specified</b><p style="margin-top:3px">The statistical gate contributes little today (F4).</p></div>
+        <div class="card" style="padding:13px 16px"><b style="color:var(--navy)">No frozen-value check</b><p style="margin-top:3px">Drives the F3 blind spot.</p></div>
+        <div class="card" style="padding:13px 16px"><b style="color:var(--navy)">Speed &amp; lateral accel single-source</b><p style="margin-top:3px">No cross-check is possible on those channels.</p></div>
+        <div class="card" style="padding:13px 16px"><b style="color:var(--navy)">Exploration &amp; calibration switching off</b><p style="margin-top:3px">"Explores instead of stopping" is untested; recorded runs never exit exploration.</p></div>
+        <div class="card" style="padding:13px 16px"><b style="color:var(--navy)">One simulator, one controller</b><p style="margin-top:3px">Generality unknown.</p></div>
+      </div>
+    </div>
+    <div>
+      <h3 style="font-size:16px;margin-bottom:12px">Plan to IEEE ITSC 2027</h3>
+      <div class="plan">
+        <div class="phase now"><b>P1 Define</b><span class="when">8–18 Oct</span><span class="out">Threat model; pre-registered monitor audit</span></div>
+        <div class="phase"><b>P2 Prove</b><span class="when">19 Oct–8 Nov</span><span class="out">Audit catches the defect on two monitors</span></div>
+        <div class="phase"><b>P3 Map faults</b><span class="when">9 Nov–13 Dec</span><span class="out">8 fault types × 4 detectors, measured</span></div>
+        <div class="phase"><b>P4 Repair</b><span class="when">14 Dec–10 Jan</span><span class="out">Retrained twin; gate passes the audit</span></div>
+        <div class="phase"><b>P5 Write</b><span class="when">11 Jan–1 Mar</span><span class="out">Paper to IEEE ITSC 2027</span></div>
+        <div class="phase"><b>P6–P10</b><span class="when">after March</span><span class="out">Guarded learning, exploration, 2nd platform; journal</span></div>
+      </div>
+    </div>
+  </div>
+</div></section>
+
+<section><div class="wrap reveal">
+  <div class="launch-band">
+    <div><h2>See it drive.</h2>
+      <p>The live demo replays every recorded run in 3D and, in a separate clearly-labelled tab, illustrates the
+        expected response ASTRA is designed toward. Inject a sensor defect, watch the layers react, and read the
+        honest gap between the two.</p></div>
+    <a class="cta lg accent" href="mp_review_sim.html">Launch live 3D demo →</a>
+  </div>
+</div></section>
+
+<footer class="foot"><div class="wrap">
+  <div style="display:flex;flex-wrap:wrap;gap:8px 28px;align-items:center">
+    <div class="brand" style="margin-right:auto"><span class="mk"></span> ASTRA</div>
+    <a href="mp_review.md">Project review</a>
+    <a href="mp_review_sim.html">Live demo</a>
+    <a href="experiments/phase5_od8_h7/EXPERIMENT_INDEX.md">Experiment index</a>
+    <a href="experiments/phase5_od8_h7/CLAIM_LEDGER.md">Claim ledger</a>
+  </div>
+  <p class="disclaim">ASTRA — Sushanth C., Tanay S. Huddar, Tarun Gowda V., T. Tilak Reddy · Guide: Dr. Chaitra R.,
+    BMS College of Engineering. Simulation only, on our own simulator; no hardware, no real-vehicle data. Figures
+    are recorded runs of the pipeline or clearly-labelled expected-response illustrations — never fabricated
+    telemetry. Type face: Mona Sans (SIL Open Font License, github/mona-sans), bundled under web/fonts/.</p>
+</div></footer>
+
+<script>
+const LAYERS = [
+  {id:"L9",name:"Arbitration",job:"Issue the command or hand to a fallback",dot:"part",state:["Hot path works",'pl-part'],
+   purpose:"Decides whether to issue the command, hand over to the fallback controller, or apply a speed cap; also hosts calibration switching and bounded safe exploration.",
+   inputs:["Verdicts from L6–L8","Context signature (surroundings, sensor health)","Candidate calibrations"],
+   outputs:["Issued command or handover","Active calibration profile","Exploration envelope"],
+   limit:"The hot path works. Calibration switching and safe exploration are coded but switched off in every experiment; in recorded runs where they engage they never exit."},
+  {id:"L8",name:"Fail-safe",job:"Step the car down to a stop",dot:"ok",state:["Works",'pl-ok'],
+   purpose:"A state machine that steps the car down through reduced-speed modes and back up on recovery: NOMINAL → DEGRADED (40 km/h) → LIMP (20 km/h) → HALT.",
+   inputs:["Out-of-distribution counter","Sensor-integrity counter"],
+   outputs:["Driving mode","Speed cap","Lane-change permission"],
+   limit:"Works as a state machine. It acts on what L1 flags — so a fault L1 cannot see (a frozen value) never triggers it."},
+  {id:"L7",name:"Shield + physics",job:"Fixed rules and physical-limit checks",dot:"part",state:["Shield works",'pl-part'],
+   purpose:"Hard-coded safety rules plus a physical-plausibility gate that rejects commands outside the vehicle's limits.",
+   inputs:["Proposed command","Estimated state","Twin prediction"],
+   outputs:["Pass / veto","Reason code"],
+   limit:"The rule shield works. The physical gate reuses the twin's prediction, so it inherits the twin's mis-specification (see L5)."},
+  {id:"L6",name:"Statistical gate",job:"Block proposals too far from the twin",dot:"bad",state:["Mis-specified",'pl-bad'],
+   purpose:"A conformal gate: blocks a proposed command when its non-conformity score exceeds a calibrated threshold.",
+   inputs:["Proposed command","Twin prediction","Calibrated quantile"],
+   outputs:["Pass / veto","Non-conformity score"],
+   limit:"The score is ≈87% throttle, 13% brake, 0.04% steering — but the twin models only steering. The gate passed every calibration check while being almost blind to what it claims to monitor. This is the central finding (F4)."},
+  {id:"L5",name:"Digital twin",job:"Independent prediction of a sound command",dot:"bad",state:["Mis-specified",'pl-bad'],
+   purpose:"A small learned model that predicts what a sound command should be, independently of the proposer, to give L6 something to compare against.",
+   inputs:["Estimated state"],
+   outputs:["Predicted steering (only)"],
+   limit:"Models the steering channel only. It never models throttle or brake, which is what the gate's score is dominated by — the root of the L6 defect."},
+  {id:"L4",name:"Proposer",job:"The learned controller",dot:"ok",state:["Works",'pl-ok'],
+   purpose:"A PPO neural-network controller that proposes throttle, brake, and steering each tick.",
+   inputs:["Estimated state from L2"],
+   outputs:["Proposed throttle / brake / steer"],
+   limit:"Works, but like any learned controller it emits a confident command even when its inputs are wrong — which is the reason the whole supervisor exists."},
+  {id:"L3",name:"Trust",job:"Score readings against expectation",dot:"off",state:["No authority",'pl-off'],
+   purpose:"Computes a trust index each tick, scoring how far readings sit from the filter's expectation.",
+   inputs:["Filter innovations"],
+   outputs:["Trust index (0–1)"],
+   limit:"Computed every tick, but nothing acts on it. A low trust score triggers no response today."},
+  {id:"L2",name:"Estimation",job:"Fuse sensors into a state estimate",dot:"ok",state:["Works",'pl-ok'],
+   purpose:"An unscented Kalman filter that fuses the sensors into position, speed, and heading.",
+   inputs:["Healthy sensor streams","L1 health flags","Issued command (FB1)"],
+   outputs:["Fused state estimate","Innovations"],
+   limit:"Works, but it trusts a frozen reading: a stream that keeps sending its last value looks healthy to the filter."},
+  {id:"L1",name:"Sensing",job:"Stream health and position cross-check",dot:"ok",state:["Works",'pl-ok'],
+   purpose:"Checks each sensor stream is arriving on time, and cross-checks the three redundant position sources against each other.",
+   inputs:["Raw IMU / GPS / LIDAR position","Speed","Lateral acceleration"],
+   outputs:["Per-stream health","Flagged / excluded sources"],
+   limit:"Cannot see a sensor whose value has frozen — the stream is fresh and self-consistent, so nothing is flagged. It also has no cross-check for the single-source speed and lateral-acceleration channels."},
+];
+const DOT = {ok:"d-ok",part:"d-part",bad:"d-bad",off:"d-off"};
+const lc = document.getElementById("layers"), dt = document.getElementById("detail");
+LAYERS.forEach((L,i) => {
+  const b = document.createElement("button"); b.className = "layer"; b.setAttribute("role","option"); b.dataset.i = i;
+  b.innerHTML = `<span class="lid"><span class="dot ${DOT[L.dot]}"></span>${L.id}</span>
+    <span><span class="lname">${L.name}</span><br><span class="ljob">${L.job}</span></span>
+    <span class="pill ${L.state[1]}">${L.state[0]}</span>`;
+  b.onclick = () => select(i); lc.appendChild(b);
+});
+function select(i){
+  const L = LAYERS[i];
+  [...lc.children].forEach((c,j) => c.setAttribute("aria-selected", j===i ? "true":"false"));
+  dt.innerHTML = `<div class="dh"><span class="dnum">${L.id}</span><h3>${L.name}</h3>
+      <span class="dstate pill ${L.state[1]}">${L.state[0]}</span></div>
+    <p class="dpurpose">${L.purpose}</p>
+    <div class="io"><div><h4>Inputs</h4><ul>${L.inputs.map(x=>`<li>${x}</li>`).join("")}</ul></div>
+      <div><h4>Outputs</h4><ul>${L.outputs.map(x=>`<li>${x}</li>`).join("")}</ul></div></div>
+    <div class="limit"><h4>Status &amp; limitation today</h4><p>${L.limit}</p></div>`;
+}
+lc.addEventListener("keydown", e => {
+  const cur = [...lc.children].findIndex(c => c.getAttribute("aria-selected")==="true");
+  if (e.key==="ArrowDown"||e.key==="ArrowRight"){ e.preventDefault(); select(Math.min(LAYERS.length-1, cur+1)); lc.children[Math.min(LAYERS.length-1,cur+1)].focus(); }
+  if (e.key==="ArrowUp"||e.key==="ArrowLeft"){ e.preventDefault(); select(Math.max(0, cur-1)); lc.children[Math.max(0,cur-1)].focus(); }
+});
+select(3); // open on L6, the central finding
+
+/* scroll reveals */
+if (!matchMedia("(prefers-reduced-motion:reduce)").matches) {
+  const io = new IntersectionObserver(es => es.forEach(x => { if (x.isIntersecting){ x.target.classList.add("in"); io.unobserve(x.target); } }), {threshold:0.08});
+  document.querySelectorAll(".reveal").forEach(el => io.observe(el));
+} else document.querySelectorAll(".reveal").forEach(el => el.classList.add("in"));
+</script>
+</body>
+</html>
