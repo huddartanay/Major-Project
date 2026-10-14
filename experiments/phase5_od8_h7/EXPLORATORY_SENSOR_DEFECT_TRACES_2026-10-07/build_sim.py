@@ -156,7 +156,7 @@ def design(id, group, short, sensor, defect, desc, bad, on, off, speed, mode, en
                 pn=list(pn), pf="".join(str(seg(i * DT, prof, 0)) for i in range(N)),
                 # optional L6 score (sc(t, clean score)) and gate mask (g(t) -> 1 L6, 2 physics, 4 rules)
                 **({"sc": [round(sc(i * DT, C["sc"][i]), 2) for i in range(N)]} if sc else {}),
-                **({"g": "".join(str(g(i * DT)) for i in range(N))} if g else {}))
+                **({"g": "".join(str(int(g(i * DT))) for i in range(N))} if g else {}))
 
 
 T = []
@@ -318,7 +318,7 @@ T.append(design("d_mon_agg_frozen", agg["group"], "aggregate score: frozen veloc
 def aligned(id, short, defect, desc, bad, on, off, speed, mode, orig, flag, belief, t_al, ev, today):
     return design(id, agg["group"], short, agg["sensor"], defect, desc, bad, on, off, speed=speed, mode=mode, orig=orig, flag=flag, belief=belief,
         sc=lambda t, s: s + 2.2 if t_al <= t < (off or 1e9) else s,
-        g=lambda t: int(alarm(0.75, 2)(t)) if t_al <= t < (off or 1e9) else int(clean5(t)), ev=ev,
+        g=lambda t: int(t < t_al + 0.6 or alarm(0.75, 2)(t)) if t_al <= t < (off or 1e9) else int(clean5(t)), ev=ev,
         notes=[("good", "Channel-aligned conformal tracking: the lateral channel gets its own calibrated score, so steering-related faults are no longer drowned out by throttle and brake."),
                ("good", "Healthy behaviour is unchanged: about 5% alarms before the defect, as in the aggregate monitor."),
                ("good", REP + "alarms amplified 11.0x to 17.2x under the evaluated offsets, with clean alarm rates 5.02% (development) and 4.88% (held-out)."),
