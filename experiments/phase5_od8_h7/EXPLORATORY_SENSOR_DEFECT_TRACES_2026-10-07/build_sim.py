@@ -137,7 +137,7 @@ def seg(t, table, default):
 
 
 def design(id, group, short, sensor, defect, desc, bad, on, off, speed, mode, env=(), arb=(), prof=(), flag=(), belief=None,
-           ye_off=(), orig=(), ev=(), notes=(), today=None, pn=("urban_clear", "rain_night")):
+           ye_off=(), orig=(), ev=(), notes=(), today=None, pn=("urban_clear", "rain_night"), sc=None, g=None):
     vt, v = [], V_CRUISE
     for i in range(N):
         t = i * DT
@@ -153,7 +153,10 @@ def design(id, group, short, sensor, defect, desc, bad, on, off, speed, mode, en
                 o="".join(str(seg(i * DT, orig, 0)) for i in range(N)), h="".join(str(seg(i * DT, flag, 0)) for i in range(N)),
                 b="".join("1" if i and vt[i] < vt[i - 1] - 0.03 else "0" for i in range(N)),
                 env="".join(str(seg(i * DT, env, 0)) for i in range(N)), arb="".join(str(seg(i * DT, arb, 1)) for i in range(N)),
-                pn=list(pn), pf="".join(str(seg(i * DT, prof, 0)) for i in range(N)))
+                pn=list(pn), pf="".join(str(seg(i * DT, prof, 0)) for i in range(N)),
+                # optional L6 score (sc(t, clean score)) and gate mask (g(t) -> 1 L6, 2 physics, 4 rules)
+                **({"sc": [round(sc(i * DT, C["sc"][i]), 2) for i in range(N)]} if sc else {}),
+                **({"g": "".join(str(g(i * DT)) for i in range(N))} if g else {}))
 
 
 T = []
@@ -246,8 +249,211 @@ T.append(design("d_tunnel_drop", "Environment + sensor defect", "tunnel, then IM
            ("good", "The car never stops and never leaves its lane, and it recovers fully."),
            ("warn", "Today this combination ends in a latched HALT.")], today="f_tunnel_dropout"))
 
+# ------------------------------------------------------------------ runtime behaviour (sim/runtime-behaviour, NOT runs)
+# Illustrations of the runtime behaviour in the team's ASTRA description: incident timeline, fault scenarios A-E,
+# the L6 monitor failure and the channel-aligned repair, shields and fail-closed, hysteresis, recovery.
+# Figures quoted as "reported" come from the team's separate build; nothing in this page measured them.
+import random
+
+REP = "Reported by the team's build, not measured by this page: "
+THR = 3.70                       # about the 95th percentile of the healthy run's L6 score
+
+
+def alarm(p, seed=0):
+    """Deterministic pseudo-random alarm with probability p at time t."""
+    return lambda t: random.Random(round(t * 1000) * 7919 + seed).random() < p
+
+
+clean5 = alarm(0.05, 1)
+T.append(design("d_incident", "End-to-end incident · frozen velocity", "freeze, detect, LIMP, repair, recover", "Speed", "frozen, repaired at 40 s",
+    "Hypothetical timeline. The speed reading freezes at 10 s on a downhill stretch and is repaired at 40 s", ["speed"], 10, 40,
+    speed=[(10, 13.0), (11, V_SLOW), (45, V_CRUISE)], mode=[(11, 2), (45, 1), (50, 0)], orig=[(11, 3), (45, 2), (50, 0)],
+    belief=lambda t, v: V_CRUISE if 10 <= t < 11 else v, g=lambda t: 1 if 10.6 <= t < 11 else int(clean5(t)),
+    sc=lambda t, s: s + (1.4 if 10.6 <= t < 11 else 0),
+    ev=[(0, "NOMINAL at 40 km/h: every sensor fresh, the estimate matches, the learned controller's proposals pass every gate"),
+        (10, "Speed reading freezes at 40 km/h. Timestamps keep advancing, so the freshness check in L1 still sees a live stream"),
+        (10.2, "The road goes downhill. The car speeds up, but L2 still believes 40 km/h because the only speed source is frozen"),
+        (10.6, "Channel-aligned lateral monitor (L6) alarms: lateral acceleration no longer matches speed times turning rate"),
+        (11, "L1 cross-check: the speed reading has not changed for 1 s while position-derived speed and IMU acceleration say the car is speeding up. Speed sensor excluded"),
+        (11, "L2 switches to position-derived speed (noisier, honest). L8 enters LIMP (cap 20 km/h). The fallback controller drives; the learned controller's proposals are only advisory"),
+        (40, "Speed sensor repaired: readings change again and match position-derived speed"),
+        (45, "5 s of agreement (probation). Speed sensor re-admitted. L8 steps back one level to DEGRADED (cap 40 km/h)"),
+        (50, "5 s more without a fault. L8 returns to NOMINAL; the learned controller drives again")],
+    notes=[("good", "Freshness alone misses a frozen value: the timestamps still advance. Comparing against other motion evidence (position change, IMU acceleration) is what catches it."),
+           ("good", "Proposed vs authorized: from 11 s to 50 s the learned controller keeps proposing, but only commands inside the mode's limits reach the actuators."),
+           ("good", "Recovery is one level at a time, each step after a clean period, so a sensor that comes back briefly does not bounce the car between modes."),
+           ("warn", "All times and speeds here are hypothetical. Today's recorded run of this defect stays in NOMINAL and ends at 53 km/h.")], today="speed_frozen"))
+
+# --- L6 statistical monitor: failure and repair
+agg = dict(group="Statistical monitor (L6)", sensor="Statistical monitor")
+T.append(design("d_mon_clean", agg["group"], "no defect: ~5% alarms", agg["sensor"], "none",
+    "No defect. Both monitors alarm on about 5% of healthy ticks, as calibrated", [], None, None,
+    speed=[], mode=[], g=clean5,
+    ev=[(0, "Healthy driving. The L6 gate alarms on about 1 tick in 20, as its calibration intends")],
+    notes=[("good", "A calibrated alarm rate of about 5% on healthy data is what the conformal calibration promises, and it holds."),
+           ("good", REP + "clean alarm rate 5.02% on development data and 4.88% on held-out data."),
+           ("warn", "Key finding: a correct healthy alarm rate says nothing about whether the monitor reacts to faults. The next scenarios show it does not.")]))
+T.append(design("d_mon_agg_imu", agg["group"], "aggregate score: IMU loss", agg["sensor"], "score contracts under IMU loss",
+    "IMU messages stop from 10 s to 20 s. L6 uses today's aggregate score over all control channels", ["stream"], 10, 20,
+    speed=[(10.75, V_SLOW), (21.8, V_CRUISE)], mode=[(10.25, 1), (10.75, 2), (21, 1), (21.8, 0)], flag=[(10.05, 1), (20, 0)], orig=[(10.75, 3), (21.8, 0)],
+    sc=lambda t, s: s - 1.5 if 10 <= t < 20 else s, g=lambda t: 0 if 10 <= t < 20 else int(clean5(t)),
+    ev=[(10, "Defect starts"), (10.05, "L1 marks the IMU stream as stale (freshness check)"),
+        (10.1, "L6 aggregate score DROPS instead of rising: with no IMU updates the throttle and brake channels look calmer than usual"),
+        (10.25, "L8 enters DEGRADED, driven by L1, not by L6"), (10.75, "L8 enters LIMP"),
+        (20, "IMU messages return"), (21.8, "L8 back to NOMINAL")],
+    notes=[("bad", "L6 stays silent for the whole outage: no alarm in 10 s. Its score contracts below its healthy level."),
+           ("bad", "The aggregate score is dominated by throttle and brake. Steering, where the IMU loss matters, contributes almost nothing."),
+           ("good", "The car is still handled safely here, but only because L1's freshness check catches a stream that stops. L6 adds nothing.")], today="imu_dropout"))
+T.append(design("d_mon_agg_frozen", agg["group"], "aggregate score: frozen velocity", agg["sensor"], "score contracts under frozen speed",
+    "Speed reading freezes at 10 s. L6 uses today's aggregate score", ["speed"], 10, None,
+    speed=[(10, 12.5), (40, 14.7)], mode=[], belief=lambda t, v: V_CRUISE if t >= 10 else v,
+    sc=lambda t, s: s - 1.2 if t >= 10 else s, g=lambda t: 0 if t >= 10 else int(clean5(t)),
+    ev=[(10, "Speed reading freezes"), (10.2, "L6 aggregate score drops: a constant speed makes throttle and brake look unusually steady"),
+        (30, "Real speed passes 50 km/h. L2 still believes 40 km/h. No layer objects")],
+    notes=[("bad", "Silent failure: L6 never alarms, L8 stays NOMINAL, the car ends far faster than it believes."),
+           ("bad", "Freshness does not help: timestamps keep advancing on a frozen value."),
+           ("warn", "This matches today's recorded run (NOMINAL throughout, 53 km/h at the end).")], today="speed_frozen"))
+
+
+def aligned(id, short, defect, desc, bad, on, off, speed, mode, orig, flag, belief, t_al, ev, today):
+    return design(id, agg["group"], short, agg["sensor"], defect, desc, bad, on, off, speed=speed, mode=mode, orig=orig, flag=flag, belief=belief,
+        sc=lambda t, s: s + 2.2 if t_al <= t < (off or 1e9) else s,
+        g=lambda t: int(alarm(0.75, 2)(t)) if t_al <= t < (off or 1e9) else int(clean5(t)), ev=ev,
+        notes=[("good", "Channel-aligned conformal tracking: the lateral channel gets its own calibrated score, so steering-related faults are no longer drowned out by throttle and brake."),
+               ("good", "Healthy behaviour is unchanged: about 5% alarms before the defect, as in the aggregate monitor."),
+               ("good", REP + "alarms amplified 11.0x to 17.2x under the evaluated offsets, with clean alarm rates 5.02% (development) and 4.88% (held-out)."),
+               ("warn", "Why it can work (explanation, not a reported finding): a fault that removes or freezes motion evidence makes lateral acceleration disagree with speed times turning rate, which only a lateral-only score sees clearly."),
+               ("warn", "The alarm says something is wrong, not which sensor. The fail-safe restricts the car; it does not identify the culprit.")], today=today)
+
+
+T.append(aligned("d_mon_al_imu", "channel-aligned: IMU loss", "lateral score rises under IMU loss",
+    "IMU messages stop from 10 s to 20 s. L6 adds a channel-aligned lateral tracker", ["stream"], 10, 20,
+    speed=[(10.75, V_SLOW), (21.8, V_CRUISE)], mode=[(10.25, 1), (10.75, 2), (21, 1), (21.8, 0)], orig=[(10.3, 3), (21.8, 0)], flag=[(10.05, 1), (20, 0)],
+    belief=None, t_al=10.3,
+    ev=[(10, "Defect starts"), (10.05, "L1 marks the IMU stream as stale"), (10.25, "L8 enters DEGRADED"),
+        (10.3, "L6 lateral tracker alarms: the lateral score rises above its calibrated threshold and stays there"),
+        (10.75, "L8 enters LIMP; L6 and L1 now agree"), (20, "IMU messages return; the lateral score falls back"), (21.8, "L8 back to NOMINAL")], today="imu_dropout"))
+T.append(aligned("d_mon_al_frozen", "channel-aligned: frozen velocity", "lateral score rises under frozen speed",
+    "Speed reading freezes at 10 s. L6 adds a channel-aligned lateral tracker", ["speed"], 10, None,
+    speed=[(10, 12.5), (11.2, V_SLOW)], mode=[(10.8, 1), (11.8, 2)], orig=[(10.8, 2), (11.8, 3)], flag=[],
+    belief=lambda t, v: V_CRUISE if 10 <= t < 11.8 else v, t_al=10.5,
+    ev=[(10, "Speed reading freezes"), (10.5, "L6 lateral tracker alarms: on the next curve, lateral acceleration does not match the frozen speed times turning rate"),
+        (10.8, "Out-of-envelope counter reaches its limit: L8 enters DEGRADED (cap 40 km/h)"),
+        (11.8, "Alarm persists: L8 enters LIMP (cap 20 km/h); the fallback controller drives on position-derived speed")], today="speed_frozen"))
+
+# --- shields and fail-closed
+SH = "Shields and fail-closed"
+T.append(design("d_shield", SH, "monitor silent, physics rejects", "Proposed command", "unsafe steering proposal",
+    "No sensor defect. At 30 s the learned controller proposes a sharp steering input at 40 km/h", [], None, None,
+    speed=[], mode=[], orig=[(30, 1), (31, 0)], g=lambda t: 2 if 30 <= t < 30.6 else 0, sc=lambda t, s: s,
+    ev=[(30, "L4 proposes a sharp steer. L6 score is normal: the statistical monitor raises no alarm"),
+        (30, "L5 twin predicts the outcome: lateral acceleration and lateral jerk above the vehicle limits. L7 physics gate rejects the proposal"),
+        (30, "L9 issues a rate-limited command instead: same direction, within the steering, lateral-acceleration and jerk limits"),
+        (31, "Proposals are back inside the limits; they pass unchanged")],
+    notes=[("good", "A proposal can be rejected with no statistical alarm. The deterministic checks do not wait for L6."),
+           ("good", "Proposed is not authorized: only the limited command reaches the actuators."),
+           ("warn", "Which constraints are enforced in code (lateral acceleration, jerk, slip, stopping distance, speed) is listed in the architecture document; this scene does not prove any of them.")]))
+T.append(design("d_failclosed", SH, "twin evidence missing: fail closed", "Digital twin (L5)", "no prediction for 3 s",
+    "No sensor defect. The L5 twin returns no prediction from 30 s to 33 s", [], 30, 33,
+    speed=[(31, V_SLOW), (38, V_CRUISE)], mode=[(31, 1), (36, 0)], orig=[(30, 3), (36, 0)], g=lambda t: 2 if 30 <= t < 33 else 0,
+    ev=[(30, "L5 produces no prediction. Without it the physics gate cannot confirm the proposal is safe"),
+        (30, "Fail-closed: L9 does not forward the learned controller's proposal. The fallback controller drives"),
+        (31, "Evidence still missing after 1 s: L8 enters DEGRADED"), (33, "Twin predictions return"),
+        (36, "3 s of valid evidence: L8 returns to NOMINAL; the learned controller drives again")],
+    notes=[("good", "Missing safety evidence is treated as a reason to refuse, never as a pass."),
+           ("good", "The car keeps moving under the conservative fallback instead of stopping, because the state estimate is still trusted.")]))
+
+# --- fault scenarios A-E (C is the incident timeline above)
+FS = "Fault scenarios A to E"
+T.append(design("d_A_outlier", FS, "A: GPS 25 m outlier", "Position: GPS", "extreme outlier",
+    "GPS position reads 25 m to the side from 10 s to 30 s; IMU and LIDAR are honest", ["gps"], 10, 30,
+    speed=[], mode=[], flag=[(10.05, 2), (35, 0)],
+    ev=[(10, "Defect starts"), (10.05, "L1 coordinate-wise median of IMU, GPS and LIDAR: the median ignores the 25 m value. GPS is flagged"),
+        (10.05, "L2 UKF updates from the median; its uncertainty barely changes. L8 stays NOMINAL"),
+        (30, "GPS reads correctly again"), (35, "5 s of agreement: GPS re-admitted")],
+    notes=[("good", "With one outlier among three, the median is unaffected however large the outlier."),
+           ("good", "If the UKF uncertainty had grown past its limit, L8 would restrict the car; here it does not need to."),
+           ("good", "Matches today's recorded behaviour for a single lying position source, except that today the car is stopped.")], today="pos_gps_bias"))
+T.append(design("d_B_imu", FS, "B: IMU loss, 1.8 s recovery", "IMU message stream", "stops for 10 s",
+    "IMU messages stop from 10 s to 20 s", ["stream"], 10, 20,
+    speed=[(10.75, V_SLOW), (21.8, V_CRUISE)], mode=[(10.25, 1), (10.75, 2), (21, 1), (21.8, 0)], flag=[(10.05, 1), (20, 0)], orig=[(10.75, 3), (21.8, 0)],
+    ev=[(10, "Defect starts"), (10.05, "L1 freshness check: no IMU message within its deadline. IMU marked stale"),
+        (10.1, "L2 UKF continues on prediction and the other sensors; its uncertainty grows each tick without IMU updates"),
+        (10.25, "L8 enters DEGRADED (sensor-integrity counter)"), (10.75, "Uncertainty past the limit: L8 enters LIMP (cap 20 km/h), fallback controller drives"),
+        (20, "IMU messages return"), (21, "L8 steps back to DEGRADED"), (21.8, "L8 returns to NOMINAL, 1.8 s after the sensor returned")],
+    notes=[("good", "The UKF bridges a gap, not an outage: it cannot reconstruct missing IMU data indefinitely, so restrictions tighten as uncertainty grows."),
+           ("good", REP + "recovery 1.8 s after a temporary IMU loss. Today's recorded run shows the same 1.8 s."),
+           ("good", "Safe exploration is not entered by a sensor outage, so the car returns to 40 km/h (today it stays crawling).")], today="f_dropout_10s"))
+T.append(design("d_D_stale", FS, "D: GPS data 600 ms late", "Position: GPS", "stale messages",
+    "GPS messages arrive 600 ms late from 10 s to 30 s", ["gps"], 10, 30,
+    speed=[], mode=[], flag=[(10.6, 2), (32, 0)],
+    ev=[(10, "GPS messages start arriving late"), (10.6, "L1 freshness check: GPS timestamps are older than the allowed age. GPS is excluded, not fused late"),
+        (10.6, "L2 continues on IMU and LIDAR. This is a data-quality problem, not a vehicle-state anomaly: L8 stays NOMINAL"),
+        (30, "GPS messages on time again"), (32, "2 s of fresh data: GPS re-admitted")],
+    notes=[("good", "Stale data is dropped at L1 before it can distort the estimate."),
+           ("good", "A data-quality fault in one redundant source is reported, but does not change the operating mode.")]))
+T.append(design("d_D_implausible", FS, "D: LIDAR jumps implausibly", "Position: LIDAR", "physically implausible jumps",
+    "LIDAR position jumps by metres between ticks from 10 s to 25 s", ["lidar"], 10, 25,
+    speed=[], mode=[], flag=[(10.05, 4), (30, 0)],
+    ev=[(10, "LIDAR starts jumping"), (10.05, "L1 plausibility check: a jump of several metres in 50 ms would need impossible acceleration. LIDAR rejected"),
+        (25, "LIDAR plausible again"), (30, "5 s of agreement: LIDAR re-admitted")],
+    notes=[("good", "A reading that breaks physics is rejected as a sensor fault, not believed as the car's motion."),
+           ("good", "The estimate, and therefore the controller, never sees the jumps.")]))
+T.append(design("d_E_multi", FS, "E: IMU + GPS + speed together", "Several sensors", "three faults at once",
+    "At 10 s the IMU stream stops, GPS goes stale and the speed reading freezes", ["stream", "gps", "speed"], 10, None,
+    speed=[(10.75, V_SLOW), (14, 0.0)], mode=[(10.25, 1), (10.75, 2), (18, 3)], flag=[(10.05, 1), (10.6, 3)], orig=[(10.75, 3)],
+    belief=lambda t, v: V_CRUISE if 10 <= t < 10.75 else v,
+    ev=[(10, "Three sensors fail at once"), (10.05, "L1 marks the IMU stale"), (10.25, "L8 enters DEGRADED"),
+        (10.6, "L1 marks GPS stale. Only LIDAR is left for position: the median of one source is no protection"),
+        (10.75, "L2 uncertainty past its limit and the speed reading cannot be cross-checked. L8 enters LIMP, fallback controller drives"),
+        (14, "State can no longer be trusted enough to keep driving: controlled stop begins in lane"),
+        (18, "L8 enters HALT: stopped, latched, human reset required")],
+    notes=[("good", "When too few independent sources remain, the answer is a controlled stop, not continued driving on a guess."),
+           ("warn", "Median fusion needs a majority of honest sources. Correlated faults (shared power, shared clock, shared mounting) can defeat it silently."),
+           ("warn", "HALT is latched on purpose: it is not left automatically even if sensors come back.")]))
+T.append(design("d_pos_two_fixed", "Position (IMU / GPS / LIDAR)", "two lie, motion check finds them", "Position: IMU + GPS", "two sources agree on a lie",
+    "IMU and GPS both read 1.0 m to the side from 10 s; only LIDAR is honest", ["imu", "gps"], 10, None,
+    speed=[(10.6, V_RAIN)], mode=[(10.6, 1)], flag=[(10.6, 3)], orig=[(10.6, 2)], ye_off=[(10, 0.3), (10.6, 0.0)],
+    ev=[(10, "Defect starts"), (10.4, "L1 median would follow the two liars. A motion cross-check (speed and heading integrated over the last second) shows the 1.0 m jump never happened"),
+        (10.6, "IMU and GPS flagged; LIDAR, which agrees with the motion check, is kept. L8 enters DEGRADED (cap 40 km/h) because only one position source is left")],
+    notes=[("good", "Voting alone blames the honest sensor when two lie together (today's recorded run). An independent physical check breaks the tie."),
+           ("good", "The car keeps driving at reduced authority instead of stopping."),
+           ("warn", "If the motion check itself is unavailable, a two-against-one split must still end in LIMP and a stop.")], today="pos_two_bias"))
+
+# --- hysteresis, calibration switching, exploration exit
+RC = "Recovery and calibration"
+flick = [(10 + 0.4 * k, (2 if k % 3 else 0)) for k in range(75)] + [(40, 0)]
+T.append(design("d_hyst", RC, "flickering GPS: hysteresis", "Position: GPS", "quality flickers around the threshold",
+    "GPS freshness hovers around its limit from 10 s to 40 s, so the flag switches on and off", ["gps"], 10, 40,
+    speed=[(11.2, V_CRUISE)], mode=[(11.2, 1), (45, 0)], flag=flick, orig=[(11.2, 2), (45, 0)],
+    ev=[(10, "GPS quality starts hovering around its limit"), (10.4, "L1 flag switches on and off every few hundred milliseconds"),
+        (11.2, "Sensor-integrity counter reaches its limit: L8 enters DEGRADED. Counter decays slower than it rises, so one good tick does not undo it"),
+        (40, "GPS steady again"), (45, "5 s with no flag: L8 returns to NOMINAL")],
+    notes=[("good", "Hysteresis: one mode change in, one out, although the flag toggled dozens of times."),
+           ("good", "Separate counters for out-of-envelope commands and sensor integrity, so a noisy sensor does not reset the other evidence."),
+           ("warn", "Without hysteresis the mode would flip with every toggle, and so would the speed cap.")]))
+T.append(design("d_rain_fast", RC, "rain: switch in 20 ticks", "Environment", "none",
+    "No sensor defect. Rain at night from 20 s to 70 s. Shadow test lasts 20 ticks (1 s)", [], None, None,
+    speed=[(22, V_RAIN), (72, V_CRUISE)], mode=[], env=[(20, 2), (70, 0)],
+    arb=[(21, 2), (22, 3), (23, 1), (71, 2), (72, 3), (73, 1)], prof=[(22, 1), (72, 0)],
+    ev=[(20, "Rain at night begins"), (21, "L9 shadow search: 'rain_night' fits better. Shadow execution: both calibrations run, only the active one drives"),
+        (22, "20 ticks of agreement: 'rain_night' committed, speed limit 30 km/h"), (70, "Rain ends"),
+        (71, "Shadow test of 'urban_clear'"), (72, "Committed back to 'urban_clear', 40 km/h")],
+    notes=[("good", REP + "calibration switching in 20 ticks, one second at 20 Hz."),
+           ("good", "A calibration switch changes thresholds and the speed limit only. It cannot lift a mode cap or override L7.")], today="f_env_change"))
+T.append(design("d_explore_exit", RC, "exploration ends after IMU outage", "IMU message stream", "stops for 10 s",
+    "IMU messages stop from 10 s to 20 s. No calibration fits during the outage, so L9 explores", ["stream"], 10, 20,
+    speed=[(10.75, V_SLOW), (23, V_CRUISE)], mode=[(10.25, 1), (10.75, 2), (21, 1), (21.8, 0)], flag=[(10.05, 1), (20, 0)],
+    arb=[(11, 5), (23, 1)], orig=[(10.75, 3), (21.8, 5), (23, 0)],
+    ev=[(10, "Defect starts"), (10.75, "L8 enters LIMP"), (11, "L9 calibration search finds no fit: bounded safe exploration (half speed, steering within 15 degrees)"),
+        (20, "IMU messages return"), (21.8, "L8 back to NOMINAL; still inside the exploration envelope"),
+        (23, "L9 matches 'urban_clear' on the sensor-health and road part of the context, ignoring the car's own reduced speed. Exploration ends, 40 km/h")],
+    notes=[("good", "Exploration is no longer a one-way door: it ends when a calibration fits again."),
+           ("good", "The car's own speed is left out of the context match, so slowing down for exploration cannot keep it exploring."),
+           ("warn", "Today's recorded run of this outage ends crawling at 0 to 4 km/h in NOMINAL.")], today="f_dropout_10s"))
+
 arms += T
-data = dict(seed=d["seed"], hz=HZ, step=d["every"], arms=arms)
+data =dict(seed=d["seed"], hz=HZ, step=d["every"], arms=arms)
 html = (HERE / "sim_template.html").read_text(encoding="utf-8").replace("/*__DATA__*/null", json.dumps(data, separators=(",", ":")))
 (ROOT / "mp_review_sim.html").write_text(html, encoding="utf-8", newline="\n")
 print("wrote", ROOT / "mp_review_sim.html", len(html) // 1024, "KB;", len(arms), "scenarios")
