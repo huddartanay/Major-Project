@@ -115,7 +115,7 @@
     </div>
     <div id="strip"><small>Sensors</small><div id="chips"></div><div id="fault"></div></div>
     <div id="charts">
-      <div class="plot"><header><b>Speed (km/h)</b><span><i style="color:#0e2a47"></i>real</span><span><i style="color:#1f6feb;border-top-style:dashed"></i>ASTRA believes</span><span><i style="color:#1a7f37;border-top-style:dotted"></i>healthy run</span><span><i style="color:#c2410c;border-top-width:4px"></i>exploring</span><span><i style="color:#0a97b0;border-top-width:4px"></i>calibration</span><button id="zoom"></button></header><canvas id="c0"></canvas></div>
+      <div class="plot"><header><b>Speed (km/h)</b><span><i style="color:#0e2a47"></i>real</span><span><i style="color:#1f6feb;border-top-style:dashed"></i>ASTRA believes</span><span><i style="color:#1a7f37;border-top-style:dotted"></i>healthy run</span><button id="zoom"></button></header><canvas id="c0"></canvas></div>
       <div class="plot"><header><b>Sideways position (m from lane centre)</b><span><i style="color:#0e2a47"></i>real</span><span><i style="color:#1f6feb;border-top-style:dashed"></i>ASTRA believes</span><span><i style="color:#cf222e;border-top-style:dashed"></i>lane edge</span></header><canvas id="c1"></canvas></div>
     </div>
   </div>
@@ -472,19 +472,6 @@ function plot(ci, lo, hi, ticks, series, edges) {
   g.textAlign = "center"; for (let s = Math.ceil(win[0] / stepS) * stepS; s <= win[1]; s += stepS) { g.beginPath(); g.moveTo(X(s), y0); g.lineTo(X(s), y1); g.stroke(); g.fillText(s + " s", X(s), H - 6 * k); }
   if (arm.env) { const sh = ["", "#5a6b7d26", "#1f6feb22"]; let s = 0; for (let i = 1; i <= arm.env.length; i++) if (i === arm.env.length || arm.env[i] !== arm.env[s]) {
       if (arm.env[s] !== "0") { g.fillStyle = sh[+arm.env[s]]; g.fillRect(X(s * DT), y0, X(i * DT) - X(s * DT), y1 - y0); g.fillStyle = "#5a6b7d"; g.textAlign = "left"; g.fillText(ENVS[+arm.env[s]].toLowerCase(), X(s * DT) + 4 * k, y1 - 8 * k); } s = i; } }
-  if (arm.arb) { const A = arm.arb, EXP = "#c2410c", CAL = "#0a97b0"; let s = 0;   // L9: safe exploration and calibration switching
-    if (!plot.hatch) { const hc = document.createElement("canvas"); hc.width = hc.height = 8; const hx = hc.getContext("2d");
-      hx.strokeStyle = EXP + "40"; hx.lineWidth = 1.5; hx.beginPath(); hx.moveTo(0, 8); hx.lineTo(8, 0); hx.stroke(); plot.hatch = hc; }
-    for (let i = 1; i <= A.length; i++) if (i === A.length || A[i] !== A[s]) { const a = +A[s], xa = X(s * DT), xb = X(i * DT);
-      g.textAlign = "left"; g.setLineDash([]); const fits = txt => g.measureText(txt).width + 8 * k < xb - xa;
-      if (a === 5) { g.fillStyle = EXP + "12"; g.fillRect(xa, y0, xb - xa, y1 - y0); g.fillStyle = g.createPattern(plot.hatch, "repeat"); g.fillRect(xa, y0, xb - xa, y1 - y0);
-        g.fillStyle = EXP; g.fillRect(xa, y0, xb - xa, 3 * k); fits("safe exploration") && g.fillText("safe exploration", xa + 4 * k, y1 - 22 * k); }
-      else if (a === 2) { g.fillStyle = CAL + "1c"; g.fillRect(xa, y0, xb - xa, y1 - y0); g.fillStyle = CAL; g.fillRect(xa, y0, xb - xa, 3 * k);
-        fits("shadow test") && g.fillText("shadow test", xa + 4 * k, y1 - 22 * k); }
-      else if (a === 3 || a === 4) { g.strokeStyle = a === 3 ? CAL : "#cf222e"; g.lineWidth = 2 * k; g.beginPath(); g.moveTo(xa, y0); g.lineTo(xa, y1); g.stroke();
-        g.fillStyle = a === 3 ? CAL : "#cf222e"; g.fillText(a === 3 ? "switched → " + (arm.pn ? arm.pn[+arm.pf[s]] : "") : "rolled back", xa + 4 * k, y1 - 36 * k); }
-      s = i; }
-    g.lineWidth = k; }
   if (edges) { g.strokeStyle = "#cf222eaa"; g.setLineDash([5 * k, 4 * k]); for (const e of edges) { g.beginPath(); g.moveTo(x0, Y(e)); g.lineTo(x1, Y(e)); g.stroke(); } }
   for (const [arr, col, dash, mul, w] of series) { g.strokeStyle = col; g.setLineDash(dash.map(d => d * k)); g.lineWidth = (w || 1.6) * k; g.beginPath();
     for (let i = 0; i < arr.length; i++) { const x = X(i * DT), y = Y(arr[i] * mul); i ? g.lineTo(x, y) : g.moveTo(x, y); } g.stroke(); }
