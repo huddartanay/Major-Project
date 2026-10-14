@@ -197,6 +197,31 @@ these" is: **not today.** What we can defend today is C1, with C2 as supporting 
 
 - 24 papers from six web searches; arXiv-heavy; no IEEE Xplore or ACM full-text sweep, no "cited by" pass.
 - Partial reads. A limitation stated on a page I did not read would be missed.
-- Classic works known but **not** read here: SAVIOR (USENIX Sec 2020), control invariants (CCS 2018),
-  PID-Piper (DSN 2021), DeLorean, Mo & Sinopoli on replay. They should be read before submission.
+- Classic works read in a second pass on 14 October (§9): SAVIOR, control invariants, PID-Piper. Still unread:
+  DeLorean, and Mo & Sinopoli on replay (paywalled).
 - "Not found" in §3.5 and §6 means not found here.
+
+---
+
+## 9 · Phase 1 reading (14 October 2026, task T1.3)
+
+PDFs downloaded and the abstract, threat model, method, discussion and conclusion sections read.
+
+| paper | read | what it does | assumes | relevance to C2 / ASTRA |
+|---|---|---|---|---|
+| Quinonez et al., **SAVIOR** — securing autonomous vehicles with robust physical invariants, USENIX Security 2020, pp. 895–912 | A | Physics-based anomaly detection: nonlinear physical invariants identified offline, an EKF predicts each sensor from the commands, per-sensor residuals fed to a CUSUM change detector. Shown on aerial and ground vehicles | Attacker injects false signals into **one** sensor or actuator; studies stealthy attacks and states such detectors are never perfect because closed-loop control is needed in the first place | The detector's model is driven by the **commands**, so a frozen sensor would leave a growing residual. Our estimator's speed model has no command input, which is part of why a frozen speed passes. Frozen or stuck sensors are not evaluated by name in the paper (no matches for "frozen", "stuck") |
+| Choi et al., **Control invariants** — detecting attacks against robotic vehicles, ACM CCS 2018, pp. 801–816 | A | Derives a state-space invariant from physics plus the controller; alarms when predicted and observed states diverge beyond a threshold within a monitoring window. Eleven vehicles; < 2.3 % overhead; detection within about 100 ms in examples | Physical, external attacks; acknowledges **mimicry attacks** that respect the dynamics while erring slowly as out of reach | Same family as SAVIOR: command-aware prediction of the next state. A baseline of this kind belongs in STEP 8 beside the plain frozen-value check |
+| Dash et al., **PID-Piper** — recovering robotic vehicles from physical attacks, IEEE/IFIP DSN 2021, pp. 26–38 (best paper) | A | An ML feed-forward controller runs beside the PID controller; on attack it takes over so the mission continues. 83 % of missions completed under attack; no false positives reported | Overt and stealthy physical attacks; criticises CI and SAVIOR because detection triggers a fail-safe that **aborts the mission** | States in the literature the exact weakness found in ASTRA's response: detection that always ends in a stop. Motivates paper 2 (recovery, not only halting). Also the model for monitor M4 in the P2 audit |
+| Mo & Sinopoli, **Secure control against replay attacks**, Allerton 2009 | **not read** | — | — | Paywalled (DOI 10.1109/ALLERTON.2009.5394956); no free copy found. Known only from a seminar abstract: replay against a chi-square detector in an LQG loop, feasibility conditions, and a watermarking countermeasure that trades detection against control performance. The free arXiv paper found by search (1307.2790, Zhu & Martínez) is a **different** paper on actuator-side replay and was not used |
+
+**What this changes**
+
+1. **C2 must be stated narrowly.** Command-aware physics detectors (SAVIOR, CI) are designed so that a sensor
+   disagreeing with the commanded motion stands out; a frozen sensor is the simplest case of that. C2 is
+   therefore not "frozen sensors are undetectable" but "a freshness check and a conformal command gate, as
+   commonly built, both miss them". STEP 8 must include a command-aware residual baseline, not only a
+   variance check.
+2. **The "ignore or stop" behaviour is a recognised problem.** PID-Piper is the citation for it.
+3. **None of the three examines whether its own detector is informative** beyond reporting detection and
+   false-positive rates on attacks. That keeps C1 open in this set, under the usual caveat.
+4. Mo & Sinopoli remains to be read; borrow through the college library or IEEE Xplore access.
