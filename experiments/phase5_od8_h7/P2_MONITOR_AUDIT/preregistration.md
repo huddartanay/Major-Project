@@ -134,14 +134,16 @@ Per monitor and run: CS; d at all six (perturbation, size) pairs; counterfactual
 alarm ratios for both controls; first-detection tick. Per seed for the controls: L8 mode timeline (HALT and
 non-HALT runs reported separately — see `STEP7…/POST_HOC_NOTE_2026-10-07.md`).
 
-## 9 · Open decisions to settle before freezing
+## 9 · Decisions (settled by Sushanth, 14 October 2026)
 
-1. Primary perturbation size 1.0 m/s² (vs 0.5).
-2. Inclusion of M4 / M4b, and ridge regression as M4's reference (vs a small neural network).
-3. Thresholds in §2 (CS 0.5 / 0.05; d 1.0 / 0.25).
-4. Whether the L3 innovation score and the MMD shift detector are added as descriptive-only monitors. Their input
-   is the measurement, not the proposal, so for them a perturbation is itself a fault injection and the audit is
-   not label-free; they cannot count towards C1.
+1. Primary perturbation size **1.0 m/s²**, with 0.5 and 2.0 reported for dose-response.
+2. **M4 and M4b included**; M4's reference is a ridge regression (simpler and more reproducible than a neural
+   network; a neural reference may be added later only by amendment).
+3. Thresholds in §2 kept as written (CS 0.5 / 0.05; d 1.0 / 0.25).
+4. The L3 innovation score and the MMD shift detector are reported **descriptively only** and do not count
+   towards C1, because for them a perturbation is itself a fault injection.
+
+Still required before FROZEN: Tanay's written agreement.
 
 ## 10 · Deviations
 

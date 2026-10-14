@@ -225,3 +225,32 @@ PDFs downloaded and the abstract, threat model, method, discussion and conclusio
 3. **None of the three examines whether its own detector is informative** beyond reporting detection and
    false-positive rates on attacks. That keeps C1 open in this set, under the usual caveat.
 4. Mo & Sinopoli remains to be read; borrow through the college library or IEEE Xplore access.
+
+---
+
+## 10 · Unit, sign and frame errors — prior work (14 October 2026, task T1.4)
+
+Five web searches; abstracts and summaries read, PDFs **not** read (read level C). Searched: units of measure in
+robot software, physical-unit inconsistency detection, coordinate-frame mismatches, data validation for ML
+pipelines, runtime unit-error detection on drones.
+
+| work | what it does | static or runtime | target |
+|---|---|---|---|
+| Ore, Detweiler, Elbaum — Phriky-Units, ISSTA 2017 | Detects physical-unit inconsistencies in ROS code without annotations; inconsistencies in 11 % of 213 systems; 87 % true positives on high-confidence reports | static | source code |
+| Ore — PhD dissertation, UNL 2019 | Extends the above with probabilistic inference from identifier names; first open dataset of dimensional inconsistencies in robot code | static | source code |
+| Kate et al. — PhysFrame, ESEC/FSE 2021 (arXiv 2106.11266) | Type-checks coordinate frames in ROS code; 190 reports on 180 projects, 154 true | static | source code |
+| SA4U, ASE 2022 (arXiv 2210.09136) | Infers unit types from simulation traces and protocol definitions; 14 new unit bugs in ArduPilot and PX4; unit errors are over a tenth of drone-firmware bugs, about a third of them causing crashes | static, using execution traces | firmware code |
+| Canelas et al. — Is it a bug? Physical unit mismatches in robot software, ICRA 2024 | Many flagged unit mismatches are intentional (e.g. differential drive), causing false positives | study of static-tool reports | source code |
+| Breck et al. / TFX data validation; CPSLint (arXiv 2510.18651) | Schema-based validation of data entering ML pipelines; CPSLint for industrial CPS sensor data | pre-processing / ingestion | datasets and logs |
+
+**What this establishes.** Unit and frame errors are a known, well-studied class of **software bug**, found by
+**static** analysis of code. Data validation checks types, ranges and schemas of data entering ML pipelines.
+
+**What was not found in this search.** Detection, at **run time**, of a **sensor stream** that starts delivering
+values in the wrong unit or with the wrong sign while a supervised learned controller is driving; nor anything
+on sign errors specifically.
+
+**Consequence for ASTRA.** Unit and sign errors stay in STEP 8 as fault types (F1). A novelty statement, if made
+at all, must be narrow: "runtime, on the sensor stream, under a supervised learned controller", and must cite the
+static-analysis work above as the established way such errors are caught. Read level is C, so this search alone
+does not support a claim; at least SA4U and Canelas et al. should be read in full first.
